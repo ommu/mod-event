@@ -1,0 +1,57 @@
+<?php
+/**
+ * Event Categories (event-category)
+ * @var $this app\components\View
+ * @var $this ommu\event\controllers\setting\CategoryController
+ * @var $model ommu\event\models\EventCategory
+ * @var $form app\components\widgets\ActiveForm
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @contact (+62)856-299-4114
+ * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
+ * @created date 23 November 2017, 09:46 WIB
+ * @link https://github.com/ommu/mod-event
+ *
+ */
+
+use yii\helpers\Html;
+use app\components\widgets\ActiveForm;
+?>
+
+<?php $form = ActiveForm::begin([
+	'options' => ['class'=>'form-horizontal form-label-left'],
+	'enableClientValidation' => true,
+	'enableAjaxValidation' => false,
+	//'enableClientScript' => true,
+]); ?>
+
+<?php //echo $form->errorSummary($model);?>
+
+<?php 
+// if(!$model->getErrors())
+if (Yii::$app->request->get('id'))
+		$model->category_name_i = $model->name->message;
+
+echo $form->field($model, 'category_name_i')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('category_name_i')); ?>
+
+<?php 
+// if(!$model->getErrors())
+if (Yii::$app->request->get('id'))
+		$model->category_desc_i = $model->desc->message;
+
+echo $form->field($model, 'category_desc_i')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('category_desc_i')); ?>
+
+<?php echo $form->field($model, 'publish')
+	->checkbox()
+	->label($model->getAttributeLabel('publish')); ?>
+
+<div class="ln_solid"></div>
+
+<?php echo $form->field($model, 'submitButton')
+	->submitButton(); ?>
+
+<?php ActiveForm::end(); ?>
