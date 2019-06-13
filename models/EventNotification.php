@@ -194,7 +194,8 @@ class EventNotification extends \app\components\ActiveRecord
 		if(parent::beforeSave($insert)) {
 			// Create action
 			if($this->isNewRecord) {
-				$this->notified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : '0';
+				if($this->notified_id == null)
+					$this->notified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
 
 				$notification = EventNotification::find()->where(['batch_id' => $this->batch_id, 'status' => 1])->one();
 				$notification->status = 0;
