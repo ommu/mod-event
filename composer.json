@@ -1,0 +1,40 @@
+{
+	"name": "ommu/event",
+	"description": "Event Module from Ommu Platform",
+	"type": "ommu-module",
+	"keywords": [
+		"module",
+		"event",
+		"ommu",
+		"ommu-platform",
+		"yii2"
+	],
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/ommu/mod-event",
+	"support": {
+		"issues": "https://github.com/ommu/mod-event/issues",
+		"wiki": "https://github.com/ommu/mod-event/wiki",
+		"source": "https://github.com/ommu/mod-event"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ommu/mod-event.git"
+	},
+	"authors": [
+		{
+			"name": "Putra Sudaryanto",
+			"email": "putra@sudaryanto.id",
+			"homepage": "https://sudaryanto.id",
+			"role": "Creator"
+		}
+	],
+	"require": {
+		"php": "~7.0",
+		"yiisoft/yii2": "~2.0.13"
+	},
+	"autoload": {
+		"psr-4": {
+			"ommu\\event\\": ""
+		}
+	}
+}
