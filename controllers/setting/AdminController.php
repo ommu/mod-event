@@ -82,7 +82,7 @@ class AdminController extends Controller
 
 		$model = EventSetting::findOne(1);
 		if ($model === null) 
-			$model = new EventSetting();
+			$model = new EventSetting(['id'=>1]);
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			//return $this->redirect(['view', 'id' => $model->id]);
