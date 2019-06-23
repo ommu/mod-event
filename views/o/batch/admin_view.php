@@ -21,60 +21,63 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Batches'), 'ur
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id' => $model->batch_id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
-	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id' => $model->batch_id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
+	['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id'=>$model->batch_id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
+	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->batch_id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
 ];
 ?>
 
 <div class="event-xxx-view">
 
-<?php echo DetailView::widget([
+<?php
+$attributes = [
+	'batch_id',
+	[
+		'attribute' => 'publish',
+		'value' => $model->publish == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
+	],
+	[
+		'attribute' => 'eventTitle',
+		'value' => $model->event->title,
+	],
+	'batch_name',
+	[
+		'attribute' => 'batch_date',
+		'value' => !in_array($model->batch_date, ['0000-00-00','1970-01-01']) ? Yii::$app->formatter->format($model->batch_date, 'date') : '-',
+	],
+	[
+		'attribute' => 'batch_time',
+		'value' => $model->batch_time ? $model->batch_time : '-',
+		'format'	=> 'html',
+	],
+	'registered_limit',
+	[
+		'attribute' => 'creation_date',
+		'value' => !in_array($model->creation_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->creation_date, 'datetime') : '-',
+	],
+	[
+		'attribute' => 'creationDisplayname',
+		'value' => $model->creation_id ? $model->creation->displayname : '-',
+	],
+	[
+		'attribute' => 'modified_date',
+		'value' => !in_array($model->modified_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->modified_date, 'datetime') : '-',
+	],
+	[
+		'attribute' => 'modifiedDisplayname',
+		'value' => $model->modified_id ? $model->modified->displayname : '-',
+	],
+	[
+		'attribute' => 'updated_date',
+		'value' => !in_array($model->updated_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->updated_date, 'datetime') : '-',
+	],
+];
+
+echo DetailView::widget([
 	'model' => $model,
 	'options' => [
 		'class'=>'table table-striped detail-view',
 	],
-	'attributes' => [
-		'batch_id',
-		[
-			'attribute' => 'publish',
-			'value' => $model->publish == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
-		],
-		[
-			'attribute' => 'eventTitle',
-			'value' => $model->event->title,
-		],
-		'batch_name',
-		[
-			'attribute' => 'batch_date',
-			'value' => !in_array($model->batch_date, ['0000-00-00','1970-01-01']) ? Yii::$app->formatter->format($model->batch_date, 'date') : '-',
-		],
-		[
-			'attribute' => 'batch_time',
-			'value' => $model->batch_time ? $model->batch_time : '-',
-			'format'	=> 'html',
-		],
-		'registered_limit',
-		[
-			'attribute' => 'creation_date',
-			'value' => !in_array($model->creation_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->creation_date, 'datetime') : '-',
-		],
-		[
-			'attribute' => 'creationDisplayname',
-			'value' => $model->creation_id ? $model->creation->displayname : '-',
-		],
-		[
-			'attribute' => 'modified_date',
-			'value' => !in_array($model->modified_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->modified_date, 'datetime') : '-',
-		],
-		[
-			'attribute' => 'modifiedDisplayname',
-			'value' => $model->modified_id ? $model->modified->displayname : '-',
-		],
-		[
-			'attribute' => 'updated_date',
-			'value' => !in_array($model->updated_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->updated_date, 'datetime') : '-',
-		],
-	],
+	'attributes' => $attributes,
 ]); ?>
 
 </div>

@@ -49,8 +49,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Blastings'), '
 if (($filter_id = Yii::$app->request->get('filter_id')) != null && ($blast_id = Yii::$app->request->get('blast_id')) != null) {
 
 $this->params['menu']['option'] = [
-	// ['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
-	['label' => Yii::t('app', 'Grid Options'), 'url' => 'javascript:void(0);'],
+	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
+	['label' => Yii::t('app', 'Grid Option'), 'url' => 'javascript:void(0);'],
 ];
 ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
@@ -134,8 +134,8 @@ $this->params['menu']['option'] = [
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menu']['option'] = [
-	// ['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
-	['label' => Yii::t('app', 'Grid Options'), 'url' => 'javascript:void(0);'],
+	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
+	['label' => Yii::t('app', 'Grid Option'), 'url' => 'javascript:void(0);'],
 ];
 ?>
 
@@ -146,7 +146,7 @@ $this->params['menu']['option'] = [
 
 <?php echo $this->render('_option_form', ['model'=>$searchModel, 'gridColumns'=>$searchModel->activeDefaultColumns($columns), 'route'=>$this->context->route]); ?>
 
-<?php 
+<?php
 $columnData = $columns;
 array_push($columnData, [
 	'class' => 'app\components\grid\ActionColumn',

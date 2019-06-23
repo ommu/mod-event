@@ -29,9 +29,6 @@ use yii\widgets\ActiveForm;
 
 		<?php echo $form->field($model, 'cat_id'); ?>
 
-		<?php echo $form->field($model, 'publish')
-			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
-
 		<?php echo $form->field($model, 'category_name'); ?>
 
 		<?php echo $form->field($model, 'category_desc'); ?>
@@ -49,9 +46,12 @@ use yii\widgets\ActiveForm;
 		<?php echo $form->field($model, 'updated_date')
 			->input('date');?>
 
+		<?php echo $form->field($model, 'publish')
+			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+
 		<div class="form-group">
-			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-			<?php echo Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']) ?>
+			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']); ?>
+			<?php echo Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']); ?>
 		</div>
 	<?php ActiveForm::end(); ?>
 </div>

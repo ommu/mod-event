@@ -19,12 +19,12 @@ use yii\helpers\Url;
 use app\components\grid\GridView;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Events'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->event_id]];
+$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id'=>$model->event_id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
 $this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'View'), 'url' => Url::to(['view', 'id' => $model->event_id]), 'icon' => 'eye', 'htmlOptions' => ['class'=>'btn btn-success']],
-	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id' => $model->event_id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
+	['label' => Yii::t('app', 'View'), 'url' => Url::to(['view', 'id'=>$model->event_id]), 'icon' => 'eye', 'htmlOptions' => ['class'=>'btn btn-success']],
+	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->event_id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
 ];
 ?>
 
@@ -61,8 +61,8 @@ $this->params['menu']['content'] = [
 	['label' => Yii::t('app', 'Add Event Batch'), 'url' => Url::to(['batch/create', 'event'=>Yii::$app->request->get('event')]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
 ];
 $this->params['menu']['option'] = [
-	// ['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
-	['label' => Yii::t('app', 'Grid Options'), 'url' => 'javascript:void(0);'],
+	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
+	['label' => Yii::t('app', 'Grid Option'), 'url' => 'javascript:void(0);'],
 ];
 ?>
 

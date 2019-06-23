@@ -14,7 +14,7 @@
  *
  */
 
-use app\helpers\Html;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 $js = <<<JS
@@ -32,7 +32,7 @@ $js = <<<JS
 		});
 	});
 JS;
-	$this->registerJs($js, \yii\web\View::POS_READY);
+	$this->registerJs($js, \app\components\View::POS_READY);
 ?>
 
 <div class="grid-form">

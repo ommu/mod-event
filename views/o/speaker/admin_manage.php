@@ -32,8 +32,8 @@ if (($batch = Yii::$app->request->get('batch')) != null) {
 }	
 
 $this->params['menu']['option'] = [
-	// ['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
-	['label' => Yii::t('app', 'Grid Options'), 'url' => 'javascript:void(0);'],
+	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
+	['label' => Yii::t('app', 'Grid Option'), 'url' => 'javascript:void(0);'],
 ];
 ?>
 
@@ -44,7 +44,7 @@ $this->params['menu']['option'] = [
 
 <?php echo $this->render('_option_form', ['model'=>$searchModel, 'gridColumns'=>$searchModel->activeDefaultColumns($columns), 'route'=>$this->context->route]); ?>
 
-<?php 
+<?php
 $columnData = $columns;
 array_push($columnData, [
 	'class' => 'app\components\grid\ActionColumn',
