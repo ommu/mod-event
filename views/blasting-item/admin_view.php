@@ -37,7 +37,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'user_search',
-		'value' => $model->user_id ? $model->user->displayname : '-',
+		'value' => isset($model->user) ? $model->user->displayname : '-',
 	],
 	'views',
 	[
@@ -47,15 +47,15 @@ $attributes = [
 	'view_ip',
 	[
 		'attribute' => 'creation_date',
-		'value' => !in_array($model->creation_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->creation_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),
 	],
 	[
 		'attribute' => 'creationDisplayname',
-		'value' => $model->creation_id ? $model->creation->displayname : '-',
+		'value' => isset($model->creation) ? $model->creation->displayname : '-',
 	],
 	[
 		'attribute' => 'modified_date',
-		'value' => !in_array($model->modified_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->modified_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->modified_date, 'medium'),
 	],
 ];
 

@@ -42,7 +42,7 @@ $attributes = [
 	'batch_name',
 	[
 		'attribute' => 'batch_date',
-		'value' => !in_array($model->batch_date, ['0000-00-00','1970-01-01']) ? Yii::$app->formatter->format($model->batch_date, 'date') : '-',
+		'value' => Yii::$app->formatter->asDate($model->batch_date, 'medium'),
 	],
 	[
 		'attribute' => 'batch_time',
@@ -52,23 +52,23 @@ $attributes = [
 	'registered_limit',
 	[
 		'attribute' => 'creation_date',
-		'value' => !in_array($model->creation_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->creation_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),
 	],
 	[
 		'attribute' => 'creationDisplayname',
-		'value' => $model->creation_id ? $model->creation->displayname : '-',
+		'value' => isset($model->creation) ? $model->creation->displayname : '-',
 	],
 	[
 		'attribute' => 'modified_date',
-		'value' => !in_array($model->modified_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->modified_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->modified_date, 'medium'),
 	],
 	[
 		'attribute' => 'modifiedDisplayname',
-		'value' => $model->modified_id ? $model->modified->displayname : '-',
+		'value' => isset($model->modified) ? $model->modified->displayname : '-',
 	],
 	[
 		'attribute' => 'updated_date',
-		'value' => !in_array($model->updated_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->updated_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->updated_date, 'medium'),
 	],
 ];
 

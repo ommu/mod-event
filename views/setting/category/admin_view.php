@@ -9,6 +9,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB
+ * @modified date 23 June 2019, 20:31 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -45,23 +46,23 @@ $attributes = [
 	],
 	[
 		'attribute' => 'creation_date',
-		'value' => !in_array($model->creation_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->creation_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),
 	],
 	[
 		'attribute' => 'creationDisplayname',
-		'value' => $model->creation_id ? $model->creation->displayname : '-',
+		'value' => isset($model->creation) ? $model->creation->displayname : '-',
 	],
 	[
 		'attribute' => 'modified_date',
-		'value' => !in_array($model->modified_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->modified_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->modified_date, 'medium'),
 	],
 	[
 		'attribute' => 'modifiedDisplayname',
-		'value' => $model->modified_id ? $model->modified->displayname : '-',
+		'value' => isset($model->modified) ? $model->modified->displayname : '-',
 	],
 	[
 		'attribute' => 'updated_date',
-		'value' => !in_array($model->updated_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->updated_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->updated_date, 'medium'),
 	],
 ];
 
