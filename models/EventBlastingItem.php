@@ -161,19 +161,10 @@ class EventBlastingItem extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['view_date'] = [
 			'attribute' => 'view_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'view_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->view_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->view_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->view_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'view_date'),
 		];
 		$this->templateColumns['view_ip'] = 'view_ip';
 		$this->templateColumns['creation_date'] = [

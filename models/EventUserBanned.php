@@ -170,53 +170,26 @@ class EventUserBanned extends \app\components\ActiveRecord
 		}
 		$this->templateColumns['banned_start'] = [
 			'attribute' => 'banned_start',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'banned_start',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->banned_start, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->banned_start, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->banned_start, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'banned_start'),
 		];
 		$this->templateColumns['banned_end'] = [
 			'attribute' => 'banned_end',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'banned_end',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->banned_end, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->banned_end, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->banned_end, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'banned_end'),
 		];
 		$this->templateColumns['banned_desc'] = 'banned_desc';
 		$this->templateColumns['unbanned_agreement'] = 'unbanned_agreement';
 		$this->templateColumns['unbanned_date'] = [
 			'attribute' => 'unbanned_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'unbanned_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->unbanned_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->unbanned_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->unbanned_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'unbanned_date'),
 		];
 		// $this->templateColumns['unbanned_id'] = 'unbanned_id';
 		if(!Yii::$app->request->get('unbanned')) {

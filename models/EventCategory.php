@@ -66,7 +66,8 @@ class EventCategory extends \app\components\ActiveRecord
 			[['category_name_i', 'category_desc_i'], 'required'],
 			[['publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
 			[['category_name_i', 'category_desc_i'], 'string'],
-			[['category_name_i', 'category_desc_i'], 'string', 'max' => 64],
+			[['category_name_i'], 'string', 'max' => 64],
+			[['category_desc_i'], 'string', 'max' => 128],
 		];
 	}
 
@@ -76,7 +77,7 @@ class EventCategory extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'cat_id' => Yii::t('app', 'Cat'),
+			'cat_id' => Yii::t('app', 'Category'),
 			'publish' => Yii::t('app', 'Publish'),
 			'category_name' => Yii::t('app', 'Category Name'),
 			'category_desc' => Yii::t('app', 'Category Desc'),
@@ -85,25 +86,40 @@ class EventCategory extends \app\components\ActiveRecord
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
 			'category_name_i' => Yii::t('app', 'Category Name'),
 			'category_desc_i' => Yii::t('app', 'Category Desc'),
+			'events' => Yii::t('app', 'Events'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
 		];
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getEvents()
+	public function getEvents($count=false, $publish=1)
 	{
-		return $this->hasMany(Events::className(), ['cat_id' => 'cat_id']);
+		if($count == false)
+			return $this->hasMany(Events::className(), ['cat_id' => 'cat_id'])
+			->andOnCondition([sprintf('%s.publish', Events::tableName()) => $publish]);
+
+		$model = Events::find()
+			->where(['cat_id' => $this->cat_id]);
+		if($publish == 0)
+			$model->unpublish();
+		elseif($publish == 1)
+			$model->published();
+		elseif($publish == 2)
+			$model->deleted();
+		$events = $model->count();
+
+		return $events ? $events : 0;
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getName()
+	public function getTitle()
 	{
 		return $this->hasOne(SourceMessage::className(), ['id' => 'category_name']);
 	}
@@ -111,7 +127,7 @@ class EventCategory extends \app\components\ActiveRecord
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getDesc()
+	public function getDescription()
 	{
 		return $this->hasOne(SourceMessage::className(), ['id' => 'category_desc']);
 	}
@@ -133,6 +149,15 @@ class EventCategory extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventCategory the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventCategory(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -150,13 +175,13 @@ class EventCategory extends \app\components\ActiveRecord
 		$this->templateColumns['category_name_i'] = [
 			'attribute' => 'category_name_i',
 			'value' => function($model, $key, $index, $column) {
-				return $model->category_name ? $model->name->message : '-';
+				return $model->category_name_i;
 			},
 		];
 		$this->templateColumns['category_desc_i'] = [
 			'attribute' => 'category_desc_i',
 			'value' => function($model, $key, $index, $column) {
-				return $model->category_desc ? $model->desc->message : '-';
+				return $model->category_desc_i;
 			},
 		];
 		$this->templateColumns['creation_date'] = [
@@ -171,6 +196,7 @@ class EventCategory extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
@@ -192,19 +218,10 @@ class EventCategory extends \app\components\ActiveRecord
 		}
 		$this->templateColumns['updated_date'] = [
 			'attribute' => 'updated_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'updated_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->updated_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->updated_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->updated_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'updated_date'),
 		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [

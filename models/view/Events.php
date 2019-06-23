@@ -101,35 +101,17 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['event_id'] = 'event_id';
 		$this->templateColumns['started_date'] = [
 			'attribute' => 'started_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'started_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->started_date, 
-					['0000-00-00','1970-01-01','0002-12-02','-0001-11-30'])) {
-					return Yii::$app->formatter->format($model->started_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->started_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'started_date'),
 		];
 		$this->templateColumns['ended_date'] = [
 			'attribute' => 'ended_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'ended_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->ended_date, 
-					['0000-00-00','1970-01-01','0002-12-02','-0001-11-30'])) {
-					return Yii::$app->formatter->format($model->ended_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->ended_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'ended_date'),
 		];
 		$this->templateColumns['tags'] = 'tags';
 		$this->templateColumns['tag_all'] = 'tag_all';

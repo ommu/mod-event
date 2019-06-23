@@ -282,19 +282,10 @@ class Events extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['published_date'] = [
 			'attribute' => 'published_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'published_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->published_date, 
-					['0000-00-00','1970-01-01','0002-12-02','-0001-11-30'])) {
-					return Yii::$app->formatter->format($model->published_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->published_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'published_date'),
 		];
 		$this->templateColumns['tag_search'] = [
 			'attribute' => 'tag_search',
@@ -338,19 +329,10 @@ class Events extends \app\components\ActiveRecord
 		}
 		$this->templateColumns['updated_date'] = [
 			'attribute' => 'updated_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'updated_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->updated_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->updated_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->updated_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'updated_date'),
 		];
 		$this->templateColumns['registered_enable'] = [
 			'attribute' => 'registered_enable',
