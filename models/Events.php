@@ -92,10 +92,10 @@ class Events extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
 			[['cat_id', 'title', 'theme', 'introduction', 'description', 'published_date', 'creation_id'], 'required'],
-			// [['introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type'], 'string'],
 			[['cover_filename', 'banner_filename'], 'required', 'on' => 'formCreate'],
+			[['publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
+			// [['introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type'], 'string'],
 			[['introduction', 'description', 'registered_message', 'registered_type'], 'string'],
 			[['tag_hidden', 'tag_id_i', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'published_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date', 'filter_gender', 'major_hidden', 'filter_major', 'university_hidden'], 'safe'],
 			[['title'], 'string', 'max' => 64],

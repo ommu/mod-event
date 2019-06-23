@@ -1,11 +1,12 @@
 <?php
 /**
  * EventCategory
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:44 WIB
+ * @modified date 23 June 2019, 18:42 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_category".
@@ -13,16 +14,20 @@
  * The followings are the available columns in table "ommu_event_category":
  * @property integer $cat_id
  * @property integer $publish
- * @property string $category_name
- * @property string $category_desc
+ * @property integer $category_name
+ * @property integer $category_desc
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  * @property string $modified_date
- * @property string $modified_id
+ * @property integer $modified_id
  * @property string $updated_date
  *
  * The followings are the available model relations:
  * @property Events[] $events
+ * @property SourceMessage $title
+ * @property SourceMessage $description
+ * @property Users $creation
+ * @property Users $modified
  *
  */
 
@@ -30,8 +35,8 @@ namespace ommu\event\models;
 
 use Yii;
 use yii\helpers\Url;
-use ommu\users\models\Users;
 use app\models\SourceMessage;
+use ommu\users\models\Users;
 
 class EventCategory extends \app\components\ActiveRecord
 {
@@ -39,11 +44,10 @@ class EventCategory extends \app\components\ActiveRecord
 
 	public $gridForbiddenColumn = ['creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'updated_date'];
 
-	// Search Variable
-	public $creationDisplayname;
-	public $modifiedDisplayname;
 	public $category_name_i;
 	public $category_desc_i;
+	public $creationDisplayname;
+	public $modifiedDisplayname;
 
 	/**
 	 * @return string the associated database table name
@@ -59,8 +63,8 @@ class EventCategory extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
 			[['category_name_i', 'category_desc_i'], 'required'],
+			[['publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
 			[['creation_id', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
 		];
 	}

@@ -59,12 +59,12 @@ class EventUserBanned extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['status', 'event_id', 'user_id', 'unbanned_id', 'creation_id', 'modified_id'], 'integer'],
 			// [['event_id', 'user_id', 'banned_desc', 'unbanned_agreement', 'unbanned_id', 'creation_id', 'modified_id'], 'required'],
 			[['event_id', 'user_id', 'banned_desc'], 'required', 'on' => 'createForm'],
 			[['banned_desc', 'unbanned_agreement'], 'required', 'on' => 'unbannedForm'],
-			[['banned_start', 'banned_end', 'unbanned_date', 'modified_date', 'unbanned_id', 'creation_id', 'modified_id'], 'safe'],
+			[['status', 'event_id', 'user_id', 'unbanned_id', 'creation_id', 'modified_id'], 'integer'],
 			[['banned_desc', 'unbanned_agreement'], 'string'],
+			[['banned_start', 'banned_end', 'unbanned_date', 'modified_date', 'unbanned_id', 'creation_id', 'modified_id'], 'safe'],
 		];
 	}
 

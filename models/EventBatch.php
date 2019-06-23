@@ -67,10 +67,10 @@ class EventBatch extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
 			[['event_id', 'batch_name', 'batch_date', 'batch_time', 'registered_limit', 'creation_id'], 'required'],
-			[['batch_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
+			[['publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
 			[['batch_time'], 'string'],
+			[['batch_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
 			[['batch_name'], 'string', 'max' => 128],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
 		];

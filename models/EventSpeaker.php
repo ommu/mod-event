@@ -61,8 +61,8 @@ class EventSpeaker extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['publish', 'batch_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
 			[['batch_id', 'user_id', 'speaker_name', 'speaker_position', 'creation_id'], 'required'],
+			[['publish', 'batch_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
 			[['creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
 			[['speaker_name'], 'string', 'max' => 64],
 			[['speaker_position'], 'string', 'max' => 128],

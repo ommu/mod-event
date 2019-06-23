@@ -55,8 +55,8 @@ class EventNotification extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['status', 'batch_id', 'notified_id', 'users'], 'integer'],
 			[['batch_id', 'notified_date'], 'required'],
+			[['status', 'batch_id', 'notified_id', 'users'], 'integer'],
 			[['notified_id', 'users', 'creation_date'], 'safe'],
 			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'batch_id']],
 		];

@@ -54,8 +54,8 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['payment', 'reward', 'creation_id'], 'integer'],
 			[['payment', 'reward'], 'required'],
+			[['payment', 'reward', 'creation_id'], 'integer'],
 			[['creation_date', 'creation_id'], 'safe'],
 			[['registered_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventRegistered::className(), 'targetAttribute' => ['registered_id' => 'registered_id']],
 		];

@@ -59,8 +59,8 @@ class EventRegistered extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['status', 'event_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
 			[['event_id', 'user_id', 'creation_id'], 'required'],
+			[['status', 'event_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
 			[['confirmation_date', 'creation_date', 'modified_id', 'modified_date'], 'safe'],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
 		];
