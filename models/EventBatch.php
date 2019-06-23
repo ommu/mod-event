@@ -183,19 +183,10 @@ class EventBatch extends \app\components\ActiveRecord
 		$this->templateColumns['batch_name'] = 'batch_name';
 		$this->templateColumns['batch_date'] = [
 			'attribute' => 'batch_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'batch_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->batch_date, 
-					['0000-00-00','1970-01-01','0002-12-02','-0001-11-30'])) {
-					return Yii::$app->formatter->format($model->batch_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDate($model->batch_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'batch_date'),
 		];
 		$this->templateColumns['batch_time'] = 'batch_time';
 		$this->templateColumns['registered_limit'] = 'registered_limit';
@@ -219,49 +210,32 @@ class EventBatch extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'creation_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->creation_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->creation_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->creation_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
 		if(!Yii::$app->request->get('creation')) {
 			$this->templateColumns['creationDisplayname'] = [
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation->displayname) ? $model->creation->displayname : '-';
+					return isset($model->creation) ? $model->creation->displayname : '-';
 				},
 			];
 		}
 		$this->templateColumns['modified_date'] = [
 			'attribute' => 'modified_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'modified_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->modified_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->modified_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->modified_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'modified_date'),
 		];
 		if(!Yii::$app->request->get('modified')) {
 			$this->templateColumns['modifiedDisplayname'] = [
 				'attribute' => 'modifiedDisplayname',
 				'value' => function($model, $key, $index, $column) {
-					return isset($model->modified->displayname) ? $model->modified->displayname : '-';
+					return isset($model->modified) ? $model->modified->displayname : '-';
+					// return $model->modifiedDisplayname;
 				},
 			];
 		}

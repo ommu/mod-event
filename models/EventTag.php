@@ -130,25 +130,16 @@ class EventTag extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'creation_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->creation_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->creation_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->creation_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
 		if(!Yii::$app->request->get('creation')) {
 			$this->templateColumns['creationDisplayname'] = [
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation->displayname) ? $model->creation->displayname : '-';
+					return isset($model->creation) ? $model->creation->displayname : '-';
 				},
 			];
 		}
