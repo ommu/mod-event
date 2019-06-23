@@ -11,7 +11,7 @@
  * This is the model class for table "ommu_event_filter_gender".
  *
  * The followings are the available columns in table "ommu_event_filter_gender":
- * @property string $filter_id
+ * @property string $id
  * @property string $event_id
  * @property string $gender
  * @property string $creation_date
@@ -80,7 +80,7 @@ class EventFilterGender extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'filter_id' => Yii::t('app', 'Filter'),
+			'id' => Yii::t('app', 'Filter'),
 			'event_id' => Yii::t('app', 'Event'),
 			'gender' => Yii::t('app', 'Gender'),
 			'creation_date' => Yii::t('app', 'Creation Date'),

@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 		],
 	]); ?>
 
-		<?php echo $form->field($model, 'filter_id'); ?>
+		<?php echo $form->field($model, 'id'); ?>
 
 		<?php echo $form->field($model, 'event_id'); ?>
 

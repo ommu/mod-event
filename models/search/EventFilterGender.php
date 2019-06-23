@@ -28,7 +28,7 @@ class EventFilterGender extends EventFilterGenderModel
 	public function rules()
 	{
 		return [
-			[['filter_id', 'event_id', 'creation_id'], 'integer'],
+			[['id', 'event_id', 'creation_id'], 'integer'],
 			[['gender', 'creation_date', 'eventTitle', 'creationDisplayname'], 'safe'],
 		];
 	}
@@ -87,7 +87,7 @@ class EventFilterGender extends EventFilterGenderModel
 		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
-			'defaultOrder' => ['filter_id' => SORT_DESC],
+			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
 		$this->load($params);
@@ -100,7 +100,7 @@ class EventFilterGender extends EventFilterGenderModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.filter_id' => isset($params['id']) ? $params['id'] : $this->filter_id,
+			't.id' => isset($params['id']) ? $params['id'] : $this->id,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			'cast(t.creation_date as date)' => $this->creation_date,
 			't.creation_id' => isset($params['creation']) ? $params['creation'] : $this->creation_id,

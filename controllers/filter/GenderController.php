@@ -97,7 +97,7 @@ class GenderController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		$this->view->title = Yii::t('app', 'View Event Filters: {filter_id}', ['filter_id' => $model->filter_id]);
+		$this->view->title = Yii::t('app', 'View Event Filters: {id}', ['id' => $model->id]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
