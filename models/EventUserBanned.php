@@ -69,6 +69,33 @@ class EventUserBanned extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'banned_id' => Yii::t('app', 'Banned ID'),
+			'status' => Yii::t('app', 'Status'),
+			'event_id' => Yii::t('app', 'Event'),
+			'user_id' => Yii::t('app', 'User'),
+			'banned_start' => Yii::t('app', 'Banned Start'),
+			'banned_end' => Yii::t('app', 'Banned End'),
+			'banned_desc' => Yii::t('app', 'Banned Desc'),
+			'unbanned_agreement' => Yii::t('app', 'Unbanned Agreement'),
+			'unbanned_date' => Yii::t('app', 'Unbanned Date'),
+			'unbanned_id' => Yii::t('app', 'Unbanned'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'user_search' => Yii::t('app', 'User'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'unbanned_search' => Yii::t('app', 'Unbanned'),
+			'eventTitle' => Yii::t('app', 'Event'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getEvent()
@@ -107,33 +134,6 @@ class EventUserBanned extends \app\components\ActiveRecord
 	public function getUnbanned()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'unbanned_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'banned_id' => Yii::t('app', 'Banned ID'),
-			'status' => Yii::t('app', 'Status'),
-			'event_id' => Yii::t('app', 'Event'),
-			'user_id' => Yii::t('app', 'User'),
-			'banned_start' => Yii::t('app', 'Banned Start'),
-			'banned_end' => Yii::t('app', 'Banned End'),
-			'banned_desc' => Yii::t('app', 'Banned Desc'),
-			'unbanned_agreement' => Yii::t('app', 'Unbanned Agreement'),
-			'unbanned_date' => Yii::t('app', 'Unbanned Date'),
-			'unbanned_id' => Yii::t('app', 'Unbanned'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'user_search' => Yii::t('app', 'User'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'unbanned_search' => Yii::t('app', 'Unbanned'),
-			'eventTitle' => Yii::t('app', 'Event'),
-		];
 	}
 
 	/**

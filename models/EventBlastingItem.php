@@ -66,6 +66,27 @@ class EventBlastingItem extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'id' => Yii::t('app', 'ID'),
+			'blast_id' => Yii::t('app', 'Blast'),
+			'user_id' => Yii::t('app', 'User'),
+			'views' => Yii::t('app', 'Views'),
+			'view_date' => Yii::t('app', 'View Date'),
+			'view_ip' => Yii::t('app', 'View Ip'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'blasting_search' => Yii::t('app', 'Blasting'),
+			'user_search' => Yii::t('app', 'User'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getHistories()
@@ -95,27 +116,6 @@ class EventBlastingItem extends \app\components\ActiveRecord
 	public function getCreation()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => Yii::t('app', 'ID'),
-			'blast_id' => Yii::t('app', 'Blast'),
-			'user_id' => Yii::t('app', 'User'),
-			'views' => Yii::t('app', 'Views'),
-			'view_date' => Yii::t('app', 'View Date'),
-			'view_ip' => Yii::t('app', 'View Ip'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'blasting_search' => Yii::t('app', 'Blasting'),
-			'user_search' => Yii::t('app', 'User'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-		];
 	}
 
 	/**

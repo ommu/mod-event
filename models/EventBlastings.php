@@ -73,6 +73,29 @@ class EventBlastings extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'blast_id' => Yii::t('app', 'Blast'),
+			'event_id' => Yii::t('app', 'Event'),
+			'filter_id' => Yii::t('app', 'Filter'),
+			'users' => Yii::t('app', 'Users'),
+			'blast_with' => Yii::t('app', 'Blast With'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'eventTitle' => Yii::t('app', 'Event'),
+			'filter_search' => Yii::t('app', 'Filter'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'filter_i[gender]' => Yii::t('app', 'Gender'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getItems()
@@ -110,29 +133,6 @@ class EventBlastings extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'blast_id' => Yii::t('app', 'Blast'),
-			'event_id' => Yii::t('app', 'Event'),
-			'filter_id' => Yii::t('app', 'Filter'),
-			'users' => Yii::t('app', 'Users'),
-			'blast_with' => Yii::t('app', 'Blast With'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'filter_search' => Yii::t('app', 'Filter'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'filter_i[gender]' => Yii::t('app', 'Gender'),
-		];
 	}
 
 	/**

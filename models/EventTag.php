@@ -59,6 +59,23 @@ class EventTag extends \app\components\ActiveRecord
 		];
 	}
 
+	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'id' => Yii::t('app', 'ID'),
+			'event_id' => Yii::t('app', 'Event'),
+			'tag_id' => Yii::t('app', 'Tag'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'eventTitle' => Yii::t('app', 'Event'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'tag_search' => Yii::t('app', 'Tag'),
+		];
+	}
+
 
 	public function getTag()
 	{
@@ -79,23 +96,6 @@ class EventTag extends \app\components\ActiveRecord
 	public function getCreation()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => Yii::t('app', 'ID'),
-			'event_id' => Yii::t('app', 'Event'),
-			'tag_id' => Yii::t('app', 'Tag'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'tag_search' => Yii::t('app', 'Tag'),
-		];
 	}
 
 	/**

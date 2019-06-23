@@ -67,6 +67,28 @@ class EventRegistered extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'id' => Yii::t('app', 'Registered'),
+			'status' => Yii::t('app', 'Status'),
+			'event_id' => Yii::t('app', 'Event'),
+			'user_id' => Yii::t('app', 'User'),
+			'confirmation_date' => Yii::t('app', 'Confirmation Date'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'eventTitle' => Yii::t('app', 'Event'),
+			'userDisplayname' => Yii::t('app', 'User'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getFinance()
@@ -104,28 +126,6 @@ class EventRegistered extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => Yii::t('app', 'Registered'),
-			'status' => Yii::t('app', 'Status'),
-			'event_id' => Yii::t('app', 'Event'),
-			'user_id' => Yii::t('app', 'User'),
-			'confirmation_date' => Yii::t('app', 'Confirmation Date'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'userDisplayname' => Yii::t('app', 'User'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-		];
 	}
 
 	/**

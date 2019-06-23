@@ -65,7 +65,30 @@ class EventCategory extends \app\components\ActiveRecord
 		return [
 			[['category_name_i', 'category_desc_i'], 'required'],
 			[['publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
-			[['creation_id', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
+			[['category_name_i', 'category_desc_i'], 'string'],
+			[['category_name_i', 'category_desc_i'], 'string', 'max' => 64],
+		];
+	}
+
+	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'cat_id' => Yii::t('app', 'Cat'),
+			'publish' => Yii::t('app', 'Publish'),
+			'category_name' => Yii::t('app', 'Category Name'),
+			'category_desc' => Yii::t('app', 'Category Desc'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'updated_date' => Yii::t('app', 'Updated Date'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'category_name_i' => Yii::t('app', 'Category Name'),
+			'category_desc_i' => Yii::t('app', 'Category Desc'),
 		];
 	}
 
@@ -107,28 +130,6 @@ class EventCategory extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'cat_id' => Yii::t('app', 'Cat'),
-			'publish' => Yii::t('app', 'Publish'),
-			'category_name' => Yii::t('app', 'Category Name'),
-			'category_desc' => Yii::t('app', 'Category Desc'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'updated_date' => Yii::t('app', 'Updated Date'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'category_name_i' => Yii::t('app', 'Category Name'),
-			'category_desc_i' => Yii::t('app', 'Category Desc'),
-		];
 	}
 
 	/**

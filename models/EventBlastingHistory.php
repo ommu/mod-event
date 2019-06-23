@@ -56,14 +56,6 @@ class EventBlastingHistory extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getItem()
-	{
-		return $this->hasOne(EventBlastingItem::className(), ['id' => 'item_id']);
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -75,6 +67,14 @@ class EventBlastingHistory extends \app\components\ActiveRecord
 			'view_ip' => Yii::t('app', 'View Ip'),
 			'item_search' => Yii::t('app', 'Item'),
 		];
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getItem()
+	{
+		return $this->hasOne(EventBlastingItem::className(), ['id' => 'item_id']);
 	}
 
 	/**

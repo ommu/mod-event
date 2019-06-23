@@ -71,6 +71,31 @@ class EventSpeaker extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'id' => Yii::t('app', 'Speaker'),
+			'publish' => Yii::t('app', 'Publish'),
+			'batch_id' => Yii::t('app', 'Batch'),
+			'user_id' => Yii::t('app', 'User'),
+			'speaker_name' => Yii::t('app', 'Adviser Name'),
+			'speaker_position' => Yii::t('app', 'Adviser Position'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'updated_date' => Yii::t('app', 'Updated Date'),
+			'batchName' => Yii::t('app', 'Batch'),
+			'userDisplayname' => Yii::t('app', 'User'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'eventTitle' => Yii::t('app', 'Event'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getBatch()
@@ -100,31 +125,6 @@ class EventSpeaker extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => Yii::t('app', 'Speaker'),
-			'publish' => Yii::t('app', 'Publish'),
-			'batch_id' => Yii::t('app', 'Batch'),
-			'user_id' => Yii::t('app', 'User'),
-			'speaker_name' => Yii::t('app', 'Adviser Name'),
-			'speaker_position' => Yii::t('app', 'Adviser Position'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'updated_date' => Yii::t('app', 'Updated Date'),
-			'batchName' => Yii::t('app', 'Batch'),
-			'userDisplayname' => Yii::t('app', 'User'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'eventTitle' => Yii::t('app', 'Event'),
-		];
 	}
 
 	/**

@@ -63,22 +63,6 @@ class EventNotification extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getBatch()
-	{
-		return $this->hasOne(EventBatch::className(), ['batch_id' => 'batch_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getNotified()
-	{
-		return $this->hasOne(Users::className(), ['user_id' => 'notified_id']);
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -95,6 +79,22 @@ class EventNotification extends \app\components\ActiveRecord
 			'eventTitle' => Yii::t('app', 'Event'),
 			'notified_search' => Yii::t('app', 'Notified'),
 		];
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getBatch()
+	{
+		return $this->hasOne(EventBatch::className(), ['batch_id' => 'batch_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getNotified()
+	{
+		return $this->hasOne(Users::className(), ['user_id' => 'notified_id']);
 	}
 
 	/**

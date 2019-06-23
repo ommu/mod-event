@@ -62,22 +62,6 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getRegistered()
-	{
-		return $this->hasOne(EventRegistered::className(), ['id' => 'registered_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getCreation()
-	{
-		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -93,6 +77,22 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 			'eventTitle' => Yii::t('app', 'Event'),
 			'userDisplayname' => Yii::t('app', 'User'),
 		];
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getRegistered()
+	{
+		return $this->hasOne(EventRegistered::className(), ['id' => 'registered_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getCreation()
+	{
+		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
 	}
 
 	/**

@@ -107,6 +107,43 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'event_id' => Yii::t('app', 'Event'),
+			'publish' => Yii::t('app', 'Publish'),
+			'cat_id' => Yii::t('app', 'Category'),
+			'title' => Yii::t('app', 'Title'),
+			'theme' => Yii::t('app', 'Theme'),
+			'introduction' => Yii::t('app', 'Introduction'),
+			'description' => Yii::t('app', 'Description'),
+			'cover_filename' => Yii::t('app', 'Cover Filename'),
+			'banner_filename' => Yii::t('app', 'Banner Filename'),
+			'registered_enable' => Yii::t('app', 'Registered Enable'),
+			'registered_message' => Yii::t('app', 'Registered Message'),
+			'registered_type' => Yii::t('app', 'Registered Type'),
+			'enable_filter' => Yii::t('app', 'Enable Filter'),
+			'published_date' => Yii::t('app', 'Published Date'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'updated_date' => Yii::t('app', 'Updated Date'),
+			'category_search' => Yii::t('app', 'Category'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'tag_search' => Yii::t('app', 'Tags'),
+			'tag_id_i' => Yii::t('app', 'Tags'),
+			'filter_gender' => Yii::t('app', 'Gender'),
+			'filter_major' => Yii::t('app', 'Major'),
+			'filter_university' => Yii::t('app', 'University'),
+			'blasting_search' => Yii::t('app', 'Blasting'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getBatches()
@@ -181,43 +218,6 @@ class Events extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'event_id' => Yii::t('app', 'Event'),
-			'publish' => Yii::t('app', 'Publish'),
-			'cat_id' => Yii::t('app', 'Category'),
-			'title' => Yii::t('app', 'Title'),
-			'theme' => Yii::t('app', 'Theme'),
-			'introduction' => Yii::t('app', 'Introduction'),
-			'description' => Yii::t('app', 'Description'),
-			'cover_filename' => Yii::t('app', 'Cover Filename'),
-			'banner_filename' => Yii::t('app', 'Banner Filename'),
-			'registered_enable' => Yii::t('app', 'Registered Enable'),
-			'registered_message' => Yii::t('app', 'Registered Message'),
-			'registered_type' => Yii::t('app', 'Registered Type'),
-			'enable_filter' => Yii::t('app', 'Enable Filter'),
-			'published_date' => Yii::t('app', 'Published Date'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'updated_date' => Yii::t('app', 'Updated Date'),
-			'category_search' => Yii::t('app', 'Category'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'tag_search' => Yii::t('app', 'Tags'),
-			'tag_id_i' => Yii::t('app', 'Tags'),
-			'filter_gender' => Yii::t('app', 'Gender'),
-			'filter_major' => Yii::t('app', 'Major'),
-			'filter_university' => Yii::t('app', 'University'),
-			'blasting_search' => Yii::t('app', 'Blasting'),
-		];
 	}
 
 	/**

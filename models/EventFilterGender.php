@@ -59,22 +59,6 @@ class EventFilterGender extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getEvent()
-	{
-		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getCreation()
-	{
-		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -88,6 +72,22 @@ class EventFilterGender extends \app\components\ActiveRecord
 			'eventTitle' => Yii::t('app', 'Event'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 		];
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getEvent()
+	{
+		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getCreation()
+	{
+		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
 	}
 
 	/**

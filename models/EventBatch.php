@@ -77,6 +77,32 @@ class EventBatch extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'batch_id' => Yii::t('app', 'Batch'),
+			'publish' => Yii::t('app', 'Publish'),
+			'event_id' => Yii::t('app', 'Event'),
+			'batch_name' => Yii::t('app', 'Batch Title'),
+			'batch_date' => Yii::t('app', 'Batch Date'),
+			'batch_time' => Yii::t('app', 'Batch Time'),
+			'registered_limit' => Yii::t('app', 'Registered Limit'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'modified_date' => Yii::t('app', 'Modified Date'),
+			'modified_id' => Yii::t('app', 'Modified'),
+			'updated_date' => Yii::t('app', 'Updated Date'),
+			'eventTitle' => Yii::t('app', 'Event'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'adviser_search' => Yii::t('app', 'Adviser'),
+			'adviser_all_search' => Yii::t('app', 'Adviser All'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getAdvisers()
@@ -129,32 +155,6 @@ class EventBatch extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'batch_id' => Yii::t('app', 'Batch'),
-			'publish' => Yii::t('app', 'Publish'),
-			'event_id' => Yii::t('app', 'Event'),
-			'batch_name' => Yii::t('app', 'Batch Title'),
-			'batch_date' => Yii::t('app', 'Batch Date'),
-			'batch_time' => Yii::t('app', 'Batch Time'),
-			'registered_limit' => Yii::t('app', 'Registered Limit'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'modified_date' => Yii::t('app', 'Modified Date'),
-			'modified_id' => Yii::t('app', 'Modified'),
-			'updated_date' => Yii::t('app', 'Updated Date'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'adviser_search' => Yii::t('app', 'Adviser'),
-			'adviser_all_search' => Yii::t('app', 'Adviser All'),
-		];
 	}
 
 	/**

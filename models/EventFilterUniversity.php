@@ -62,6 +62,23 @@ class EventFilterUniversity extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return [
+			'id' => Yii::t('app', 'ID'),
+			'event_id' => Yii::t('app', 'Event'),
+			'university_id' => Yii::t('app', 'University'),
+			'creation_date' => Yii::t('app', 'Creation Date'),
+			'creation_id' => Yii::t('app', 'Creation'),
+			'eventTitle' => Yii::t('app', 'Event'),
+			'university_search' => Yii::t('app', 'University'),
+			'creationDisplayname' => Yii::t('app', 'Creation'),
+		];
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getEvent()
@@ -83,23 +100,6 @@ class EventFilterUniversity extends \app\components\ActiveRecord
 	public function getCreation()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => Yii::t('app', 'ID'),
-			'event_id' => Yii::t('app', 'Event'),
-			'university_id' => Yii::t('app', 'University'),
-			'creation_date' => Yii::t('app', 'Creation Date'),
-			'creation_id' => Yii::t('app', 'Creation'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'university_search' => Yii::t('app', 'University'),
-			'creationDisplayname' => Yii::t('app', 'Creation'),
-		];
 	}
 
 	/**
