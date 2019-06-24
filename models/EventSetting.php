@@ -1,11 +1,12 @@
 <?php
 /**
  * EventSetting
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:36 WIB
+ * @modified date 23 June 2019, 15:30 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_setting".
@@ -24,21 +25,24 @@
  * @property string $event_banned_diff_type
  * @property integer $event_banned_difference
  * @property string $modified_date
- * @property string $modified_id
+ * @property integer $modified_id
+ *
+ * The followings are the available model relations:
+ * @property Users $modified
  *
  */
 
 namespace ommu\event\models;
 
 use Yii;
-use yii\helpers\Url;
 use ommu\users\models\Users;
 
 class EventSetting extends \app\components\ActiveRecord
 {
+	use \ommu\traits\UtilityTrait;
+
 	public $gridForbiddenColumn = [];
 
-	// Search Variable
 	public $modifiedDisplayname;
 
 	/**
@@ -57,18 +61,10 @@ class EventSetting extends \app\components\ActiveRecord
 		return [
 			[['license', 'permission', 'meta_keyword', 'meta_description', 'event_price', 'event_agreement', 'event_warning_message', 'event_notify_diff_type', 'event_notify_difference', 'event_banned_diff_type', 'event_banned_difference'], 'required'],
 			[['permission', 'event_price', 'event_notify_difference', 'event_banned_difference', 'modified_id'], 'integer'],
-			[['meta_keyword', 'meta_description', 'event_agreement', 'event_warning_message', 'event_notify_diff_type', 'event_banned_diff_type'], 'string'],
-			[['modified_date', 'modified_id'], 'safe'],
+			[['meta_keyword', 'meta_description', 'event_agreement', 'event_notify_diff_type', 'event_banned_diff_type'], 'string'],
+			//[['event_warning_message'], 'serialize'],
 			[['license'], 'string', 'max' => 32],
 		];
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getModified()
-	{
-		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
 	}
 
 	/**
@@ -96,6 +92,14 @@ class EventSetting extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getModified()
+	{
+		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -107,84 +111,162 @@ class EventSetting extends \app\components\ActiveRecord
 
 		$this->templateColumns['_no'] = [
 			'header' => Yii::t('app', 'No'),
-			'class'  => 'yii\grid\SerialColumn',
+			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		$this->templateColumns['license'] = 'license';
-		$this->templateColumns['meta_keyword'] = 'meta_keyword';
-		$this->templateColumns['meta_description'] = 'meta_description';
-		$this->templateColumns['event_price'] = 'event_price';
-		$this->templateColumns['event_agreement'] = 'event_agreement';
-		$this->templateColumns['event_warning_message'] = 'event_warning_message';
-		$this->templateColumns['event_notify_diff_type'] = 'event_notify_diff_type';
-		$this->templateColumns['event_notify_difference'] = 'event_notify_difference';
-		$this->templateColumns['event_banned_diff_type'] = 'event_banned_diff_type';
-		$this->templateColumns['event_banned_difference'] = 'event_banned_difference';
+		$this->templateColumns['license'] = [
+			'attribute' => 'license',
+			'value' => function($model, $key, $index, $column) {
+				return $model->license;
+			},
+		];
+		$this->templateColumns['permission'] = [
+			'attribute' => 'permission',
+			'value' => function($model, $key, $index, $column) {
+				return self::getPermission($model->permission);
+			},
+		];
+		$this->templateColumns['meta_keyword'] = [
+			'attribute' => 'meta_keyword',
+			'value' => function($model, $key, $index, $column) {
+				return $model->meta_keyword;
+			},
+		];
+		$this->templateColumns['meta_description'] = [
+			'attribute' => 'meta_description',
+			'value' => function($model, $key, $index, $column) {
+				return $model->meta_description;
+			},
+		];
+		$this->templateColumns['event_price'] = [
+			'attribute' => 'event_price',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event_price;
+			},
+		];
+		$this->templateColumns['event_agreement'] = [
+			'attribute' => 'event_agreement',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event_agreement;
+			},
+		];
+		$this->templateColumns['event_warning_message'] = [
+			'attribute' => 'event_warning_message',
+			'value' => function($model, $key, $index, $column) {
+				return serialize($model->event_warning_message);
+			},
+		];
+		$this->templateColumns['event_notify_diff_type'] = [
+			'attribute' => 'event_notify_diff_type',
+			'value' => function($model, $key, $index, $column) {
+				return self::getEventNotifyDiffType($model->event_notify_diff_type);
+			},
+			'filter' => self::getEventNotifyDiffType(),
+		];
+		$this->templateColumns['event_notify_difference'] = [
+			'attribute' => 'event_notify_difference',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event_notify_difference;
+			},
+		];
+		$this->templateColumns['event_banned_diff_type'] = [
+			'attribute' => 'event_banned_diff_type',
+			'value' => function($model, $key, $index, $column) {
+				return self::getEventNotifyDiffType($model->event_banned_diff_type);
+			},
+			'filter' => self::getEventNotifyDiffType(),
+		];
+		$this->templateColumns['event_banned_difference'] = [
+			'attribute' => 'event_banned_difference',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event_banned_difference;
+			},
+		];
 		$this->templateColumns['modified_date'] = [
 			'attribute' => 'modified_date',
-			'filter'	=> \yii\jui\DatePicker::widget([
-				'dateFormat' => 'yyyy-MM-dd',
-				'attribute' => 'modified_date',
-				'model'	 => $this,
-			]),
 			'value' => function($model, $key, $index, $column) {
-				if(!in_array($model->modified_date, 
-					['0000-00-00 00:00:00','1970-01-01 00:00:00','0002-12-02 07:07:12','-0001-11-30 00:00:00'])) {
-					return Yii::$app->formatter->format($model->modified_date, 'date'/*datetime*/);
-				}else {
-					return '-';
-				}
+				return Yii::$app->formatter->asDatetime($model->modified_date, 'medium');
 			},
+			'filter' => $this->filterDatepicker($this, 'modified_date'),
 		];
 		if(!Yii::$app->request->get('modified')) {
 			$this->templateColumns['modifiedDisplayname'] = [
 				'attribute' => 'modifiedDisplayname',
 				'value' => function($model, $key, $index, $column) {
-					return isset($model->modified->displayname) ? $model->modified->displayname : '-';
+					return isset($model->modified) ? $model->modified->displayname : '-';
+					// return $model->modifiedDisplayname;
 				},
 			];
 		}
-		$this->templateColumns['permission'] = [
-			'attribute' => 'permission',
-			'value' => function($model, $key, $index, $column) {
-				return $model->permission;
-			},
-			'contentOptions' => ['class'=>'center'],
-		];
 	}
 
-	
 	/**
-	 * getLicense
+	 * User get information
 	 */
-	public static function getLicense($source='1234567890', $length=16, $char=4)
+	public static function getInfo($id, $column=null)
 	{
-		$mod = $length%$char;
-		if($mod == 0)
-			$sep = ($length/$char);
-		else
-			$sep = (int)($length/$char)+1;
-		
-		$sourceLength = strlen($source);
-		$random = '';
-		for ($i = 0; $i < $length; $i++)
-			$random .= $source[rand(0, $sourceLength - 1)];
-		
-		$license = '';
-		for ($i = 0; $i < $sep; $i++) {
-			if($i != $sep-1)
-				$license .= substr($random,($i*$char),$char).'-';
-			else
-				$license .= substr($random,($i*$char),$char);
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
 		}
+	}
 
-		return $license;
+	/**
+	 * function getPermission
+	 */
+	public static function getPermission($value=null)
+	{
+		$items = array(
+			1 => Yii::t('app', 'Yes, the public can view "module name" unless they are made private.'),
+			0 => Yii::t('app', 'No, the public cannot view "module name".'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * function getEventNotifyDiffType
+	 */
+	public static function getEventNotifyDiffType($value=null)
+	{
+		$items = array(
+			'1' => Yii::t('app', 'Hour'),
+			'2' => Yii::t('app', 'Day'),
+			'3' => Yii::t('app', 'Week'),
+			'4' => Yii::t('app', 'Month'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->event_warning_message = unserialize($this->event_warning_message);
+		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
 	}
 
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if(!$this->isNewRecord) {
@@ -195,54 +277,14 @@ class EventSetting extends \app\components\ActiveRecord
 		return true;
 	}
 
-	// /**
-	//  * before save attributes
-	//  */
-	// public function beforeSave($insert) 
-	// {
-	// 	if(parent::beforeSave($insert)) {
-	// 		// Create action
-	// 	}
-	// 	return true;	
-	// }
-
-	// /**
-	//  * after validate attributes
-	//  */
-	// public function afterValidate()
-	// {
-	// 	parent::afterValidate();
-	// 	// Create action
-		
-	// 	return true;
-	// }
-	
-	// /**
-	//  * After save attributes
-	//  */
-	// public function afterSave($insert, $changedAttributes) 
-	// {
-	// 	parent::afterSave($insert, $changedAttributes);
-	// 	// Create action
-	// }
-
-	// /**
-	//  * Before delete attributes
-	//  */
-	// public function beforeDelete() 
-	// {
-	// 	if(parent::beforeDelete()) {
-	// 		// Create action
-	// 	}
-	// 	return true;
-	// }
-
-	// /**
-	//  * After delete attributes
-	//  */
-	// public function afterDelete() 
-	// {
-	// 	parent::afterDelete();
-	// 	// Create action
-	// }
+	/**
+	 * before save attributes
+	 */
+	public function beforeSave($insert)
+	{
+		if(parent::beforeSave($insert)) {
+			$this->event_warning_message = serialize($this->event_warning_message);
+		}
+		return true;
+	}
 }

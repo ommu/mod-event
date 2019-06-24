@@ -34,7 +34,9 @@
 namespace ommu\event\models;
 
 use Yii;
+use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\Inflector;
 use app\models\SourceMessage;
 use ommu\users\models\Users;
 
@@ -42,7 +44,7 @@ class EventCategory extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
 
-	public $gridForbiddenColumn = ['creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'updated_date'];
+	public $gridForbiddenColumn = ['category_desc_i', 'creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'updated_date'];
 
 	public $category_name_i;
 	public $category_desc_i;
@@ -79,15 +81,15 @@ class EventCategory extends \app\components\ActiveRecord
 		return [
 			'cat_id' => Yii::t('app', 'Category'),
 			'publish' => Yii::t('app', 'Publish'),
-			'category_name' => Yii::t('app', 'Category Name'),
-			'category_desc' => Yii::t('app', 'Category Desc'),
+			'category_name' => Yii::t('app', 'Category'),
+			'category_desc' => Yii::t('app', 'Description'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
-			'category_name_i' => Yii::t('app', 'Category Name'),
-			'category_desc_i' => Yii::t('app', 'Category Desc'),
+			'category_name_i' => Yii::t('app', 'Category'),
+			'category_desc_i' => Yii::t('app', 'Description'),
 			'events' => Yii::t('app', 'Events'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
@@ -223,6 +225,16 @@ class EventCategory extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'updated_date'),
 		];
+		$this->templateColumns['events'] = [
+			'attribute' => 'events',
+			'value' => function($model, $key, $index, $column) {
+				$events = $model->getEvents(true);
+				return Html::a($events, ['admin/manage', 'category'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} events', ['count'=>$events])]);
+			},
+			'filter' => false,
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
+		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [
 				'attribute' => 'publish',
@@ -238,29 +250,59 @@ class EventCategory extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['cat_id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
 	 * function getCategory
 	 */
-	public static function getCategory($publish=null) 
+	public static function getCategory($publish=null, $array=true) 
 	{
-		$items = [];
-		$model = self::find();
-		if ($publish!=null)
-			$model = $model->andWhere(['publish'=>$publish]);
-		$model = $model->orderBy('category_name ASC')->all();
+		$model = self::find()->alias('t')
+			->select(['t.cat_id', 't.category_name']);
+		$model->leftJoin(sprintf('%s title', SourceMessage::tableName()), 't.category_name=title.id');
+		if($publish != null)
+			$model->andWhere(['t.publish' => $publish]);
 
-		if($model !== null) {
-			foreach($model as $val) {
-				$items[$val->cat_id] = $val->name->message;
-			}
-		}
-		
-		return $items;
+		$model = $model->orderBy('title.message ASC')->all();
+
+		if($array == true)
+			return \yii\helpers\ArrayHelper::map($model, 'cat_id', 'category_name_i');
+
+		return $model;
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->category_name_i = isset($this->title) ? $this->title->message : '';
+		$this->category_desc_i = isset($this->description) ? $this->description->message : '';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
 	}
 
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -277,81 +319,42 @@ class EventCategory extends \app\components\ActiveRecord
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
 		$module = strtolower(Yii::$app->controller->module->id);
 		$controller = strtolower(Yii::$app->controller->id);
 		$action = strtolower(Yii::$app->controller->action->id);
-		$location = Utility::getUrlTitle($module.' '.$controller);
+
+		$location = Inflector::slug($module.' '.$controller);
 
 		if(parent::beforeSave($insert)) {
-			// Create action
-			if($this->isNewRecord || (!$this->isNewRecord && !$this->category_name)) {
+			if($insert || (!$insert && !$this->category_name)) {
 				$category_name = new SourceMessage();
-				$category_name->location = $location.'_category_name';
+				$category_name->location = $location.'_title';
 				$category_name->message = $this->category_name_i;
 				if($category_name->save())
 					$this->category_name = $category_name->id;
-				
+
 			} else {
 				$category_name = SourceMessage::findOne($this->category_name);
 				$category_name->message = $this->category_name_i;
 				$category_name->save();
 			}
 
-			if($this->isNewRecord || (!$this->isNewRecord && !$this->category_desc)) {
+			if($insert || (!$insert && !$this->category_desc)) {
 				$category_desc = new SourceMessage();
-				$category_desc->location = $location.'_category_desc';
+				$category_desc->location = $location.'_description';
 				$category_desc->message = $this->category_desc_i;
 				if($category_desc->save())
 					$this->category_desc = $category_desc->id;
-				
+
 			} else {
 				$category_desc = SourceMessage::findOne($this->category_desc);
 				$category_desc->message = $this->category_desc_i;
 				$category_desc->save();
 			}
+
 		}
-		return true;	
+		return true;
 	}
-
-	// /**
-	//  * after validate attributes
-	//  */
-	// public function afterValidate()
-	// {
-	// 	parent::afterValidate();
-	// 	// Create action
-		
-	// 	return true;
-	// }
-	
-	// /**
-	//  * After save attributes
-	//  */
-	// public function afterSave($insert, $changedAttributes) 
-	// {
-	// 	parent::afterSave($insert, $changedAttributes);
-	// 	// Create action
-	// }
-
-	// /**
-	//  * Before delete attributes
-	//  */
-	// public function beforeDelete() 
-	// {
-	// 	if(parent::beforeDelete()) {
-	// 		// Create action
-	// 	}
-	// 	return true;
-	// }
-
-	// /**
-	//  * After delete attributes
-	//  */
-	// public function afterDelete() 
-	// {
-	// 	parent::afterDelete();
-	// 	// Create action
-	// }
 }

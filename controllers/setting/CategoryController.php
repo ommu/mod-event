@@ -1,7 +1,7 @@
 <?php
 /**
  * CategoryController
- * @var ommu\event\controllers\setting\CategoryController
+ * @var $this ommu\event\controllers\setting\CategoryController
  * @var $model ommu\event\models\EventCategory
  *
  * CategoryController implements the CRUD actions for EventCategory model.
@@ -22,10 +22,11 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB
+ * @modified date 23 June 2019, 20:31 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
- 
+
 namespace ommu\event\controllers\setting;
 
 use Yii;
@@ -34,12 +35,20 @@ use app\components\Controller;
 use mdm\admin\components\AccessControl;
 use ommu\event\models\EventCategory;
 use ommu\event\models\search\EventCategory as EventCategorySearch;
-use ommu\event\models\Events;
 
 class CategoryController extends Controller
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
+	 */
+	public function init()
+	{
+		parent::init();
+		$this->subMenu = $this->module->params['setting_submenu'];
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function behaviors()
 	{
@@ -84,13 +93,13 @@ class CategoryController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Categories');
+		$this->view->title = Yii::t('app', 'Categories');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
-			'columns'	  => $columns,
+			'columns' => $columns,
 		]);
 	}
 
@@ -103,19 +112,28 @@ class CategoryController extends Controller
 	{
 		$model = new EventCategory();
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->cat_id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Category success created.'));
-			return $this->redirect(['index']);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
-		} else {
-			$this->view->title = Yii::t('app', 'Create Event Category');
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_create', [
-				'model' => $model,
-			]);
+			if($model->save()) {
+				Yii::$app->session->setFlash('success', Yii::t('app', 'Event category success created.'));
+				return $this->redirect(['manage']);
+				//return $this->redirect(['view', 'id'=>$model->cat_id]);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+			}
 		}
+
+		$this->view->title = Yii::t('app', 'Create Category');
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_create', [
+			'model' => $model,
+		]);
 	}
 
 	/**
@@ -128,19 +146,27 @@ class CategoryController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->cat_id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Category success updated.'));
-			return $this->redirect(['index']);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
-		} else {
-			$this->view->title = Yii::t('app', 'Update Event Category: {category_name}', ['category_name' => $model->category_name]);
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_update', [
-				'model' => $model,
-			]);
+			if($model->save()) {
+				Yii::$app->session->setFlash('success', Yii::t('app', 'Event category success updated.'));
+				return $this->redirect(['manage']);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+			}
 		}
+
+		$this->view->title = Yii::t('app', 'Update Category: {category-name}', ['category-name' => $model->title->message]);
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_update', [
+			'model' => $model,
+		]);
 	}
 
 	/**
@@ -152,7 +178,7 @@ class CategoryController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		$this->view->title = Yii::t('app', 'View Event Category: {category_name}', ['category_name' => $model->category_name]);
+		$this->view->title = Yii::t('app', 'Detail Category: {category-name}', ['category-name' => $model->title->message]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -168,24 +194,18 @@ class CategoryController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if (Events::find()->where(['cat_id' => $id])->andWhere(['not', 'publish=2'])->one() != null) {
-			Yii::$app->session->setFlash('error', Yii::t('app', 'Category cannot be deleted. Category is still used in an Event.'));
-			return $this->redirect(['index']);
-		}
-
 		$model = $this->findModel($id);
 		$model->publish = 2;
 
-		if ($model->save(false, ['publish'])) {
-			//return $this->redirect(['view', 'id' => $model->cat_id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Category success deleted.'));
-			return $this->redirect(['index']);
+		if($model->save(false, ['publish','modified_id'])) {
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event category success deleted.'));
+			return $this->redirect(['manage']);
 		}
 	}
 
 	/**
-	 * Publish/Unpublish an existing EventCategory model.
-	 * If publish/unpublish is successful, the browser will be redirected to the 'index' page.
+	 * actionPublish an existing EventCategory model.
+	 * If publish is successful, the browser will be redirected to the 'index' page.
 	 * @param integer $id
 	 * @return mixed
 	 */
@@ -195,9 +215,9 @@ class CategoryController extends Controller
 		$replace = $model->publish == 1 ? 0 : 1;
 		$model->publish = $replace;
 
-		if ($model->save(false, ['publish'])) {
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Category success updated.'));
-			return $this->redirect(['index']);
+		if($model->save(false, ['publish','modified_id'])) {
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event category success updated.'));
+			return $this->redirect(['manage']);
 		}
 	}
 
@@ -210,7 +230,7 @@ class CategoryController extends Controller
 	 */
 	protected function findModel($id)
 	{
-		if (($model = EventCategory::findOne($id)) !== null)
+		if(($model = EventCategory::findOne($id)) !== null)
 			return $model;
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

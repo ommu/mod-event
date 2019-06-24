@@ -10,6 +10,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB
+ * @modified date 23 June 2019, 20:31 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -17,6 +18,8 @@
 use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
 ?>
+
+<div class="event-category-form">
 
 <?php $form = ActiveForm::begin([
 	'options' => ['class'=>'form-horizontal form-label-left'],
@@ -27,22 +30,12 @@ use app\components\widgets\ActiveForm;
 
 <?php //echo $form->errorSummary($model);?>
 
-<?php 
-// if(!$model->getErrors())
-if (Yii::$app->request->get('id'))
-		$model->category_name_i = $model->name->message;
-
-echo $form->field($model, 'category_name_i')
+<?php echo $form->field($model, 'category_name_i')
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('category_name_i')); ?>
 
-<?php 
-// if(!$model->getErrors())
-if (Yii::$app->request->get('id'))
-		$model->category_desc_i = $model->desc->message;
-
-echo $form->field($model, 'category_desc_i')
-	->textInput(['maxlength'=>true])
+<?php echo $form->field($model, 'category_desc_i')
+	->textarea(['rows'=>6, 'cols'=>50, 'maxlength'=>true])
 	->label($model->getAttributeLabel('category_desc_i')); ?>
 
 <?php echo $form->field($model, 'publish')
@@ -55,3 +48,5 @@ echo $form->field($model, 'category_desc_i')
 	->submitButton(); ?>
 
 <?php ActiveForm::end(); ?>
+
+</div>

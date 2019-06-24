@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB
+ * @modified date 23 June 2019, 20:31 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -22,18 +23,18 @@ use ommu\event\models\EventCategory as EventCategoryModel;
 class EventCategory extends EventCategoryModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
 			[['cat_id', 'publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
-			[['creation_date', 'modified_date', 'updated_date', 'creationDisplayname', 'modifiedDisplayname', 'category_name_i', 'category_desc_i'], 'safe'],
+			[['creation_date', 'modified_date', 'updated_date', 'category_name_i', 'category_desc_i', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -64,7 +65,12 @@ class EventCategory extends EventCategoryModel
 			$query = EventCategoryModel::find()->alias('t');
 		else
 			$query = EventCategoryModel::find()->alias('t')->select($column);
-		$query->joinWith(['creation creation', 'modified modified', 'name name', 'desc desc']);
+		$query->joinWith([
+			'title title', 
+			'description description', 
+			'creation creation', 
+			'modified modified'
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -77,12 +83,12 @@ class EventCategory extends EventCategoryModel
 
 		$attributes = array_keys($this->getTableSchema()->columns);
 		$attributes['category_name_i'] = [
-			'asc' => ['name.message' => SORT_ASC],
-			'desc' => ['name.message' => SORT_DESC],
+			'asc' => ['title.message' => SORT_ASC],
+			'desc' => ['title.message' => SORT_DESC],
 		];
 		$attributes['category_desc_i'] = [
-			'asc' => ['desc.message' => SORT_ASC],
-			'desc' => ['desc.message' => SORT_DESC],
+			'asc' => ['description.message' => SORT_ASC],
+			'desc' => ['description.message' => SORT_DESC],
 		];
 		$attributes['creationDisplayname'] = [
 			'asc' => ['creation.displayname' => SORT_ASC],
@@ -97,9 +103,11 @@ class EventCategory extends EventCategoryModel
 			'defaultOrder' => ['cat_id' => SORT_DESC],
 		]);
 
+		if(Yii::$app->request->get('cat_id'))
+			unset($params['cat_id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -107,8 +115,7 @@ class EventCategory extends EventCategoryModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.cat_id' => isset($params['id']) ? $params['id'] : $this->cat_id,
-			't.publish' => isset($params['publish']) ? 1 : $this->publish,
+			't.cat_id' => $this->cat_id,
 			't.category_name' => $this->category_name,
 			't.category_desc' => $this->category_desc,
 			'cast(t.creation_date as date)' => $this->creation_date,
@@ -118,13 +125,17 @@ class EventCategory extends EventCategoryModel
 			'cast(t.updated_date as date)' => $this->updated_date,
 		]);
 
-		if(!isset($params['trash']))
-			$query->andFilterWhere(['IN', 't.publish', [0,1]]);
-		else
+		if(isset($params['trash']))
 			$query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
+		else {
+			if(!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == ''))
+				$query->andFilterWhere(['IN', 't.publish', [0,1]]);
+			else
+				$query->andFilterWhere(['t.publish' => $this->publish]);
+		}
 
-		$query->andFilterWhere(['like', 'name.message', $this->category_name_i])
-			->andFilterWhere(['like', 'desc.message', $this->category_desc_i])
+		$query->andFilterWhere(['like', 'title.message', $this->category_name_i])
+			->andFilterWhere(['like', 'description.message', $this->category_desc_i])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
 			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname]);
 

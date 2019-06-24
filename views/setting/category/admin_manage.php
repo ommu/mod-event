@@ -4,11 +4,13 @@
  * @var $this app\components\View
  * @var $this ommu\event\controllers\setting\CategoryController
  * @var $model ommu\event\models\EventCategory
+ * @var $searchModel ommu\event\models\search\EventCategory
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB
+ * @modified date 23 June 2019, 20:31 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -21,8 +23,7 @@ use yii\widgets\Pjax;
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'Back To Setting'), 'url' => Url::to(['setting/index']), 'icon' => 'gears'],
-	['label' => Yii::t('app', 'Add Event Category'), 'url' => Url::to(['create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
+	['label' => Yii::t('app', 'Add Category'), 'url' => Url::to(['setting/category/create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
 ];
 $this->params['menu']['option'] = [
 	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
@@ -30,7 +31,7 @@ $this->params['menu']['option'] = [
 ];
 ?>
 
-<div class="event-xxx-manage">
+<div class="event-category-manage">
 <?php Pjax::begin(); ?>
 
 <?php //echo $this->render('_search', ['model'=>$searchModel]); ?>

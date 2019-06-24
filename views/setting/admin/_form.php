@@ -10,22 +10,17 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:41 WIB
+ * @modified date 23 June 2019, 20:09 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
 
 use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
-use yii\redactor\widgets\Redactor;
 use ommu\event\models\EventSetting;
-
-$redactorOptions = [
-	'imageManagerJson' => ['/redactor/upload/image-json'],
-	'imageUpload' => ['/redactor/upload/image'],
-	'fileUpload' => ['/redactor/upload/file'],
-	'plugins' => ['clips', 'fontcolor','imagemanager']
-];
 ?>
+
+<div class="event-setting-form">
 
 <?php $form = ActiveForm::begin([
 	'options' => ['class'=>'form-horizontal form-label-left'],
@@ -40,84 +35,51 @@ $redactorOptions = [
 	$model->license = $model->licenseCode();
 echo $form->field($model, 'license')
 	->textInput(['maxlength'=>true])
-	->label($model->getAttributeLabel('license')); ?>
+	->label($model->getAttributeLabel('license'))
+	->hint(Yii::t('app', 'Enter the your license key that is provided to you when you purchased this plugin. If you do not know your license key, please contact support team.').'<br/>'.Yii::t('app', 'Format: XXXX-XXXX-XXXX-XXXX')); ?>
 
-<?php 
-$permission = [
-	1 => Yii::t('app', 'Yes, the public can view event unless they are made private.'),
-	0 => Yii::t('app', 'No, the public cannot view event.'),
-];
-echo $form->field($model, 'permission', ['template' => '{label}<div class="col-md-9 col-sm-9 col-xs-12"><span class="small-px">'.Yii::t('app', 'Select whether or not you want to let the public (visitors that are not logged-in) to view the following sections of your social network. In some cases (such as Profiles, Blogs, and Albums), if you have given them the option, your users will be able to make their pages private even though you have made them publically viewable here. For more permissions settings, please visit the General Settings page.').'</span>{input}{error}</div>'])
+<?php $permission = EventSetting::getPermission();
+echo $form->field($model, 'permission', ['template' => '{label}{beginWrapper}{hint}{input}{error}{endWrapper}'])
 	->radioList($permission)
-	->label($model->getAttributeLabel('permission')); ?>
+	->label($model->getAttributeLabel('permission'))
+	->hint(Yii::t('app', 'Select whether or not you want to let the public (visitors that are not logged-in) to view the following sections of your social network. In some cases (such as Profiles, Blogs, and Albums), if you have given them the option, your users will be able to make their pages private even though you have made them publically viewable here. For more permissions settings, please visit the General Settings page.')); ?>
 
 <?php echo $form->field($model, 'meta_keyword')
 	->textarea(['rows'=>6, 'cols'=>50])
-	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('meta_keyword')); ?>
 
 <?php echo $form->field($model, 'meta_description')
 	->textarea(['rows'=>6, 'cols'=>50])
-	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('meta_description')); ?>
 
 <?php echo $form->field($model, 'event_price')
-	->textInput(['type' => 'number', 'min' => 0])
+	->textInput(['type'=>'number', 'min'=>'0'])
 	->label($model->getAttributeLabel('event_price')); ?>
 
 <?php echo $form->field($model, 'event_agreement')
 	->textarea(['rows'=>6, 'cols'=>50])
-	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('event_agreement')); ?>
 
 <?php echo $form->field($model, 'event_warning_message')
 	->textarea(['rows'=>6, 'cols'=>50])
-	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('event_warning_message')); ?>
 
-<div class="form-group field-eventsetting-event_notify_difference required">
-	<?php echo $form->field($model, 'event_notify_difference', ['template' => '{label}', 'options' => ['tag' => null]])
-		->label($model->getAttributeLabel('event_notify_difference')); ?>
-	<div class="col-md-3 col-sm-3 col-xs-12">
-		<?php echo $form->field($model, 'event_notify_difference', ['template' => '{input}{error}'])
-			->textInput(['type' => 'number', 'min' => 1])
-			->label($model->getAttributeLabel('event_notify_difference')); ?>
-	</div>
-	<div class="col-md-3 col-sm-3 col-xs-12">
-		<?php 
-		$event_notify_diff_type = [
-			1 => Yii::t('app', 'Hours'),
-			2 => Yii::t('app', 'Day'),
-			3 => Yii::t('app', 'Week'),
-			4 => Yii::t('app', 'Month'),
-		];
-		echo $form->field($model, 'event_notify_diff_type', ['template' => '{input}'])
-			->dropDownList($event_notify_diff_type, ['prompt' => ''])
-			->label($model->getAttributeLabel('event_notify_diff_type')); ?>
-	</div>
-</div>
+<?php $eventNotifyDiffType = EventSetting::getEventNotifyDiffType();
+$event_notify_diff_type = $form->field($model, 'event_notify_diff_type', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6'], 'options' => ['tag' => null]])
+	->dropDownList($eventNotifyDiffType, ['prompt' => ''])
+	->label($model->getAttributeLabel('event_notify_diff_type')); ?>
 
-<div class="form-group field-eventsetting-event_banned_difference required">
-	<?php echo $form->field($model, 'event_banned_difference', ['template' => '{label}', 'options' => ['tag' => null]])
-		->label($model->getAttributeLabel('event_banned_difference')); ?>
-	<div class="col-md-3 col-sm-3 col-xs-12">
-		<?php echo $form->field($model, 'event_banned_difference', ['template' => '{input}{error}'])
-			->textInput(['type' => 'number', 'min' => 1])
-			->label($model->getAttributeLabel('event_banned_difference')); ?>
-	</div>
-	<div class="col-md-3 col-sm-3 col-xs-12">
-		<?php 
-		$event_banned_diff_type = [
-			1 => Yii::t('app', 'Hours'),
-			2 => Yii::t('app', 'Day'),
-			3 => Yii::t('app', 'Week'),
-			4 => Yii::t('app', 'Month'),
-		];
-		echo $form->field($model, 'event_banned_diff_type', ['template' => '{input}'])
-			->dropDownList($event_banned_diff_type, ['prompt' => ''])
-			->label($model->getAttributeLabel('event_banned_diff_type')); ?>
-	</div>
-</div>
+<?php echo $form->field($model, 'event_notify_difference', ['template' => '{label}{beginWrapper}{input}{endWrapper}'.$event_notify_diff_type.'{error}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6', 'error'=>'col-md-6 col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type'=>'number', 'min'=>'1'])
+	->label($model->getAttributeLabel('event_notify_difference')); ?>
+
+<?php $event_banned_diff_type = $form->field($model, 'event_banned_diff_type', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6'], 'options' => ['tag' => null]])
+	->dropDownList($eventNotifyDiffType, ['prompt' => ''])
+	->label($model->getAttributeLabel('event_banned_diff_type')); ?>
+
+<?php echo $form->field($model, 'event_banned_difference', ['template' => '{label}{beginWrapper}{input}{endWrapper}'.$event_banned_diff_type.'{error}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6', 'error'=>'col-md-6 col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type'=>'number', 'min'=>'1'])
+	->label($model->getAttributeLabel('event_banned_difference')); ?>
 
 <div class="ln_solid"></div>
 
@@ -125,3 +87,5 @@ echo $form->field($model, 'permission', ['template' => '{label}<div class="col-m
 	->submitButton(); ?>
 
 <?php ActiveForm::end(); ?>
+
+</div>
