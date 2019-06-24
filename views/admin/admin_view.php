@@ -74,7 +74,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'category_search',
-		'value' => $model->category->name->message,
+		'value' => $model->category->title->message,
 	],
 	'title',
 	'theme',

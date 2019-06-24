@@ -239,7 +239,7 @@ class Events extends \app\components\ActiveRecord
 			$this->templateColumns['category_search'] = [
 				'attribute' => 'category_search',
 				'value' => function($model, $key, $index, $column) {
-					return $model->category->name->message;
+					return $model->category->title->message;
 				},
 			];
 		}
@@ -283,7 +283,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['published_date'] = [
 			'attribute' => 'published_date',
 			'value' => function($model, $key, $index, $column) {
-				return Yii::$app->formatter->asDatetime($model->published_date, 'medium');
+				return Yii::$app->formatter->asDate($model->published_date, 'medium');
 			},
 			'filter' => $this->filterDatepicker($this, 'published_date'),
 		];

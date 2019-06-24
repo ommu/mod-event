@@ -86,7 +86,7 @@ class UserBannedController extends Controller
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
-			'columns'	  => $columns,
+			'columns' => $columns,
 		]);
 	}
 
@@ -102,6 +102,8 @@ class UserBannedController extends Controller
 
 		if(Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
 			if($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->banned_id]);
@@ -131,11 +133,17 @@ class UserBannedController extends Controller
 
 		if(Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
 			if($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->banned_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event User Banned success updated.'));
 				return $this->redirect(['index']);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
 			}
 		}
 
@@ -160,11 +168,17 @@ class UserBannedController extends Controller
 		
 		if(Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
 			if($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->banned_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event User Banned success updated.'));
 				return $this->redirect(['index']);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
 			}
 		}
 

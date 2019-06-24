@@ -105,7 +105,7 @@ class BlastingsController extends Controller
 			'model' => $model,
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
-			'columns'	  => $columns,
+			'columns' => $columns,
 		]);
 	}
 
@@ -264,13 +264,20 @@ class BlastingsController extends Controller
 	public function actionUpdate($id)
 	{
 		$model = $this->findModel($id);
+
 		if(Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
 			if($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success updated.'));
 				return $this->redirect(['index']);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
 			}
 		}
 
