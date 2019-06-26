@@ -700,11 +700,13 @@ class Events extends \app\components\ActiveRecord
 			}
 
 			// validate and set package reward
-			if($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100)
-				$this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
-
-			if($this->package_reward['type'] == '')
-				$this->package_reward = '';
+			if($this->scenario != self::SCENARIO_FILTER) {
+				if($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100)
+					$this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
+	
+				if($this->package_reward['type'] == '')
+					$this->package_reward = '';
+			}
 		}
 		return true;
 	}
