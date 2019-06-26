@@ -37,37 +37,6 @@ echo $form->field($model, 'status')
 }
 ?>
 
-<?php 
-if (!Yii::$app->request->get('id')) {
-$batch_id = EventBatch::getBatch(1);
-echo $form->field($model, 'batch_id')
-	// ->textInput(['maxlength'=>true])
-	->dropDownList($batch_id, ['prompt' => ' Event Title - Batch Title'])
-	->label($model->getAttributeLabel('batch_id')); 
-} else {
-?>
-<div class="form-group">
-	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="eventnotification-eventTitle"><?php echo Yii::t('app', 'Event');?></label>
-	<div class="col-md-9 col-sm-9 col-xs-12">
-		<?php 
-		echo $model->batch->event->title;
-		?>
-	</div>
-</div>
-<div class="form-group">
-	<label class="control-label col-md-3 col-sm-3 col-xs-12" for="eventnotification-batch_id"><?php echo Yii::t('app', 'Batch');?></label>
-	<div class="col-md-9 col-sm-9 col-xs-12">
-		<?php 
-		echo Yii::t('app', 'Title: {batch_name}', ['batch_name'=>$model->batch->batch_name])."<br />";
-		
-		echo Yii::t('app', 'Time: {batch_time}', ['batch_time'=>$model->batch->batch_time])."<br />";
-		?>
-	</div>
-</div>
-<?php 
-} 
-?>
-
 <?php echo $form->field($model, 'notified_date')
 	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['class' => 'form-control']])
 	->label($model->getAttributeLabel('notified_date')); ?>

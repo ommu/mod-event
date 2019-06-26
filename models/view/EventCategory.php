@@ -8,9 +8,9 @@
  * @created date 28 November 2017, 12:12 WIB
  * @link https://github.com/ommu/mod-event
  *
- * This is the model class for table "_view_event_category".
+ * This is the model class for table "_event_category".
  *
- * The followings are the available columns in table "_view_event_category":
+ * The followings are the available columns in table "_event_category":
  * @property integer $id
  * @property string $events
  * @property string $event_all
@@ -31,7 +31,7 @@ class EventCategory extends \app\components\ActiveRecord
 	 */
 	public static function tableName()
 	{
-		return '_view_event_category';
+		return '_event_category';
 	}
 
 	/**

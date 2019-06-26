@@ -1,6 +1,6 @@
 <?php
 /**
- * Event Advisers (event-adviser)
+ * Event Speakers (event-speaker)
  * @var $this app\components\View
  * @var $this ommu\event\controllers\o\SpeakerController
  * @var $model ommu\event\models\search\EventSpeaker

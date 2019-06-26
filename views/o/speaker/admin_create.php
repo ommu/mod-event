@@ -1,6 +1,6 @@
 <?php
 /**
- * Event Advisers (event-adviser)
+ * Event Speakers (event-speaker)
  * @var $this app\components\View
  * @var $this ommu\event\controllers\o\SpeakerController
  * @var $model ommu\event\models\EventSpeaker
@@ -17,7 +17,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Advisers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Speakers'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Create');
 ?>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Event Advisers (event-adviser)
+ * Event Speakers (event-speaker)
  * @var $this app\components\View
  * @var $this ommu\event\controllers\o\SpeakerController
  * @var $model ommu\event\models\EventSpeaker
@@ -23,11 +23,11 @@ $this->params['breadcrumbs'][] = $this->title;
 if (($batch = Yii::$app->request->get('batch')) != null) {
 	$this->params['menu']['content'] = [
 		['label' => Yii::t('app', 'Back To Manage Batch'), 'url' => Url::to(['batch/index']), 'icon' => 'table'],
-		['label' => Yii::t('app', 'Add Event Adviser'), 'url' => Url::to(['create', 'batch' => $batch]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
+		['label' => Yii::t('app', 'Add Event Speaker'), 'url' => Url::to(['create', 'batch' => $batch]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
 	];
 } else {
 	$this->params['menu']['content'] = [
-		['label' => Yii::t('app', 'Add Event Adviser'), 'url' => Url::to(['create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
+		['label' => Yii::t('app', 'Add Event Speaker'), 'url' => Url::to(['create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
 	];
 }	
 

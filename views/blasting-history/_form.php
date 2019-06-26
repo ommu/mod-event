@@ -33,7 +33,7 @@ use yii\jui\DatePicker;
 	->label($model->getAttributeLabel('item_id')); ?>
 
 <?php echo $form->field($model, 'view_date')
-	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['type' => 'date', 'class' => 'form-control']])
+	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['type'=>'date', 'class' => 'form-control']])
 	->label($model->getAttributeLabel('view_date')); ?>
 
 <?php echo $form->field($model, 'view_ip')

@@ -233,7 +233,7 @@ class Events extends \app\components\ActiveRecord
 			return $this->hasMany(EventRegistered::className(), ['event_id' => 'id']);
 
 		$model = EventRegistered::find()
-			->where(['id' => $this->id]);
+			->where(['event_id' => $this->id]);
 		$registereds = $model->count();
 
 		return $registereds ? $registereds : 0;

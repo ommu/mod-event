@@ -1,7 +1,7 @@
 <?php
 /**
  * BatchController
- * @var ommu\event\controllers\o\BatchController
+ * @var $this ommu\event\controllers\o\BatchController
  * @var $model ommu\event\models\EventBatch
  *
  * BatchController implements the CRUD actions for EventBatch model.
@@ -22,10 +22,11 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:40 WIB
+ * @modified date 26 June 2019, 14:39 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
- 
+
 namespace ommu\event\controllers\o;
 
 use Yii;
@@ -34,14 +35,21 @@ use app\components\Controller;
 use mdm\admin\components\AccessControl;
 use ommu\event\models\EventBatch;
 use ommu\event\models\search\EventBatch as EventBatchSearch;
-use ommu\event\models\Events;
-use ommu\event\models\EventSpeaker;
-use ommu\event\models\EventNotification;
 
 class BatchController extends Controller
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
+	 */
+	public function init()
+	{
+		parent::init();
+		if(Yii::$app->request->get('id'))
+			$this->subMenu = $this->module->params['event_submenu'];
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function behaviors()
 	{
@@ -86,13 +94,17 @@ class BatchController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Batches');
+		if(($event = Yii::$app->request->get('event')) != null)
+			$event = \ommu\event\models\Events::findOne($event);
+
+		$this->view->title = Yii::t('app', 'Batches');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 			'columns' => $columns,
+			'event' => $event,
 		]);
 	}
 
@@ -103,68 +115,82 @@ class BatchController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model = new EventBatch();
+		if(($id = Yii::$app->request->get('id')) == null)
+			throw new \yii\web\NotAcceptableHttpException(Yii::t('app', 'The requested page does not exist.'));
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success created.'));
-			return $this->redirect(['index']);
+		$model = new EventBatch(['event_id'=>$id]);
 
-		} else {
-			
-			// cek jika tidak ada event
-			$events = "";
-			$title = Yii::t('app', 'Create Batch');
-			if (($event = Yii::$app->request->get('event')) != null) {
-				$events = Events::findOne($event);
-				$title = Yii::t('app', 'Create Batch: {title}', ['title'=>$events->title]);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
+
+			if($model->save()) {
+				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success created.'));
+				return $this->redirect(['manage']);
+				//return $this->redirect(['view', 'id'=>$model->id]);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
 			}
-
-			$this->view->title = $title;
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_create', [
-				'model' => $model,
-				'events' => $events,
-			]);
 		}
+
+		$this->view->title = Yii::t('app', 'Create Batch');
+		if($id)
+			$this->view->title = Yii::t('app', 'Create Batch: {title}', ['title' => $model->event->title]);
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_create', [
+			'model' => $model,
+		]);
 	}
 
 	/**
 	 * Updates an existing EventBatch model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionUpdate($id)
 	{
 		$model = $this->findModel($id);
+		$this->subMenuParam = $model->event_id;
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success updated.'));
-			return $this->redirect(['index']);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
-		} else {
-			$this->view->title = Yii::t('app', 'Update Event Batch: {batch_name}', ['batch_name' => $model->batch_name]);
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_update', [
-				'model' => $model,
-			]);
+			if($model->save()) {
+				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
+				return $this->redirect(['manage']);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+			}
 		}
+
+		$this->view->title = Yii::t('app', 'Update Batch: {batch-name}', ['batch-name' => $model->batch_name]);
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_update', [
+			'model' => $model,
+		]);
 	}
 
 	/**
 	 * Displays a single EventBatch model.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionView($id)
 	{
 		$model = $this->findModel($id);
+		$this->subMenuParam = $model->event_id;
 
-		$this->view->title = Yii::t('app', 'View Event Batch: {batch_name}', ['batch_name' => $model->batch_name]);
+		$this->view->title = Yii::t('app', 'Detail Batch: {batch-name}', ['batch-name' => $model->batch_name]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -175,35 +201,24 @@ class BatchController extends Controller
 	/**
 	 * Deletes an existing EventBatch model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionDelete($id)
 	{
-		if (EventSpeaker::find()->where(['batch_id' => $id])->andWhere(['not', 'publish=2'])->one() != null) {
-			Yii::$app->session->setFlash('error', Yii::t('app', 'Batch cannot be deleted. Batch is still used in an Adviser.'));
-			return $this->redirect(['index']);
-		}
-
-		if (EventNotification::find()->where(['batch_id' => $id])->one() != null) {
-			Yii::$app->session->setFlash('error', Yii::t('app', 'Batch cannot be deleted. Batch is still used in a Notification.'));
-			return $this->redirect(['index']);
-		}
-
 		$model = $this->findModel($id);
 		$model->publish = 2;
 
-		if ($model->save(false, ['publish'])) {
-			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success deleted.'));
-			return $this->redirect(['index']);
+		if($model->save(false, ['publish','modified_id'])) {
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success deleted.'));
+			return $this->redirect(['manage']);
 		}
 	}
 
 	/**
-	 * Publish/Unpublish an existing EventBatch model.
-	 * If publish/unpublish is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 * actionPublish an existing EventBatch model.
+	 * If publish is successful, the browser will be redirected to the 'index' page.
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionPublish($id)
@@ -212,22 +227,22 @@ class BatchController extends Controller
 		$replace = $model->publish == 1 ? 0 : 1;
 		$model->publish = $replace;
 
-		if ($model->save(false, ['publish'])) {
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success updated.'));
-			return $this->redirect(['index']);
+		if($model->save(false, ['publish','modified_id'])) {
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
+			return $this->redirect(['manage']);
 		}
 	}
 
 	/**
 	 * Finds the EventBatch model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
-	 * @param string $id
+	 * @param integer $id
 	 * @return EventBatch the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id)
 	{
-		if (($model = EventBatch::findOne($id)) !== null)
+		if(($model = EventBatch::findOne($id)) !== null)
 			return $model;
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

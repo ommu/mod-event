@@ -10,16 +10,15 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:40 WIB
+ * @modified date 26 June 2019, 14:39 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
 
 use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
-use yii\jui\DatePicker;
 use yii\redactor\widgets\Redactor;
-use ommu\event\models\Events;
-use kartik\time\TimePicker;
+use ommu\event\models\EventBatch;
 
 $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
@@ -29,63 +28,57 @@ $redactorOptions = [
 ];
 ?>
 
+<div class="event-batch-form">
+
 <?php $form = ActiveForm::begin([
 	'options' => ['class'=>'form-horizontal form-label-left'],
-	'enableClientValidation' => true,
+	'enableClientValidation' => false,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
 ]); ?>
 
 <?php //echo $form->errorSummary($model);?>
 
-<?php 
-// cek jika ada event_id
-if(($event = Yii::$app->request->get('event')) != null)
-	$model->event_id = $event;
-?>
-	<div class="form-group">
-		<label class="control-label col-md-3 col-sm-3 col-xs-12" for="consultationonlines-subject_id"><?php echo Yii::t('app', 'Event');?></label>
-		<div class="col-md-9 col-sm-9 col-xs-12">
-			<?php 
-			echo Yii::t('app', '{title}', ['title' => $events->title])."<br />";
-
-			echo $form->field($model, 'event_id')->hiddenInput()
-				->label(false);
-			?>
-		</div>
-	</div>
-<?php
-} else {
-	// echo $form->field($model, 'event_id')
-	// 	->textInput(['maxlength'=>true])
-	// 	->label($model->getAttributeLabel('event_id')); 
-
-	$event = Events::getEvent(1);
-	echo $form->field($model, 'event_id')
-		->dropDownList($event, ['prompt' => ''])
-		->label($model->getAttributeLabel('event_id'));
-}
-?>
-
 <?php echo $form->field($model, 'batch_name')
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('batch_name')); ?>
 
+<?php echo $form->field($model, 'batch_desc')
+	->textarea(['rows'=>6, 'cols'=>50])
+	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
+	->label($model->getAttributeLabel('batch_desc')); ?>
+
 <?php echo $form->field($model, 'batch_date')
-	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['class' => 'form-control']])
+	->textInput(['type'=>'date'])
 	->label($model->getAttributeLabel('batch_date')); ?>
 
-<?php echo $form->field($model, 'batch_time')
-	->widget(TimePicker::classname(), [
-		'pluginOptions' => [
-			'showMeridian' => false,
-		]
-	])
+<?php $batch_time_start = $form->field($model, 'batch_time[start]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
+	->textInput(['type'=>'time'])
+	->label($model->getAttributeLabel('batch_time[start]')); ?>
+
+<?php echo $form->field($model, 'batch_time[end]', ['template' => '{label}'.$batch_time_start.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type'=>'time'])
 	->label($model->getAttributeLabel('batch_time')); ?>
 
+<?php echo $form->field($model, 'batch_price')
+	->textInput(['type'=>'number', 'min'=>'0'])
+	->label($model->getAttributeLabel('batch_price')); ?>
+
 <?php echo $form->field($model, 'registered_limit')
-	->textInput(['type' => 'number', 'min' => 0])
+	->textInput(['type'=>'number', 'min'=>'0'])
 	->label($model->getAttributeLabel('registered_limit')); ?>
+
+<?php echo $form->field($model, 'batch_location')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('batch_location')); ?>
+
+<?php echo $form->field($model, 'location_name')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('location_name')); ?>
+
+<?php echo $form->field($model, 'location_address')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('location_address')); ?>
 
 <?php echo $form->field($model, 'publish')
 	->checkbox()
@@ -97,3 +90,5 @@ if(($event = Yii::$app->request->get('event')) != null)
 	->submitButton(); ?>
 
 <?php ActiveForm::end(); ?>
+
+</div>

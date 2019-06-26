@@ -113,11 +113,11 @@ echo $form->field($model, 'registered_type')
 	->label($model->getAttributeLabel('registered_type')); ?>
 
 <?php $packageRewardType = Events::getPackageRewardType();
-$media_image_resize_size_height = $form->field($model, 'package_reward[type]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
+$package_reward_type = $form->field($model, 'package_reward[type]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
 	->dropDownList($packageRewardType, ['prompt' => Yii::t('app', 'Please choose {attribute}', ['attribute'=>strtolower($model->getAttributeLabel('package_reward[type]'))])])
 	->label($model->getAttributeLabel('package_reward[type]')); ?>
 
-<?php echo $form->field($model, 'package_reward[reward]', ['template' => '{label}'.$media_image_resize_size_height.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
+<?php echo $form->field($model, 'package_reward[reward]', ['template' => '{label}'.$package_reward_type.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
 	->textInput(['type'=>'number', 'min'=>0, 'maxlength'=>'4', 'placeholder'=>$model->getAttributeLabel('package_reward[reward]')])
 	->label($model->getAttributeLabel('package_reward')); ?>
 
@@ -134,7 +134,7 @@ $media_image_resize_size_height = $form->field($model, 'package_reward[type]', [
 <?php if($model->isNewRecord && !$model->getErrors())
 	$model->published_date = Yii::$app->formatter->asDate('now', 'php:Y-m-d');
 echo $form->field($model, 'published_date')
-	->textInput(['type' => 'date'])
+	->textInput(['type'=>'date'])
 	->label($model->getAttributeLabel('published_date')); ?>
 
 <?php echo $form->field($model, 'publish')

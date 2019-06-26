@@ -59,7 +59,7 @@ class EventRegistered extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['event_id', 'user_id', 'creation_id'], 'required'],
+			[['event_id', 'user_id'], 'required'],
 			[['status', 'event_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
 			[['confirmation_date', 'creation_date', 'modified_id', 'modified_date'], 'safe'],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
@@ -92,17 +92,17 @@ class EventRegistered extends \app\components\ActiveRecord
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getFinance()
+	public function getEvent()
 	{
-		return $this->hasOne(EventRegisteredFinance::className(), ['id' => 'id']);
+		return $this->hasOne(Events::className(), ['id' => 'event_id']);
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getEvent()
+	public function getFinance()
 	{
-		return $this->hasOne(Events::className(), ['id' => 'event_id']);
+		return $this->hasOne(EventRegisteredFinance::className(), ['id' => 'id']);
 	}
 
 	/**

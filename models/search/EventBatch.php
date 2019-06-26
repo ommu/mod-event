@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:40 WIB
+ * @modified date 26 June 2019, 14:39 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -18,23 +19,22 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ommu\event\models\EventBatch as EventBatchModel;
-//use ommu\event\models\Events;
 
 class EventBatch extends EventBatchModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
-			[['id', 'publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
-			[['batch_name', 'batch_date', 'batch_time', 'creation_date', 'modified_date', 'updated_date', 'eventTitle', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
+			[['id', 'publish', 'event_id', 'batch_price', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
+			[['batch_name', 'batch_desc', 'batch_date', 'batch_time', 'batch_location', 'location_name', 'location_address', 'creation_date', 'modified_date', 'updated_date', 'eventTitle', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -65,7 +65,11 @@ class EventBatch extends EventBatchModel
 			$query = EventBatchModel::find()->alias('t');
 		else
 			$query = EventBatchModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'creation creation', 'modified modified', 'view view']);
+		$query->joinWith([
+			'event event', 
+			'creation creation', 
+			'modified modified'
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -89,22 +93,16 @@ class EventBatch extends EventBatchModel
 			'asc' => ['modified.displayname' => SORT_ASC],
 			'desc' => ['modified.displayname' => SORT_DESC],
 		];
-		$attributes['adviser_search'] = [
-			'asc' => ['view.advisers' => SORT_ASC],
-			'desc' => ['view.advisers' => SORT_DESC],
-		];
-		$attributes['adviser_all_search'] = [
-			'asc' => ['view.adviser_all' => SORT_ASC],
-			'desc' => ['view.adviser_all' => SORT_DESC],
-		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
+		if(Yii::$app->request->get('id'))
+			unset($params['id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -113,9 +111,9 @@ class EventBatch extends EventBatchModel
 		// grid filtering conditions
 		$query->andFilterWhere([
 			't.id' => $this->id,
-			't.publish' => isset($params['publish']) ? 1 : $this->publish,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			'cast(t.batch_date as date)' => $this->batch_date,
+			't.batch_price' => $this->batch_price,
 			't.registered_limit' => $this->registered_limit,
 			'cast(t.creation_date as date)' => $this->creation_date,
 			't.creation_id' => isset($params['creation']) ? $params['creation'] : $this->creation_id,
@@ -124,13 +122,21 @@ class EventBatch extends EventBatchModel
 			'cast(t.updated_date as date)' => $this->updated_date,
 		]);
 
-		if(!isset($params['trash']))
-			$query->andFilterWhere(['IN', 't.publish', [0,1]]);
-		else
+		if(isset($params['trash']))
 			$query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
+		else {
+			if(!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == ''))
+				$query->andFilterWhere(['IN', 't.publish', [0,1]]);
+			else
+				$query->andFilterWhere(['t.publish' => $this->publish]);
+		}
 
 		$query->andFilterWhere(['like', 't.batch_name', $this->batch_name])
+			->andFilterWhere(['like', 't.batch_desc', $this->batch_desc])
 			->andFilterWhere(['like', 't.batch_time', $this->batch_time])
+			->andFilterWhere(['like', 't.batch_location', $this->batch_location])
+			->andFilterWhere(['like', 't.location_name', $this->location_name])
+			->andFilterWhere(['like', 't.location_address', $this->location_address])
 			->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
 			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname]);

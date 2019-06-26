@@ -31,32 +31,31 @@
  * @property string $updated_date
  *
  * The followings are the available model relations:
- * @property EventSpeaker[] $advisers
  * @property Events $event
  * @property EventNotification[] $notifications
- * @property EventRegistered[] $registereds
+ * @property EventRegisteredBatch[] $registereds
+ * @property EventSpeaker[] $speakers
+ * @property Users $creation
+ * @property Users $modified
  *
  */
 
 namespace ommu\event\models;
 
 use Yii;
-use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use ommu\users\models\Users;
-use ommu\event\models\view\EventBatch as EventBatchView;
 
 class EventBatch extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
 
-	public $gridForbiddenColumn = ['creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
+	public $gridForbiddenColumn = ['batch_desc', 'batch_date', 'batch_time', 'batch_price', 'batch_location', 'location_name', 'location_address', 'registered_limit', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
 
 	public $eventTitle;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
-	public $adviser_search;
-	public $adviser_all_search;
 
 	/**
 	 * @return string the associated database table name
@@ -72,11 +71,14 @@ class EventBatch extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['event_id', 'batch_name', 'batch_date', 'batch_time', 'registered_limit', 'creation_id'], 'required'],
-			[['publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
-			[['batch_time'], 'string'],
-			[['batch_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
-			[['batch_name'], 'string', 'max' => 128],
+			[['event_id', 'batch_name', 'batch_desc', 'batch_date', 'batch_price', 'registered_limit'], 'required'],
+			[['publish', 'event_id', 'batch_price', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
+			[['batch_desc'], 'string'],
+			//[['batch_time'], 'serialize'],
+			[['batch_date', 'batch_time'], 'safe'],
+			[['batch_name', 'location_name'], 'string', 'max' => 128],
+			[['batch_location'], 'string', 'max' => 256],
+			[['location_address'], 'string', 'max' => 512],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 		];
 	}
@@ -87,13 +89,15 @@ class EventBatch extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'id' => Yii::t('app', 'Batch'),
+			'id' => Yii::t('app', 'ID'),
 			'publish' => Yii::t('app', 'Publish'),
 			'event_id' => Yii::t('app', 'Event'),
-			'batch_name' => Yii::t('app', 'Name'),
+			'batch_name' => Yii::t('app', 'Batch'),
 			'batch_desc' => Yii::t('app', 'Description'),
 			'batch_date' => Yii::t('app', 'Batch Date'),
 			'batch_time' => Yii::t('app', 'Batch Time'),
+			'batch_time[start]' => Yii::t('app', 'Time Start'),
+			'batch_time[end]' => Yii::t('app', 'Time Finish'),
 			'batch_price' => Yii::t('app', 'Batch Price'),
 			'batch_location' => Yii::t('app', 'Batch Location'),
 			'location_name' => Yii::t('app', 'Location Name'),
@@ -104,20 +108,12 @@ class EventBatch extends \app\components\ActiveRecord
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
+			'registereds' => Yii::t('app', 'Registereds'),
+			'speakers' => Yii::t('app', 'Speakers'),
 			'eventTitle' => Yii::t('app', 'Event'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'adviser_search' => Yii::t('app', 'Adviser'),
-			'adviser_all_search' => Yii::t('app', 'Adviser All'),
 		];
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getAdvisers()
-	{
-		return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id']);
 	}
 
 	/**
@@ -139,9 +135,38 @@ class EventBatch extends \app\components\ActiveRecord
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getRegistereds()
+	public function getRegistereds($count=false)
 	{
-		return $this->hasMany(EventRegistered::className(), ['batch_id' => 'id']);
+		if($count == false)
+			return $this->hasMany(EventRegisteredBatch::className(), ['batch_id' => 'id']);
+
+		$model = EventRegisteredBatch::find()
+			->where(['batch_id' => $this->id]);
+		$batches = $model->count();
+
+		return $batches ? $batches : 0;
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getSpeakers($count=false, $publish=1)
+	{
+		if($count == false)
+			return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id'])
+			->andOnCondition([sprintf('%s.publish', EventSpeaker::tableName()) => $publish]);
+
+		$model = EventSpeaker::find()
+			->where(['batch_id' => $this->id]);
+		if($publish == 0)
+			$model->unpublish();
+		elseif($publish == 1)
+			$model->published();
+		elseif($publish == 2)
+			$model->deleted();
+		$speakers = $model->count();
+
+		return $speakers ? $speakers : 0;
 	}
 
 	/**
@@ -158,14 +183,6 @@ class EventBatch extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getView()
-	{
-		return $this->hasOne(EventBatchView::className(), ['id' => 'id']);
 	}
 
 	/**
@@ -212,6 +229,7 @@ class EventBatch extends \app\components\ActiveRecord
 			'value' => function($model, $key, $index, $column) {
 				return $model->batch_desc;
 			},
+			'format' => 'html',
 		];
 		$this->templateColumns['batch_date'] = [
 			'attribute' => 'batch_date',
@@ -220,25 +238,41 @@ class EventBatch extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'batch_date'),
 		];
-		$this->templateColumns['batch_time'] = 'batch_time';
-		$this->templateColumns['registered_limit'] = 'registered_limit';
-		$this->templateColumns['adviser_search'] = [
-			'attribute' => 'adviser_search',
+		$this->templateColumns['batch_time'] = [
+			'attribute' => 'batch_time',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['adviser/index', 'batch'=>$model->primaryKey, 'publish' => true]);
-				return Html::a($model->view->advisers ? $model->view->advisers : 0, $url);
+				return serialize($model->batch_time);
 			},
-			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
 		];
-		$this->templateColumns['adviser_all_search'] = [
-			'attribute' => 'adviser_all_search',
+		$this->templateColumns['batch_price'] = [
+			'attribute' => 'batch_price',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['adviser/index', 'batch'=>$model->primaryKey]);
-				return Html::a($model->view->adviser_all ? $model->view->adviser_all : 0, $url);
+				return $model->batch_price;
 			},
-			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
+		];
+		$this->templateColumns['batch_location'] = [
+			'attribute' => 'batch_location',
+			'value' => function($model, $key, $index, $column) {
+				return $model->batch_location;
+			},
+		];
+		$this->templateColumns['location_name'] = [
+			'attribute' => 'location_name',
+			'value' => function($model, $key, $index, $column) {
+				return $model->location_name;
+			},
+		];
+		$this->templateColumns['location_address'] = [
+			'attribute' => 'location_address',
+			'value' => function($model, $key, $index, $column) {
+				return $model->location_address;
+			},
+		];
+		$this->templateColumns['registered_limit'] = [
+			'attribute' => 'registered_limit',
+			'value' => function($model, $key, $index, $column) {
+				return $model->registered_limit;
+			},
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
@@ -278,6 +312,26 @@ class EventBatch extends \app\components\ActiveRecord
 				return Yii::$app->formatter->asDatetime($model->updated_date, 'medium');
 			},
 			'filter' => $this->filterDatepicker($this, 'updated_date'),
+		];
+		$this->templateColumns['registereds'] = [
+			'attribute' => 'registereds',
+			'value' => function($model, $key, $index, $column) {
+				$registereds = $model->getRegistereds(true);
+				return Html::a($registereds, ['registered/batch/manage', 'batch'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+			},
+			'filter' => false,
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
+		];
+		$this->templateColumns['speakers'] = [
+			'attribute' => 'speakers',
+			'value' => function($model, $key, $index, $column) {
+				$speakers = $model->getSpeakers(true);
+				return Html::a($speakers, ['o/speaker/manage', 'batch'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$speakers])]);
+			},
+			'filter' => false,
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
 		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [
@@ -325,45 +379,6 @@ class EventBatch extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * function getBatch
-	 */
-	public static function getBatch($publish=null) 
-	{
-		$items = [];
-		$model = self::find()->alias('b')->joinWith('event event');
-		if ($publish!=null)
-			$model = $model->andWhere(['b.publish'=>$publish]);
-		$model = $model->orderBy('event.title ASC')->all();
-
-		if($model !== null) {
-			foreach($model as $val) {
-				$items[$val->id] = $val->event->title.' - '.$val->batch_name;
-			}
-		}
-		
-		return $items;
-	}
-
-	/**
-	 * function getBatchRegister
-	 */
-	public static function getBatchRegister($publish, $event) 
-	{
-		$items = [];
-		$model = self::find()->alias('b')->joinWith('event event');
-		$model = $model->andWhere(['b.publish'=>$publish])->andWhere(['event.id' => $event]);
-		$model = $model->orderBy('b.batch_time ASC')->all();
-
-		if($model !== null) {
-			foreach($model as $val) {
-				$items[$val->id] = $val->batch_time.' - '.$val->batch_name;
-			}
-		}
-		
-		return $items;
-	}
-
-	/**
 	 * before validate attributes
 	 */
 	public function beforeValidate()
@@ -376,6 +391,9 @@ class EventBatch extends \app\components\ActiveRecord
 				if($this->modified_id == null)
 					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
 			}
+
+			if($this->batch_time['start'] == '')
+				$this->addError('batch_time', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('batch_time')]));
 		}
 		return true;
 	}

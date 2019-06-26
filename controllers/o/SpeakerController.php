@@ -84,7 +84,7 @@ class SpeakerController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Advisers');
+		$this->view->title = Yii::t('app', 'Event Speakers');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
@@ -105,7 +105,7 @@ class SpeakerController extends Controller
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Adviser success created.'));
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Speaker success created.'));
 			return $this->redirect(['index']);
 
 		} else {
@@ -114,7 +114,7 @@ class SpeakerController extends Controller
 			} else {
 				$batch = "";
 			}
-			$this->view->title = Yii::t('app', 'Create Event Adviser');
+			$this->view->title = Yii::t('app', 'Create Event Speaker');
 			$this->view->description = '';
 			$this->view->keywords = '';
 			return $this->render('admin_create', [
@@ -136,11 +136,11 @@ class SpeakerController extends Controller
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Adviser success updated.'));
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Speaker success updated.'));
 			return $this->redirect(['index']);
 
 		} else {
-			$this->view->title = Yii::t('app', 'Update Event Adviser: {speaker_name}', ['speaker_name' => $model->speaker_name]);
+			$this->view->title = Yii::t('app', 'Update Event Speaker: {speaker_name}', ['speaker_name' => $model->speaker_name]);
 			$this->view->description = '';
 			$this->view->keywords = '';
 			return $this->render('admin_update', [
@@ -158,7 +158,7 @@ class SpeakerController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		$this->view->title = Yii::t('app', 'View Event Adviser: {speaker_name}', ['speaker_name' => $model->speaker_name]);
+		$this->view->title = Yii::t('app', 'View Event Speaker: {speaker_name}', ['speaker_name' => $model->speaker_name]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -179,7 +179,7 @@ class SpeakerController extends Controller
 
 		if ($model->save(false, ['publish'])) {
 			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Adviser success deleted.'));
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Speaker success deleted.'));
 			return $this->redirect(['index']);
 		}
 	}
@@ -197,7 +197,7 @@ class SpeakerController extends Controller
 		$model->publish = $replace;
 
 		if ($model->save(false, ['publish'])) {
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Adviser success updated.'));
+			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Speaker success updated.'));
 			return $this->redirect(['index']);
 		}
 	}

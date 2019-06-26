@@ -17,6 +17,12 @@ event_submenu:
       0: 'admin/filter'
       id: $_GET*id
     select: action
+  batch:
+    label: Batchs
+    url:
+      0: 'o/batch/manage'
+      id: $_GET*id
+    select: controller
   delete:
     label: Delete
     url:

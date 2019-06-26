@@ -10,15 +10,18 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:40 WIB
+ * @modified date 26 June 2019, 14:39 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use ommu\event\models\EventBatch;
 ?>
 
-<div class="search-form">
+<div class="event-batch-search search-form">
+
 	<?php $form = ActiveForm::begin([
 		'action' => ['index'],
 		'method' => 'get',
@@ -27,18 +30,26 @@ use yii\widgets\ActiveForm;
 		],
 	]); ?>
 
-		<?php echo $form->field($model, 'id'); ?>
+		<?php echo $form->field($model, 'eventTitle');?>
 
-		<?php echo $form->field($model, 'event_id'); ?>
+		<?php echo $form->field($model, 'batch_name');?>
 
-		<?php echo $form->field($model, 'batch_name'); ?>
+		<?php echo $form->field($model, 'batch_desc');?>
 
 		<?php echo $form->field($model, 'batch_date')
 			->input('date');?>
 
-		<?php echo $form->field($model, 'batch_time'); ?>
+		<?php echo $form->field($model, 'batch_time');?>
 
-		<?php echo $form->field($model, 'registered_limit'); ?>
+		<?php echo $form->field($model, 'batch_price');?>
+
+		<?php echo $form->field($model, 'batch_location');?>
+
+		<?php echo $form->field($model, 'location_name');?>
+
+		<?php echo $form->field($model, 'location_address');?>
+
+		<?php echo $form->field($model, 'registered_limit');?>
 
 		<?php echo $form->field($model, 'creation_date')
 			->input('date');?>
@@ -60,5 +71,7 @@ use yii\widgets\ActiveForm;
 			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']); ?>
 			<?php echo Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']); ?>
 		</div>
+
 	<?php ActiveForm::end(); ?>
+
 </div>
