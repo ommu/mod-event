@@ -47,7 +47,7 @@ echo DetailView::widget([
 			'value' => function ($model) {
 				$categoryName = isset($model->category) ? $model->category->title->message : '-';
 				if($categoryName != '-')
-					return Html::a($categoryName, ['category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+					return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
 				return $categoryName;
 			},
 			'format' => 'html',
@@ -56,7 +56,7 @@ echo DetailView::widget([
 			'attribute' => 'title',
 			'value' => function ($model) {
 				if($model->title != '')
-					return Html::a($model->title, ['admin/view', 'id'=>$model->event_id], ['title'=>$model->title, 'class'=>'modal-btn']);
+					return Html::a($model->title, ['admin/view', 'id'=>$model->id], ['title'=>$model->title, 'class'=>'modal-btn']);
 				return $model->title;
 			},
 			'format' => 'html',

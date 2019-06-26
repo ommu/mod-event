@@ -12,7 +12,7 @@
  * This is the model class for table "ommu_event_category".
  *
  * The followings are the available columns in table "ommu_event_category":
- * @property integer $cat_id
+ * @property integer $id
  * @property integer $publish
  * @property integer $category_name
  * @property integer $category_desc
@@ -79,7 +79,7 @@ class EventCategory extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'cat_id' => Yii::t('app', 'Category'),
+			'id' => Yii::t('app', 'Category'),
 			'publish' => Yii::t('app', 'Publish'),
 			'category_name' => Yii::t('app', 'Category'),
 			'category_desc' => Yii::t('app', 'Description'),
@@ -102,11 +102,11 @@ class EventCategory extends \app\components\ActiveRecord
 	public function getEvents($count=false, $publish=1)
 	{
 		if($count == false)
-			return $this->hasMany(Events::className(), ['cat_id' => 'cat_id'])
+			return $this->hasMany(Events::className(), ['cat_id' => 'id'])
 			->andOnCondition([sprintf('%s.publish', Events::tableName()) => $publish]);
 
 		$model = Events::find()
-			->where(['cat_id' => $this->cat_id]);
+			->where(['cat_id' => $this->id]);
 		if($publish == 0)
 			$model->unpublish();
 		elseif($publish == 1)
@@ -257,7 +257,7 @@ class EventCategory extends \app\components\ActiveRecord
 		if($column != null) {
 			$model = self::find()
 				->select([$column])
-				->where(['cat_id' => $id])
+				->where(['id' => $id])
 				->one();
 			return $model->$column;
 			
@@ -273,7 +273,7 @@ class EventCategory extends \app\components\ActiveRecord
 	public static function getCategory($publish=null, $array=true) 
 	{
 		$model = self::find()->alias('t')
-			->select(['t.cat_id', 't.category_name']);
+			->select(['t.id', 't.category_name']);
 		$model->leftJoin(sprintf('%s title', SourceMessage::tableName()), 't.category_name=title.id');
 		if($publish != null)
 			$model->andWhere(['t.publish' => $publish]);
@@ -281,7 +281,7 @@ class EventCategory extends \app\components\ActiveRecord
 		$model = $model->orderBy('title.message ASC')->all();
 
 		if($array == true)
-			return \yii\helpers\ArrayHelper::map($model, 'cat_id', 'category_name_i');
+			return \yii\helpers\ArrayHelper::map($model, 'id', 'category_name_i');
 
 		return $model;
 	}

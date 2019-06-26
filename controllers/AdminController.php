@@ -120,8 +120,7 @@ class AdminController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success created.'));
-				return $this->redirect(['manage']);
-				//return $this->redirect(['view', 'id'=>$model->event_id]);
+				return $this->redirect(['view', 'id'=>$model->id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)
@@ -156,7 +155,7 @@ class AdminController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success updated.'));
-				return $this->redirect(['update', 'id' => $model->event_id]);
+				return $this->redirect(['update', 'id' => $model->id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)
@@ -191,7 +190,7 @@ class AdminController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter success updated.'));
-				return $this->redirect(['filter', 'id' => $model->event_id]);
+				return $this->redirect(['filter', 'id' => $model->id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)

@@ -67,7 +67,7 @@ class EventBlastings extends \app\components\ActiveRecord
 			[['blast_with'], 'string'],
 			// [['creation_date', 'modified_date'], 'safe'],
 			[['creation_date', 'users', 'blast_with', 'creation_id', 'modified_id', 'modified_date'], 'safe'],
-			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
+			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 			[['filter_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlastingFilter::className(), 'targetAttribute' => ['filter_id' => 'filter_id']],
 		];
 	}
@@ -108,7 +108,7 @@ class EventBlastings extends \app\components\ActiveRecord
 	 */
 	public function getEvent()
 	{
-		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
+		return $this->hasOne(Events::className(), ['id' => 'event_id']);
 	}
 
 	/**

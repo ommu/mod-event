@@ -66,7 +66,7 @@ class EventSpeaker extends \app\components\ActiveRecord
 			[['creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
 			[['speaker_name'], 'string', 'max' => 64],
 			[['speaker_position'], 'string', 'max' => 128],
-			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'batch_id']],
+			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'id']],
 		];
 	}
 
@@ -100,7 +100,7 @@ class EventSpeaker extends \app\components\ActiveRecord
 	 */
 	public function getBatch()
 	{
-		return $this->hasOne(EventBatch::className(), ['batch_id' => 'batch_id']);
+		return $this->hasOne(EventBatch::className(), ['id' => 'batch_id']);
 	}
 
 	/**

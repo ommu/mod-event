@@ -11,7 +11,7 @@
  * This is the model class for table "_view_event_category".
  *
  * The followings are the available columns in table "_view_event_category":
- * @property integer $cat_id
+ * @property integer $id
  * @property string $events
  * @property string $event_all
  *
@@ -38,7 +38,7 @@ class EventCategory extends \app\components\ActiveRecord
 	 * @return string the primarykey column
 	 */
 	public static function primaryKey() {
-		return ['cat_id'];
+		return ['id'];
 	}
 
 	/**
@@ -47,7 +47,7 @@ class EventCategory extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['cat_id', 'event_all'], 'integer'],
+			[['id', 'event_all'], 'integer'],
 			[['events'], 'number'],
 		];
 	}
@@ -58,7 +58,7 @@ class EventCategory extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'cat_id' => Yii::t('app', 'Cat'),
+			'id' => Yii::t('app', 'Cat'),
 			'events' => Yii::t('app', 'Events'),
 			'event_all' => Yii::t('app', 'Event All'),
 		];
@@ -79,7 +79,7 @@ class EventCategory extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		$this->templateColumns['cat_id'] = 'cat_id';
+		$this->templateColumns['id'] = 'id';
 		$this->templateColumns['events'] = 'events';
 		$this->templateColumns['event_all'] = 'event_all';
 	}

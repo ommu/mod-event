@@ -69,7 +69,7 @@ class Events extends \yii\base\BaseObject
 				}
 
 				$model = new EventTag();
-				$model->event_id = $event->event_id;
+				$model->event_id = $event->id;
 				$model->tag_id = $tag_id;
 				$model->save();
 			}
@@ -80,7 +80,7 @@ class Events extends \yii\base\BaseObject
 			foreach ($oldTag as $key => $val) {
 				EventTag::find()
 					->select(['id'])
-					->where(['event_id'=>$event->event_id, 'tag_id'=>$key])
+					->where(['event_id'=>$event->id, 'tag_id'=>$key])
 					->one()
 					->delete();
 			}
@@ -100,7 +100,7 @@ class Events extends \yii\base\BaseObject
 		if($event->gender) {
 			if(empty($oldGender)) {
 				$model = new EventFilterGender();
-				$model->event_id = $event->event_id;
+				$model->event_id = $event->id;
 				$model->gender = $event->gender;
 				$model->save();
 			} else {

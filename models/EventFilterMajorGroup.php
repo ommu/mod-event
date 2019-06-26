@@ -54,7 +54,7 @@ class EventFilterMajorGroup extends \app\components\ActiveRecord
 		return [
 			[['event_id', 'major_group_id'], 'required'],
 			[['event_id', 'major_group_id', 'creation_id'], 'integer'],
-			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
+			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 			[['major_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => IpediaMajorGroup::className(), 'targetAttribute' => ['major_group_id' => 'id']],
 		];
 	}
@@ -81,7 +81,7 @@ class EventFilterMajorGroup extends \app\components\ActiveRecord
 	 */
 	public function getEvent()
 	{
-		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
+		return $this->hasOne(Events::className(), ['id' => 'event_id']);
 	}
 
 	/**

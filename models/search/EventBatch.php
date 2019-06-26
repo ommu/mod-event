@@ -28,7 +28,7 @@ class EventBatch extends EventBatchModel
 	public function rules()
 	{
 		return [
-			[['batch_id', 'publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
+			[['id', 'publish', 'event_id', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
 			[['batch_name', 'batch_date', 'batch_time', 'creation_date', 'modified_date', 'updated_date', 'eventTitle', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
 		];
 	}
@@ -99,7 +99,7 @@ class EventBatch extends EventBatchModel
 		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
-			'defaultOrder' => ['batch_id' => SORT_DESC],
+			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
 		$this->load($params);
@@ -112,7 +112,7 @@ class EventBatch extends EventBatchModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.batch_id' => isset($params['id']) ? $params['id'] : $this->batch_id,
+			't.id' => $this->id,
 			't.publish' => isset($params['publish']) ? 1 : $this->publish,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			'cast(t.batch_date as date)' => $this->batch_date,

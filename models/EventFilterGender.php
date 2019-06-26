@@ -53,7 +53,7 @@ class EventFilterGender extends \app\components\ActiveRecord
 			[['event_id', 'gender'], 'required'],
 			[['event_id', 'creation_id'], 'integer'],
 			[['gender'], 'string'],
-			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
+			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 		];
 	}
 
@@ -78,7 +78,7 @@ class EventFilterGender extends \app\components\ActiveRecord
 	 */
 	public function getEvent()
 	{
-		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
+		return $this->hasOne(Events::className(), ['id' => 'event_id']);
 	}
 
 	/**

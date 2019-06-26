@@ -12,7 +12,7 @@
  * This is the model class for table "ommu_event_batch".
  *
  * The followings are the available columns in table "ommu_event_batch":
- * @property integer $batch_id
+ * @property integer $id
  * @property integer $publish
  * @property integer $event_id
  * @property string $batch_name
@@ -77,7 +77,7 @@ class EventBatch extends \app\components\ActiveRecord
 			[['batch_time'], 'string'],
 			[['batch_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date'], 'safe'],
 			[['batch_name'], 'string', 'max' => 128],
-			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
+			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 		];
 	}
 
@@ -87,7 +87,7 @@ class EventBatch extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'batch_id' => Yii::t('app', 'Batch'),
+			'id' => Yii::t('app', 'Batch'),
 			'publish' => Yii::t('app', 'Publish'),
 			'event_id' => Yii::t('app', 'Event'),
 			'batch_name' => Yii::t('app', 'Name'),
@@ -117,7 +117,7 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getAdvisers()
 	{
-		return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'batch_id']);
+		return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id']);
 	}
 
 	/**
@@ -125,7 +125,7 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getEvent()
 	{
-		return $this->hasOne(Events::className(), ['event_id' => 'event_id']);
+		return $this->hasOne(Events::className(), ['id' => 'event_id']);
 	}
 
 	/**
@@ -133,7 +133,7 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getNotifications()
 	{
-		return $this->hasMany(EventNotification::className(), ['batch_id' => 'batch_id']);
+		return $this->hasMany(EventNotification::className(), ['batch_id' => 'id']);
 	}
 
 	/**
@@ -141,16 +141,9 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getRegistereds()
 	{
-		return $this->hasMany(EventRegistered::className(), ['batch_id' => 'batch_id']);
+		return $this->hasMany(EventRegistered::className(), ['batch_id' => 'id']);
 	}
 
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getView()
-	{
-		return $this->hasOne(EventBatchView::className(), ['batch_id' => 'batch_id']);
-	}
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
@@ -165,6 +158,14 @@ class EventBatch extends \app\components\ActiveRecord
 	public function getModified()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'modified_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getView()
+	{
+		return $this->hasOne(EventBatchView::className(), ['id' => 'id']);
 	}
 
 	/**
@@ -300,7 +301,7 @@ class EventBatch extends \app\components\ActiveRecord
 		if($column != null) {
 			$model = self::find()
 				->select([$column])
-				->where(['batch_id' => $id])
+				->where(['id' => $id])
 				->one();
 			return $model->$column;
 			
@@ -336,7 +337,7 @@ class EventBatch extends \app\components\ActiveRecord
 
 		if($model !== null) {
 			foreach($model as $val) {
-				$items[$val->batch_id] = $val->event->title.' - '.$val->batch_name;
+				$items[$val->id] = $val->event->title.' - '.$val->batch_name;
 			}
 		}
 		
@@ -350,12 +351,12 @@ class EventBatch extends \app\components\ActiveRecord
 	{
 		$items = [];
 		$model = self::find()->alias('b')->joinWith('event event');
-		$model = $model->andWhere(['b.publish'=>$publish])->andWhere(['event.event_id' => $event]);
+		$model = $model->andWhere(['b.publish'=>$publish])->andWhere(['event.id' => $event]);
 		$model = $model->orderBy('b.batch_time ASC')->all();
 
 		if($model !== null) {
 			foreach($model as $val) {
-				$items[$val->batch_id] = $val->batch_time.' - '.$val->batch_name;
+				$items[$val->id] = $val->batch_time.' - '.$val->batch_name;
 			}
 		}
 		

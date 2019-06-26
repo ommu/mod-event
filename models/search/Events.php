@@ -28,7 +28,7 @@ class Events extends EventsModel
 	public function rules()
 	{
 		return [
-			[['event_id', 'publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
+			[['id', 'publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
 			[['title', 'theme', 'introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'package_reward', 'published_date', 'creation_date', 'modified_date', 'updated_date', 'categoryName', 'creationDisplayname', 'modifiedDisplayname', 'tag', 'gender', 'major', 'majorGroup', 'university'], 'safe'],
 		];
 	}
@@ -108,11 +108,11 @@ class Events extends EventsModel
 		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
-			'defaultOrder' => ['event_id' => SORT_DESC],
+			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
-		if(Yii::$app->request->get('event_id'))
-			unset($params['event_id']);
+		if(Yii::$app->request->get('id'))
+			unset($params['id']);
 		$this->load($params);
 
 		if(!$this->validate()) {
@@ -123,7 +123,7 @@ class Events extends EventsModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.event_id' => $this->event_id,
+			't.id' => $this->id,
 			't.cat_id' => isset($params['category']) ? $params['category'] : $this->cat_id,
 			't.registered_enable' => $this->registered_enable,
 			't.registered_type' => $this->registered_type,

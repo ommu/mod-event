@@ -23,7 +23,7 @@ use ommu\selectize\Selectize;
 use yii\helpers\ArrayHelper;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Events'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id'=>$model->event_id]];
+$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id'=>$model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Filter');
 ?>
 

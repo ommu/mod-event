@@ -11,7 +11,7 @@
  * This is the model class for table "_view_event_batch".
  *
  * The followings are the available columns in table "_view_event_batch":
- * @property string $batch_id
+ * @property string $id
  * @property string $advisers
  * @property string $adviser_all
  * @property string $registered
@@ -41,7 +41,7 @@ class EventBatch extends \app\components\ActiveRecord
 	 * @return string the primarykey column
 	 */
 	public static function primaryKey() {
-		return ['batch_id'];
+		return ['id'];
 	}
 
 	/**
@@ -50,7 +50,7 @@ class EventBatch extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['batch_id', 'adviser_all', 'registered'], 'integer'],
+			[['id', 'adviser_all', 'registered'], 'integer'],
 			[['advisers', 'confirm', 'no_confirm'], 'number'],
 		];
 	}
@@ -61,7 +61,7 @@ class EventBatch extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'batch_id' => Yii::t('app', 'Batch'),
+			'id' => Yii::t('app', 'Batch'),
 			'advisers' => Yii::t('app', 'Advisers'),
 			'adviser_all' => Yii::t('app', 'Adviser All'),
 			'registered' => Yii::t('app', 'Registered'),
@@ -85,7 +85,7 @@ class EventBatch extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		$this->templateColumns['batch_id'] = 'batch_id';
+		$this->templateColumns['id'] = 'id';
 		$this->templateColumns['advisers'] = 'advisers';
 		$this->templateColumns['adviser_all'] = 'adviser_all';
 		$this->templateColumns['registered'] = 'registered';

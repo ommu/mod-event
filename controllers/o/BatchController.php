@@ -106,7 +106,7 @@ class BatchController extends Controller
 		$model = new EventBatch();
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->batch_id]);
+			//return $this->redirect(['view', 'id' => $model->id]);
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success created.'));
 			return $this->redirect(['index']);
 
@@ -141,7 +141,7 @@ class BatchController extends Controller
 		$model = $this->findModel($id);
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->batch_id]);
+			//return $this->redirect(['view', 'id' => $model->id]);
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success updated.'));
 			return $this->redirect(['index']);
 
@@ -194,7 +194,7 @@ class BatchController extends Controller
 		$model->publish = 2;
 
 		if ($model->save(false, ['publish'])) {
-			//return $this->redirect(['view', 'id' => $model->batch_id]);
+			//return $this->redirect(['view', 'id' => $model->id]);
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Batch success deleted.'));
 			return $this->redirect(['index']);
 		}

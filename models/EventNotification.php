@@ -58,7 +58,7 @@ class EventNotification extends \app\components\ActiveRecord
 			[['batch_id', 'notified_date'], 'required'],
 			[['status', 'batch_id', 'notified_id', 'users'], 'integer'],
 			[['notified_id', 'users', 'creation_date'], 'safe'],
-			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'batch_id']],
+			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'id']],
 		];
 	}
 
@@ -86,7 +86,7 @@ class EventNotification extends \app\components\ActiveRecord
 	 */
 	public function getBatch()
 	{
-		return $this->hasOne(EventBatch::className(), ['batch_id' => 'batch_id']);
+		return $this->hasOne(EventBatch::className(), ['id' => 'batch_id']);
 	}
 
 	/**

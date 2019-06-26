@@ -72,13 +72,13 @@ echo $form->field($model, 'cat_id')
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('description')); ?>
 
-<?php $uploadPath = join('/', [Events::getUploadPath(false), $model->event_id]);
+<?php $uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
 $coverFilename = !$model->isNewRecord && $model->old_cover_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_cover_filename])), ['class'=>'mb-3']) : '';
 echo $form->field($model, 'cover_filename', ['template' => '{label}{beginWrapper}<div>'.$coverFilename.'</div>{input}{error}{hint}{endWrapper}'])
 	->fileInput()
 	->label($model->getAttributeLabel('cover_filename')); ?>
 
-<?php $uploadPath = join('/', [Events::getUploadPath(false), $model->event_id]);
+<?php $uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
 $bannerFilename = !$model->isNewRecord && $model->old_banner_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_banner_filename])), ['class'=>'mb-3']) : '';
 echo $form->field($model, 'banner_filename', ['template' => '{label}{beginWrapper}<div>'.$bannerFilename.'</div>{input}{error}{hint}{endWrapper}'])
 	->fileInput()
@@ -111,6 +111,15 @@ echo $form->field($model, 'registered_enable')
 echo $form->field($model, 'registered_type')
 	->dropDownList($registeredType, ['prompt' => ''])
 	->label($model->getAttributeLabel('registered_type')); ?>
+
+<?php $packageRewardType = Events::getPackageRewardType();
+$media_image_resize_size_height = $form->field($model, 'package_reward[type]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
+	->dropDownList($packageRewardType, ['prompt' => Yii::t('app', 'Please choose {attribute}', ['attribute'=>strtolower($model->getAttributeLabel('package_reward[type]'))])])
+	->label($model->getAttributeLabel('package_reward[type]')); ?>
+
+<?php echo $form->field($model, 'package_reward[reward]', ['template' => '{label}'.$media_image_resize_size_height.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type'=>'number', 'min'=>0, 'maxlength'=>'4', 'placeholder'=>$model->getAttributeLabel('package_reward[reward]')])
+	->label($model->getAttributeLabel('package_reward')); ?>
 
 <?php echo $form->field($model, 'registered_message')
 	->textarea(['rows'=>6, 'cols'=>50])

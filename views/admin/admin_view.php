@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $model->title;
 
 <?php
 $attributes = [
-	'event_id',
+	'id',
 	[
 		'attribute' => 'publish',
 		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
@@ -38,7 +38,7 @@ $attributes = [
 		'value' => function ($model) {
 			$categoryName = isset($model->category) ? $model->category->title->message : '-';
 			if($categoryName != '-')
-				return Html::a($categoryName, ['category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+				return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
 			return $categoryName;
 		},
 		'format' => 'html',
@@ -58,7 +58,7 @@ $attributes = [
 	[
 		'attribute' => 'cover_filename',
 		'value' => function ($model) {
-			$uploadPath = join('/', [Events::getUploadPath(false), $model->event_id]);
+			$uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
 			return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['class'=>'mb-3']).$model->cover_filename : '-';
 		},
 		'format' => 'html',
@@ -66,10 +66,14 @@ $attributes = [
 	[
 		'attribute' => 'banner_filename',
 		'value' => function ($model) {
-			$uploadPath = join('/', [Events::getUploadPath(false), $model->event_id]);
+			$uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
 			return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['class'=>'mb-3']).$model->banner_filename : '-';
 		},
 		'format' => 'html',
+	],
+	[
+		'attribute' => 'tag',
+		'value' => implode(', ', $model->getTags(true, 'title')),
 	],
 	[
 		'attribute' => 'published_date',
@@ -85,21 +89,17 @@ $attributes = [
 		'value' => Events::getRegisteredType($model->registered_type),
 	],
 	[
+		'attribute' => 'package_reward',
+		'value' => Events::parseReward($model->package_reward),
+	],
+	[
 		'attribute' => 'registered_message',
 		'value' => serialize($model->registered_message),
 		'format' => 'html',
 	],
 	[
-		'attribute' => 'package_reward',
-		'value' => serialize($model->package_reward),
-	],
-	[
 		'attribute' => 'enable_filter',
 		'value' => $model->filterYesNo($model->enable_filter),
-	],
-	[
-		'attribute' => 'tag',
-		'value' => implode(', ', $model->getTags(true, 'title')),
 	],
 	[
 		'attribute' => 'gender',

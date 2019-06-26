@@ -12,7 +12,7 @@
  * This is the model class for table "ommu_events".
  *
  * The followings are the available columns in table "ommu_events":
- * @property integer $event_id
+ * @property integer $id
  * @property integer $publish
  * @property integer $cat_id
  * @property string $title
@@ -98,10 +98,10 @@ class Events extends \app\components\ActiveRecord
 			[['publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
 			[['introduction', 'description', 'registered_message', 'registered_type'], 'string'],
 			//[['registered_message', 'package_reward'], 'serialize'],
-			[['theme', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'tag', 'gender', 'major', 'majorGroup', 'university'], 'safe'],
+			[['theme', 'cover_filename', 'banner_filename', 'registered_enable', 'registered_message', 'registered_type', 'package_reward', 'tag', 'gender', 'major', 'majorGroup', 'university'], 'safe'],
 			[['title'], 'string', 'max' => 64],
 			[['theme'], 'string', 'max' => 128],
-			[['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventCategory::className(), 'targetAttribute' => ['cat_id' => 'cat_id']],
+			[['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventCategory::className(), 'targetAttribute' => ['cat_id' => 'id']],
 		];
 	}
 
@@ -121,19 +121,21 @@ class Events extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'event_id' => Yii::t('app', 'Event'),
+			'id' => Yii::t('app', 'Event'),
 			'publish' => Yii::t('app', 'Publish'),
 			'cat_id' => Yii::t('app', 'Category'),
 			'title' => Yii::t('app', 'Title'),
 			'theme' => Yii::t('app', 'Theme'),
 			'introduction' => Yii::t('app', 'Introduction'),
 			'description' => Yii::t('app', 'Description'),
-			'cover_filename' => Yii::t('app', 'Cover Filename'),
-			'banner_filename' => Yii::t('app', 'Banner Filename'),
+			'cover_filename' => Yii::t('app', 'Cover'),
+			'banner_filename' => Yii::t('app', 'Banner'),
 			'registered_enable' => Yii::t('app', 'Registered Online'),
 			'registered_message' => Yii::t('app', 'Registered Message'),
 			'registered_type' => Yii::t('app', 'Registered Type'),
 			'package_reward' => Yii::t('app', 'Package Reward'),
+			'package_reward[type]' => Yii::t('app', 'Type'),
+			'package_reward[reward]' => Yii::t('app', 'Reward'),
 			'enable_filter' => Yii::t('app', 'Registered Filter'),
 			'published_date' => Yii::t('app', 'Published Date'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
@@ -141,8 +143,8 @@ class Events extends \app\components\ActiveRecord
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
-			'old_cover_filename' => Yii::t('app', 'Old Cover Filename'),
-			'old_banner_filename' => Yii::t('app', 'Old Banner Filename'),
+			'old_cover_filename' => Yii::t('app', 'Old Cover'),
+			'old_banner_filename' => Yii::t('app', 'Old Banner'),
 			'batches' => Yii::t('app', 'Batches'),
 			'registereds' => Yii::t('app', 'Registereds'),
 			'categoryName' => Yii::t('app', 'Category'),
@@ -162,11 +164,11 @@ class Events extends \app\components\ActiveRecord
 	public function getBatches($count=false, $publish=1)
 	{
 		if($count == false)
-			return $this->hasMany(EventBatch::className(), ['event_id' => 'event_id'])
+			return $this->hasMany(EventBatch::className(), ['event_id' => 'id'])
 			->andOnCondition([sprintf('%s.publish', EventBatch::tableName()) => $publish]);
 
 		$model = EventBatch::find()
-			->where(['event_id' => $this->event_id]);
+			->where(['event_id' => $this->id]);
 		if($publish == 0)
 			$model->unpublish();
 		elseif($publish == 1)
@@ -186,7 +188,7 @@ class Events extends \app\components\ActiveRecord
 		if($result == true)
 			return \yii\helpers\ArrayHelper::map($this->genders, 'gender', 'id');
 
-		return $this->hasMany(EventFilterGender::className(), ['event_id' => 'event_id']);
+		return $this->hasMany(EventFilterGender::className(), ['event_id' => 'id']);
 	}
 
 	/**
@@ -197,7 +199,7 @@ class Events extends \app\components\ActiveRecord
 		if($result == true)
 			return \yii\helpers\ArrayHelper::map($this->majors, 'major_id', $val=='id' ? 'id' : 'major.major_name');
 
-		return $this->hasMany(EventFilterMajor::className(), ['event_id' => 'event_id']);
+		return $this->hasMany(EventFilterMajor::className(), ['event_id' => 'id']);
 	}
 
 	/**
@@ -208,7 +210,7 @@ class Events extends \app\components\ActiveRecord
 		if($result == true)
 			return \yii\helpers\ArrayHelper::map($this->majorGroups, 'major_group_id', $val=='id' ? 'id' : 'group.group_name');
 
-		return $this->hasMany(EventFilterMajorGroup::className(), ['event_id' => 'event_id']);
+		return $this->hasMany(EventFilterMajorGroup::className(), ['event_id' => 'id']);
 	}
 
 	/**
@@ -219,7 +221,7 @@ class Events extends \app\components\ActiveRecord
 		if($result == true)
 			return \yii\helpers\ArrayHelper::map($this->universities, 'university_id', $val=='id' ? 'id' : 'university.company.company_name');
 
-		return $this->hasMany(EventFilterUniversity::className(), ['event_id' => 'event_id']);
+		return $this->hasMany(EventFilterUniversity::className(), ['event_id' => 'id']);
 	}
 
 	/**
@@ -228,10 +230,10 @@ class Events extends \app\components\ActiveRecord
 	public function getRegistereds($count=false)
 	{
 		if($count == false)
-			return $this->hasMany(EventRegistered::className(), ['event_id' => 'event_id']);
+			return $this->hasMany(EventRegistered::className(), ['event_id' => 'id']);
 
 		$model = EventRegistered::find()
-			->where(['event_id' => $this->event_id]);
+			->where(['id' => $this->id]);
 		$registereds = $model->count();
 
 		return $registereds ? $registereds : 0;
@@ -245,7 +247,7 @@ class Events extends \app\components\ActiveRecord
 		if($result == true)
 			return \yii\helpers\ArrayHelper::map($this->tags, 'tag_id', $val=='id' ? 'id' : 'tag.body');
 
-		return $this->hasMany(EventTag::className(), ['event_id' => 'event_id']);
+		return $this->hasMany(EventTag::className(), ['event_id' => 'id']);
 	}
 
 	/**
@@ -253,7 +255,7 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getCategory()
 	{
-		return $this->hasOne(EventCategory::className(), ['cat_id' => 'cat_id']);
+		return $this->hasOne(EventCategory::className(), ['id' => 'cat_id']);
 	}
 
 	/**
@@ -335,7 +337,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['cover_filename'] = [
 			'attribute' => 'cover_filename',
 			'value' => function($model, $key, $index, $column) {
-				$uploadPath = join('/', [self::getUploadPath(false), $model->event_id]);
+				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
 				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt' => $model->cover_filename]) : '-';
 			},
 			'format' => 'html',
@@ -343,7 +345,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['banner_filename'] = [
 			'attribute' => 'banner_filename',
 			'value' => function($model, $key, $index, $column) {
-				$uploadPath = join('/', [self::getUploadPath(false), $model->event_id]);
+				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
 				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt' => $model->banner_filename]) : '-';
 			},
 			'format' => 'html',
@@ -365,7 +367,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['package_reward'] = [
 			'attribute' => 'package_reward',
 			'value' => function($model, $key, $index, $column) {
-				return serialize($model->package_reward);
+				return Events::parseReward($model->package_reward);
 			},
 		];
 		$this->templateColumns['published_date'] = [
@@ -507,7 +509,7 @@ class Events extends \app\components\ActiveRecord
 		if($column != null) {
 			$model = self::find()
 				->select([$column])
-				->where(['event_id' => $id])
+				->where(['id' => $id])
 				->one();
 			return $model->$column;
 			
@@ -525,6 +527,22 @@ class Events extends \app\components\ActiveRecord
 		$items = array(
 			1 => Yii::t('app', 'Enable'),
 			0 => Yii::t('app', 'Disable'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * function getRegisteredEnable
+	 */
+	public static function getPackageRewardType($value=null)
+	{
+		$items = array(
+			1 => Yii::t('app', 'Reward (%)'),
+			0 => Yii::t('app', 'Reward (Price)'),
 		);
 
 		if($value !== null)
@@ -572,7 +590,7 @@ class Events extends \app\components\ActiveRecord
 
 		if($model !== null) {
 			foreach($model as $val) {
-				$items[$val->event_id] = $val->title;
+				$items[$val->id] = $val->title;
 			}
 		}
 		
@@ -601,6 +619,17 @@ class Events extends \app\components\ActiveRecord
 		}
 
 		return implode($sep, $items);
+	}
+
+	/**
+	 * function parseReward
+	 */
+	public static function parseReward($reward)
+	{
+		if(!$reward)
+			return '-';
+		
+		return Yii::t('app', 'Reward {reward}', ['reward' => $reward['type'] == '1' ? $reward['reward'].'%' : Yii::$app->formatter->asCurrency($reward['reward'])]);
 	}
 
 	/**
@@ -669,6 +698,13 @@ class Events extends \app\components\ActiveRecord
 				if ($this->registered_type == '')
 					$this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
 			}
+
+			// validate and set package reward
+			if($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100)
+				$this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
+
+			if($this->package_reward['type'] == '')
+				$this->package_reward = '';
 		}
 		return true;
 	}
@@ -680,16 +716,16 @@ class Events extends \app\components\ActiveRecord
 	{
 		if(parent::beforeSave($insert)) {
 			if(!$insert) {
-				$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+				$uploadPath = join('/', [self::getUploadPath(), $this->id]);
 				$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
-				$this->createUploadDirectory(self::getUploadPath(), $this->event_id);
+				$this->createUploadDirectory(self::getUploadPath(), $this->id);
 
 				// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
 				if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
 					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
 					if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
 						if($this->old_cover_filename != '' && file_exists(join('/', [$uploadPath, $this->old_cover_filename])))
-							rename(join('/', [$uploadPath, $this->old_cover_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_change_'.$this->old_cover_filename]));
+							rename(join('/', [$uploadPath, $this->old_cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_cover_filename]));
 						$this->cover_filename = $fileName;
 					}
 				} else {
@@ -702,7 +738,7 @@ class Events extends \app\components\ActiveRecord
 					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
 					if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
 						if($this->old_banner_filename != '' && file_exists(join('/', [$uploadPath, $this->old_banner_filename])))
-							rename(join('/', [$uploadPath, $this->old_banner_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_change_'.$this->old_banner_filename]));
+							rename(join('/', [$uploadPath, $this->old_banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_banner_filename]));
 						$this->banner_filename = $fileName;
 					}
 				} else {
@@ -729,23 +765,23 @@ class Events extends \app\components\ActiveRecord
 	{
 		parent::afterSave($insert, $changedAttributes);
 
-		$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+		$uploadPath = join('/', [self::getUploadPath(), $this->id]);
 		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
-		$this->createUploadDirectory(self::getUploadPath(), $this->event_id);
+		$this->createUploadDirectory(self::getUploadPath(), $this->id);
 
 		if($insert) {
 			// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
 			if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
 				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
 				if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName])))
-					self::updateAll(['cover_filename' => $fileName], ['event_id' => $this->event_id]);
+					self::updateAll(['cover_filename' => $fileName], ['id' => $this->id]);
 			}
 
 			// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
 			if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
 				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
 				if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName])))
-					self::updateAll(['banner_filename' => $fileName], ['event_id' => $this->event_id]);
+					self::updateAll(['banner_filename' => $fileName], ['id' => $this->id]);
 			}
 
 			// set filters
@@ -761,14 +797,14 @@ class Events extends \app\components\ActiveRecord
 	{
 		parent::afterDelete();
 
-		$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+		$uploadPath = join('/', [self::getUploadPath(), $this->id]);
 		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
 
 		if($this->cover_filename != '' && file_exists(join('/', [$uploadPath, $this->cover_filename])))
-			rename(join('/', [$uploadPath, $this->cover_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_deleted_'.$this->cover_filename]));
+			rename(join('/', [$uploadPath, $this->cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->cover_filename]));
 
 		if($this->banner_filename != '' && file_exists(join('/', [$uploadPath, $this->banner_filename])))
-			rename(join('/', [$uploadPath, $this->banner_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_deleted_'.$this->banner_filename]));
+			rename(join('/', [$uploadPath, $this->banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->banner_filename]));
 
 	}
 }

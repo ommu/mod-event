@@ -28,7 +28,7 @@ class EventCategory extends EventCategoryModel
 	public function rules()
 	{
 		return [
-			[['cat_id', 'publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
+			[['id', 'publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
 			[['creation_date', 'modified_date', 'updated_date', 'category_name_i', 'category_desc_i', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
 		];
 	}
@@ -100,11 +100,11 @@ class EventCategory extends EventCategoryModel
 		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
-			'defaultOrder' => ['cat_id' => SORT_DESC],
+			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
-		if(Yii::$app->request->get('cat_id'))
-			unset($params['cat_id']);
+		if(Yii::$app->request->get('id'))
+			unset($params['id']);
 		$this->load($params);
 
 		if(!$this->validate()) {
@@ -115,7 +115,7 @@ class EventCategory extends EventCategoryModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.cat_id' => $this->cat_id,
+			't.id' => $this->id,
 			't.category_name' => $this->category_name,
 			't.category_desc' => $this->category_desc,
 			'cast(t.creation_date as date)' => $this->creation_date,
