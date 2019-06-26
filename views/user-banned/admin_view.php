@@ -54,12 +54,12 @@ $attributes = [
 	[
 		'attribute' => 'banned_desc',
 		'value' => $model->banned_desc ? $model->banned_desc : '-',
-		'format'	=> 'html',
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'unbanned_agreement',
 		'value' => $model->unbanned_agreement ? $model->unbanned_agreement : '-',
-		'format'	=> 'html',
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'unbanned_date',

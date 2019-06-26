@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:15 WIB
+ * @modified date 24 June 2019, 21:35 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -18,12 +19,11 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ommu\event\models\EventFilterGender as EventFilterGenderModel;
-//use ommu\event\models\Events;
 
 class EventFilterGender extends EventFilterGenderModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
@@ -34,7 +34,7 @@ class EventFilterGender extends EventFilterGenderModel
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -65,7 +65,10 @@ class EventFilterGender extends EventFilterGenderModel
 			$query = EventFilterGenderModel::find()->alias('t');
 		else
 			$query = EventFilterGenderModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'creation creation']);
+		$query->joinWith([
+			'event event', 
+			'creation creation'
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -90,9 +93,11 @@ class EventFilterGender extends EventFilterGenderModel
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
+		if(Yii::$app->request->get('id'))
+			unset($params['id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -100,14 +105,14 @@ class EventFilterGender extends EventFilterGenderModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.id' => isset($params['id']) ? $params['id'] : $this->id,
+			't.id' => $this->id,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
+			't.gender' => $this->gender,
 			'cast(t.creation_date as date)' => $this->creation_date,
 			't.creation_id' => isset($params['creation']) ? $params['creation'] : $this->creation_id,
 		]);
 
-		$query->andFilterWhere(['like', 't.gender', $this->gender])
-			->andFilterWhere(['like', 'event.title', $this->eventTitle])
+		$query->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname]);
 
 		return $dataProvider;

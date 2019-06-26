@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:25 WIB
+ * @modified date 24 June 2019, 20:21 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -18,24 +19,22 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ommu\event\models\EventFilterUniversity as EventFilterUniversityModel;
-//use ommu\event\models\Events;
-//use ommu\event\models\IpediaUniversities;
 
 class EventFilterUniversity extends EventFilterUniversityModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
 			[['id', 'event_id', 'university_id', 'creation_id'], 'integer'],
-			[['creation_date', 'eventTitle', 'university_search', 'creationDisplayname'], 'safe'],
+			[['creation_date', 'eventTitle', 'universityName', 'creationDisplayname'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -66,7 +65,11 @@ class EventFilterUniversity extends EventFilterUniversityModel
 			$query = EventFilterUniversityModel::find()->alias('t');
 		else
 			$query = EventFilterUniversityModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'university university', 'creation creation']);
+		$query->joinWith([
+			'event event', 
+			'university.company university', 
+			'creation creation'
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -82,9 +85,9 @@ class EventFilterUniversity extends EventFilterUniversityModel
 			'asc' => ['event.title' => SORT_ASC],
 			'desc' => ['event.title' => SORT_DESC],
 		];
-		$attributes['university_search'] = [
-			'asc' => ['university.university_id' => SORT_ASC],
-			'desc' => ['university.university_id' => SORT_DESC],
+		$attributes['universityName'] = [
+			'asc' => ['university.company_name' => SORT_ASC],
+			'desc' => ['university.company_name' => SORT_DESC],
 		];
 		$attributes['creationDisplayname'] = [
 			'asc' => ['creation.displayname' => SORT_ASC],
@@ -99,7 +102,7 @@ class EventFilterUniversity extends EventFilterUniversityModel
 			unset($params['id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -107,7 +110,7 @@ class EventFilterUniversity extends EventFilterUniversityModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.id' => isset($params['id']) ? $params['id'] : $this->id,
+			't.id' => $this->id,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			't.university_id' => isset($params['university']) ? $params['university'] : $this->university_id,
 			'cast(t.creation_date as date)' => $this->creation_date,
@@ -115,7 +118,7 @@ class EventFilterUniversity extends EventFilterUniversityModel
 		]);
 
 		$query->andFilterWhere(['like', 'event.title', $this->eventTitle])
-			->andFilterWhere(['like', 'university.university_id', $this->university_search])
+			->andFilterWhere(['like', 'university.company_name', $this->universityName])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname]);
 
 		return $dataProvider;

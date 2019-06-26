@@ -42,7 +42,7 @@ $attributes = [
 	[
 		'attribute' => 'blast_with',
 		'value' => $model->blast_with ? $model->blast_with : '-',
-		'format'	=> 'html',
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'creation_date',

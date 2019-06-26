@@ -1,3 +1,32 @@
+event_submenu:
+  view:
+    label: Detail
+    url:
+      0: 'admin/view'
+      id: $_GET*id
+    select: action
+  update:
+    label: Update
+    url:
+      0: 'admin/update'
+      id: $_GET*id
+    select: action
+  filter:
+    label: Filter(s)
+    url:
+      0: 'admin/filter'
+      id: $_GET*id
+    select: action
+  delete:
+    label: Delete
+    url:
+      0: 'admin/delete'
+      id: $_GET*id
+    htmlOptions:
+      data-confirm: Are you sure you want to delete this item?
+      data-method: post
+    select: action
+
 setting_submenu:
   update:
     label: Settings

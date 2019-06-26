@@ -10,15 +10,19 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 13:22 WIB
+ * @modified date 24 June 2019, 10:28 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use ommu\event\models\Events;
+use ommu\event\models\EventCategory;
 ?>
 
-<div class="search-form">
+<div class="events-search search-form">
+
 	<?php $form = ActiveForm::begin([
 		'action' => ['index'],
 		'method' => 'get',
@@ -27,29 +31,29 @@ use yii\widgets\ActiveForm;
 		],
 	]); ?>
 
-		<?php echo $form->field($model, 'event_id'); ?>
+		<?php $category = EventCategory::getCategory();
+		echo $form->field($model, 'cat_id')
+			->dropDownList($category, ['prompt'=>'']);?>
 
-		<?php echo $form->field($model, 'cat_id'); ?>
+		<?php echo $form->field($model, 'title');?>
 
-		<?php echo $form->field($model, 'title'); ?>
+		<?php echo $form->field($model, 'theme');?>
 
-		<?php echo $form->field($model, 'theme'); ?>
+		<?php echo $form->field($model, 'introduction');?>
 
-		<?php echo $form->field($model, 'introduction'); ?>
+		<?php echo $form->field($model, 'description');?>
 
-		<?php echo $form->field($model, 'description'); ?>
+		<?php echo $form->field($model, 'cover_filename');?>
 
-		<?php echo $form->field($model, 'cover_filename'); ?>
+		<?php echo $form->field($model, 'banner_filename');?>
 
-		<?php echo $form->field($model, 'banner_filename'); ?>
+		<?php echo $form->field($model, 'registered_message');?>
 
-		<?php echo $form->field($model, 'registered_enable'); ?>
+		<?php $registeredType = Events::getRegisteredType();
+			echo $form->field($model, 'registered_type')
+			->dropDownList($registeredType, ['prompt'=>'']);?>
 
-		<?php echo $form->field($model, 'registered_message'); ?>
-
-		<?php echo $form->field($model, 'registered_type'); ?>
-
-		<?php echo $form->field($model, 'enable_filter'); ?>
+		<?php echo $form->field($model, 'package_reward');?>
 
 		<?php echo $form->field($model, 'published_date')
 			->input('date');?>
@@ -67,6 +71,12 @@ use yii\widgets\ActiveForm;
 		<?php echo $form->field($model, 'updated_date')
 			->input('date');?>
 
+		<?php echo $form->field($model, 'registered_enable')
+			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+
+		<?php echo $form->field($model, 'enable_filter')
+			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+
 		<?php echo $form->field($model, 'publish')
 			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
 
@@ -74,5 +84,7 @@ use yii\widgets\ActiveForm;
 			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']); ?>
 			<?php echo Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-default']); ?>
 		</div>
+
 	<?php ActiveForm::end(); ?>
+
 </div>

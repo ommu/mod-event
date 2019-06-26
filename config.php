@@ -10,7 +10,17 @@
  *
  */
 
+use ommu\event\Events;
+use ommu\event\models\Events as EventsModel;
+
 return [
 	'id' => 'event',
 	'class' => ommu\event\Module::className(),
+	'events' => [
+		[
+			'class'    => EventsModel::className(),
+			'event'    => EventsModel::EVENT_BEFORE_SAVE_EVENTS,
+			'callback' => [Events::className(), 'onBeforeSaveEvents']
+		],
+	],
 ];

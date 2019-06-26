@@ -1,27 +1,33 @@
 <?php
 /**
  * EventBatch
- *
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:38 WIB
+ * @modified date 23 June 2019, 16:04 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_batch".
  *
  * The followings are the available columns in table "ommu_event_batch":
- * @property string $batch_id
+ * @property integer $batch_id
  * @property integer $publish
- * @property string $event_id
+ * @property integer $event_id
  * @property string $batch_name
+ * @property string $batch_desc
  * @property string $batch_date
  * @property string $batch_time
+ * @property integer $batch_price
+ * @property string $batch_location
+ * @property string $location_name
+ * @property string $location_address
  * @property integer $registered_limit
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  * @property string $modified_date
- * @property string $modified_id
+ * @property integer $modified_id
  * @property string $updated_date
  *
  * The followings are the available model relations:
@@ -46,7 +52,6 @@ class EventBatch extends \app\components\ActiveRecord
 
 	public $gridForbiddenColumn = ['creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
 
-	// Search Variable
 	public $eventTitle;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
@@ -85,9 +90,14 @@ class EventBatch extends \app\components\ActiveRecord
 			'batch_id' => Yii::t('app', 'Batch'),
 			'publish' => Yii::t('app', 'Publish'),
 			'event_id' => Yii::t('app', 'Event'),
-			'batch_name' => Yii::t('app', 'Batch Title'),
+			'batch_name' => Yii::t('app', 'Name'),
+			'batch_desc' => Yii::t('app', 'Description'),
 			'batch_date' => Yii::t('app', 'Batch Date'),
 			'batch_time' => Yii::t('app', 'Batch Time'),
+			'batch_price' => Yii::t('app', 'Batch Price'),
+			'batch_location' => Yii::t('app', 'Batch Location'),
+			'location_name' => Yii::t('app', 'Location Name'),
+			'location_address' => Yii::t('app', 'Location Address'),
 			'registered_limit' => Yii::t('app', 'Registered Limit'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
 			'creation_id' => Yii::t('app', 'Creation'),
@@ -158,6 +168,15 @@ class EventBatch extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventBatch the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventBatch(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -176,11 +195,23 @@ class EventBatch extends \app\components\ActiveRecord
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
+					return isset($model->event) ? $model->event->title : '-';
+					// return $model->eventTitle;
 				},
 			];
 		}
-		$this->templateColumns['batch_name'] = 'batch_name';
+		$this->templateColumns['batch_name'] = [
+			'attribute' => 'batch_name',
+			'value' => function($model, $key, $index, $column) {
+				return $model->batch_name;
+			},
+		];
+		$this->templateColumns['batch_desc'] = [
+			'attribute' => 'batch_desc',
+			'value' => function($model, $key, $index, $column) {
+				return $model->batch_desc;
+			},
+		];
 		$this->templateColumns['batch_date'] = [
 			'attribute' => 'batch_date',
 			'value' => function($model, $key, $index, $column) {
@@ -220,6 +251,7 @@ class EventBatch extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
@@ -258,6 +290,37 @@ class EventBatch extends \app\components\ActiveRecord
 				'format' => 'raw',
 			];
 		}
+	}
+
+	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['batch_id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		$this->batch_time = unserialize($this->batch_time);
+		// $this->eventTitle = isset($this->event) ? $this->event->title : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
 	}
 
 	/**
@@ -302,7 +365,7 @@ class EventBatch extends \app\components\ActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -319,51 +382,12 @@ class EventBatch extends \app\components\ActiveRecord
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
 		if(parent::beforeSave($insert)) {
 			$this->batch_date = Yii::$app->formatter->asDate($this->batch_date, 'php:Y-m-d');
-		}
-		return true;	
-	}
-
-	/**
-	 * after validate attributes
-	 */
-	public function afterValidate()
-	{
-		parent::afterValidate();
-		// Create action
-		
-		return true;
-	}
-	
-	/**
-	 * After save attributes
-	 */
-	public function afterSave($insert, $changedAttributes) 
-	{
-		parent::afterSave($insert, $changedAttributes);
-		// Create action
-	}
-
-	/**
-	 * Before delete attributes
-	 */
-	public function beforeDelete() 
-	{
-		if(parent::beforeDelete()) {
-			// Create action
+			$this->batch_time = serialize($this->batch_time);
 		}
 		return true;
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	public function afterDelete() 
-	{
-		parent::afterDelete();
-		// Create action
 	}
 }

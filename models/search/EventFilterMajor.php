@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:22 WIB
+ * @modified date 24 June 2019, 20:13 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -18,24 +19,22 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ommu\event\models\EventFilterMajor as EventFilterMajorModel;
-//use ommu\event\models\Events;
-//use ommu\event\models\IpediaMajors;
 
 class EventFilterMajor extends EventFilterMajorModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
 			[['id', 'event_id', 'major_id', 'creation_id'], 'integer'],
-			[['creation_date', 'eventTitle', 'major_search', 'creationDisplayname'], 'safe'],
+			[['creation_date', 'eventTitle', 'majorName', 'creationDisplayname'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -66,7 +65,11 @@ class EventFilterMajor extends EventFilterMajorModel
 			$query = EventFilterMajorModel::find()->alias('t');
 		else
 			$query = EventFilterMajorModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'major major', 'creation creation']);
+		$query->joinWith([
+			'event event', 
+			'major major', 
+			'creation creation'
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -82,9 +85,9 @@ class EventFilterMajor extends EventFilterMajorModel
 			'asc' => ['event.title' => SORT_ASC],
 			'desc' => ['event.title' => SORT_DESC],
 		];
-		$attributes['major_search'] = [
-			'asc' => ['major.major_id' => SORT_ASC],
-			'desc' => ['major.major_id' => SORT_DESC],
+		$attributes['majorName'] = [
+			'asc' => ['major.major_name' => SORT_ASC],
+			'desc' => ['major.major_name' => SORT_DESC],
 		];
 		$attributes['creationDisplayname'] = [
 			'asc' => ['creation.displayname' => SORT_ASC],
@@ -99,7 +102,7 @@ class EventFilterMajor extends EventFilterMajorModel
 			unset($params['id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -107,7 +110,7 @@ class EventFilterMajor extends EventFilterMajorModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.id' => isset($params['id']) ? $params['id'] : $this->id,
+			't.id' => $this->id,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			't.major_id' => isset($params['major']) ? $params['major'] : $this->major_id,
 			'cast(t.creation_date as date)' => $this->creation_date,
@@ -115,7 +118,7 @@ class EventFilterMajor extends EventFilterMajorModel
 		]);
 
 		$query->andFilterWhere(['like', 'event.title', $this->eventTitle])
-			->andFilterWhere(['like', 'major.major_id', $this->major_search])
+			->andFilterWhere(['like', 'major.major_name', $this->majorName])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname]);
 
 		return $dataProvider;

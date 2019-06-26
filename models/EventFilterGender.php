@@ -1,38 +1,38 @@
 <?php
 /**
  * EventFilterGender
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:13 WIB
+ * @modified date 24 June 2019, 13:19 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_filter_gender".
  *
  * The followings are the available columns in table "ommu_event_filter_gender":
- * @property string $id
- * @property string $event_id
+ * @property integer $id
+ * @property integer $event_id
  * @property string $gender
  * @property string $creation_date
  * @property integer $creation_id
  *
  * The followings are the available model relations:
  * @property Events $event
+ * @property Users $creation
  *
  */
 
 namespace ommu\event\models;
 
 use Yii;
-use yii\helpers\Url;
 use ommu\users\models\Users;
 
 class EventFilterGender extends \app\components\ActiveRecord
 {
 	public $gridForbiddenColumn = [];
 
-	// Search Variable
 	public $eventTitle;
 	public $creationDisplayname;
 
@@ -50,10 +50,9 @@ class EventFilterGender extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['event_id', 'gender', 'creation_id'], 'required'],
+			[['event_id', 'gender'], 'required'],
 			[['event_id', 'creation_id'], 'integer'],
 			[['gender'], 'string'],
-			[['creation_date'], 'safe'],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
 		];
 	}
@@ -64,7 +63,7 @@ class EventFilterGender extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'id' => Yii::t('app', 'Filter'),
+			'id' => Yii::t('app', 'ID'),
 			'event_id' => Yii::t('app', 'Event'),
 			'gender' => Yii::t('app', 'Gender'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
@@ -91,6 +90,15 @@ class EventFilterGender extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventFilterGender the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventFilterGender(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -109,11 +117,18 @@ class EventFilterGender extends \app\components\ActiveRecord
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
+					return isset($model->event) ? $model->event->title : '-';
+					// return $model->eventTitle;
 				},
 			];
 		}
-		$this->templateColumns['gender'] = 'gender';
+		$this->templateColumns['gender'] = [
+			'attribute' => 'gender',
+			'value' => function($model, $key, $index, $column) {
+				return self::getGender($model->gender);
+			},
+			'filter' => self::getGender(),
+		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
 			'value' => function($model, $key, $index, $column) {
@@ -126,15 +141,61 @@ class EventFilterGender extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * function getGender
+	 */
+	public static function getGender($value=null)
+	{
+		$items = array(
+			'male' => Yii::t('app', 'Male'),
+			'female' => Yii::t('app', 'Female'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		// $this->eventTitle = isset($this->event) ? $this->event->title : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+	}
+
+	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -143,56 +204,5 @@ class EventFilterGender extends \app\components\ActiveRecord
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * before save attributes
-	 */
-	public function beforeSave($insert) 
-	{
-		if(parent::beforeSave($insert)) {
-			// Create action
-		}
-		return true;	
-	}
-
-	/**
-	 * after validate attributes
-	 */
-	public function afterValidate()
-	{
-		parent::afterValidate();
-		// Create action
-		
-		return true;
-	}
-	
-	/**
-	 * After save attributes
-	 */
-	public function afterSave($insert, $changedAttributes) 
-	{
-		parent::afterSave($insert, $changedAttributes);
-		// Create action
-	}
-
-	/**
-	 * Before delete attributes
-	 */
-	public function beforeDelete() 
-	{
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	public function afterDelete() 
-	{
-		parent::afterDelete();
-		// Create action
 	}
 }

@@ -1,28 +1,28 @@
 <?php
 /**
  * EventRegistered
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:42 WIB
+ * @modified date 25 June 2019, 07:42 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_registered".
  *
  * The followings are the available columns in table "ommu_event_registered":
- * @property string $id
+ * @property integer $id
  * @property integer $status
- * @property string $event_id
- * @property string $user_id
+ * @property integer $event_id
+ * @property integer $user_id
  * @property string $confirmation_date
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  * @property string $modified_date
- * @property string $modified_id
+ * @property integer $modified_id
  *
  * The followings are the available model relations:
- * @property EventRegisteredFinance $finance
  * @property Events $event
  *
  */
@@ -30,6 +30,7 @@
 namespace ommu\event\models;
 
 use Yii;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use ommu\users\models\Users;
 
@@ -39,7 +40,6 @@ class EventRegistered extends \app\components\ActiveRecord
 
 	public $gridForbiddenColumn = [];
 
-	// Search Variable
 	public $eventTitle;
 	public $userDisplayname;
 	public $creationDisplayname;
@@ -72,7 +72,7 @@ class EventRegistered extends \app\components\ActiveRecord
 	public function attributeLabels()
 	{
 		return [
-			'id' => Yii::t('app', 'Registered'),
+			'id' => Yii::t('app', 'ID'),
 			'status' => Yii::t('app', 'Status'),
 			'event_id' => Yii::t('app', 'Event'),
 			'user_id' => Yii::t('app', 'User'),
@@ -81,6 +81,7 @@ class EventRegistered extends \app\components\ActiveRecord
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
+			'batches' => Yii::t('app', 'Batches'),
 			'eventTitle' => Yii::t('app', 'Event'),
 			'userDisplayname' => Yii::t('app', 'User'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
@@ -129,6 +130,15 @@ class EventRegistered extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventRegistered the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventRegistered(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -147,7 +157,8 @@ class EventRegistered extends \app\components\ActiveRecord
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
+					return isset($model->event) ? $model->event->title : '-';
+					// return $model->eventTitle;
 				},
 			];
 		}
@@ -155,7 +166,8 @@ class EventRegistered extends \app\components\ActiveRecord
 			$this->templateColumns['userDisplayname'] = [
 				'attribute' => 'userDisplayname',
 				'value' => function($model, $key, $index, $column) {
-					return isset($model->user->displayname) ? $model->user->displayname : '-';
+					return isset($model->user) ? $model->user->displayname : '-';
+					// return $model->userDisplayname;
 				},
 			];
 		}
@@ -178,6 +190,7 @@ class EventRegistered extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
@@ -208,9 +221,40 @@ class EventRegistered extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		// $this->eventTitle = isset($this->event) ? $this->event->title : '-';
+		// $this->userDisplayname = isset($this->user) ? $this->user->displayname : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
+	}
+
+	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -230,55 +274,4 @@ class EventRegistered extends \app\components\ActiveRecord
 		}
 		return true;
 	}
-
-	// /**
-	//  * before save attributes
-	//  */
-	// public function beforeSave($insert) 
-	// {
-	// 	if(parent::beforeSave($insert)) {
-	// 		// Create action
-	// 	}
-	// 	return true;	
-	// }
-
-	// /**
-	//  * after validate attributes
-	//  */
-	// public function afterValidate()
-	// {
-	// 	parent::afterValidate();
-	// 	// Create action
-		
-	// 	return true;
-	// }
-	
-	// /**
-	//  * After save attributes
-	//  */
-	// public function afterSave($insert, $changedAttributes) 
-	// {
-	// 	parent::afterSave($insert, $changedAttributes);
-	// 	// Create action
-	// }
-
-	// /**
-	//  * Before delete attributes
-	//  */
-	// public function beforeDelete() 
-	// {
-	// 	if(parent::beforeDelete()) {
-	// 		// Create action
-	// 	}
-	// 	return true;
-	// }
-
-	// /**
-	//  * After delete attributes
-	//  */
-	// public function afterDelete() 
-	// {
-	// 	parent::afterDelete();
-	// 	// Create action
-	// }
 }

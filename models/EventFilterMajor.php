@@ -1,42 +1,42 @@
 <?php
 /**
  * EventFilterMajor
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:19 WIB
+ * @modified date 24 June 2019, 13:20 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_filter_major".
  *
  * The followings are the available columns in table "ommu_event_filter_major":
- * @property string $id
- * @property string $event_id
- * @property string $major_id
+ * @property integer $id
+ * @property integer $event_id
+ * @property integer $major_id
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  *
  * The followings are the available model relations:
  * @property Events $event
  * @property IpediaMajors $major
+ * @property Users $creation
  *
  */
 
 namespace ommu\event\models;
 
 use Yii;
-use yii\helpers\Url;
 use ommu\users\models\Users;
-use app\modules\ipedia\models\IpediaMajor;
+use ommu\ipedia\models\IpediaMajors;
 
 class EventFilterMajor extends \app\components\ActiveRecord
 {
 	public $gridForbiddenColumn = [];
 
-	// Search Variable
 	public $eventTitle;
-	public $major_search;
+	public $majorName;
 	public $creationDisplayname;
 
 	/**
@@ -53,11 +53,10 @@ class EventFilterMajor extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['event_id', 'major_id', 'creation_id'], 'required'],
+			[['event_id', 'major_id'], 'required'],
 			[['event_id', 'major_id', 'creation_id'], 'integer'],
-			[['creation_date'], 'safe'],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'event_id']],
-			[['major_id'], 'exist', 'skipOnError' => true, 'targetClass' => IpediaMajor::className(), 'targetAttribute' => ['major_id' => 'major_id']],
+			[['major_id'], 'exist', 'skipOnError' => true, 'targetClass' => IpediaMajors::className(), 'targetAttribute' => ['major_id' => 'major_id']],
 		];
 	}
 
@@ -73,7 +72,7 @@ class EventFilterMajor extends \app\components\ActiveRecord
 			'creation_date' => Yii::t('app', 'Creation Date'),
 			'creation_id' => Yii::t('app', 'Creation'),
 			'eventTitle' => Yii::t('app', 'Event'),
-			'major_search' => Yii::t('app', 'Major'),
+			'majorName' => Yii::t('app', 'Major'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 		];
 	}
@@ -91,7 +90,7 @@ class EventFilterMajor extends \app\components\ActiveRecord
 	 */
 	public function getMajor()
 	{
-		return $this->hasOne(IpediaMajor::className(), ['major_id' => 'major_id']);
+		return $this->hasOne(IpediaMajors::className(), ['major_id' => 'major_id']);
 	}
 
 	/**
@@ -100,6 +99,15 @@ class EventFilterMajor extends \app\components\ActiveRecord
 	public function getCreation()
 	{
 		return $this->hasOne(Users::className(), ['user_id' => 'creation_id']);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventFilterMajor the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventFilterMajor(get_called_class());
 	}
 
 	/**
@@ -121,15 +129,17 @@ class EventFilterMajor extends \app\components\ActiveRecord
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
+					return isset($model->event) ? $model->event->title : '-';
+					// return $model->eventTitle;
 				},
 			];
 		}
 		if(!Yii::$app->request->get('major')) {
-			$this->templateColumns['major_search'] = [
-				'attribute' => 'major_search',
+			$this->templateColumns['majorName'] = [
+				'attribute' => 'majorName',
 				'value' => function($model, $key, $index, $column) {
-					return $model->major->major_id;
+					return isset($model->major) ? $model->major->another->another_name : '-';
+					// return $model->majorName;
 				},
 			];
 		}
@@ -145,15 +155,46 @@ class EventFilterMajor extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		// $this->eventTitle = isset($this->event) ? $this->event->title : '-';
+		// $this->majorName = isset($this->major) ? $this->major->another->another_name : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+	}
+
+	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -162,56 +203,5 @@ class EventFilterMajor extends \app\components\ActiveRecord
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * before save attributes
-	 */
-	public function beforeSave($insert) 
-	{
-		if(parent::beforeSave($insert)) {
-			// Create action
-		}
-		return true;	
-	}
-
-	/**
-	 * after validate attributes
-	 */
-	public function afterValidate()
-	{
-		parent::afterValidate();
-		// Create action
-		
-		return true;
-	}
-	
-	/**
-	 * After save attributes
-	 */
-	public function afterSave($insert, $changedAttributes) 
-	{
-		parent::afterSave($insert, $changedAttributes);
-		// Create action
-	}
-
-	/**
-	 * Before delete attributes
-	 */
-	public function beforeDelete() 
-	{
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	public function afterDelete() 
-	{
-		parent::afterDelete();
-		// Create action
 	}
 }

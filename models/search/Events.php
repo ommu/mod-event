@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 13:22 WIB
+ * @modified date 24 June 2019, 10:28 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -18,23 +19,22 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ommu\event\models\Events as EventsModel;
-//use ommu\event\models\EventCategory;
 
 class Events extends EventsModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
 			[['event_id', 'publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
-			[['title', 'theme', 'introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'published_date', 'creation_date', 'modified_date', 'updated_date', 'category_search', 'creationDisplayname', 'modifiedDisplayname', 'blasting_search'], 'safe'],
+			[['title', 'theme', 'introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'package_reward', 'published_date', 'creation_date', 'modified_date', 'updated_date', 'categoryName', 'creationDisplayname', 'modifiedDisplayname', 'tag', 'gender', 'major', 'majorGroup', 'university'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -65,7 +65,20 @@ class Events extends EventsModel
 			$query = EventsModel::find()->alias('t');
 		else
 			$query = EventsModel::find()->alias('t')->select($column);
-		$query->joinWith(['category category', 'creation creation', 'modified modified', 'category.name name', 'view view']);
+		$query->joinWith([
+			'category.title category',
+			'creation creation',
+			'modified modified',
+			'tags tags',
+			'genders genders',
+			'majors majors',
+			'majorGroups majorGroups',
+			'universities universities',
+			'tags.tag tagsRltn',
+			'majors.major majorsRltn',
+			'majorGroups majorGroupsRltn',
+			'universities.university.company universitiesRltn',
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -77,9 +90,13 @@ class Events extends EventsModel
 		$dataProvider = new ActiveDataProvider($dataParams);
 
 		$attributes = array_keys($this->getTableSchema()->columns);
-		$attributes['category_search'] = [
-			'asc' => ['name.message' => SORT_ASC],
-			'desc' => ['name.message' => SORT_DESC],
+		$attributes['cat_id'] = [
+			'asc' => ['category.message' => SORT_ASC],
+			'desc' => ['category.message' => SORT_DESC],
+		];
+		$attributes['categoryName'] = [
+			'asc' => ['category.message' => SORT_ASC],
+			'desc' => ['category.message' => SORT_DESC],
 		];
 		$attributes['creationDisplayname'] = [
 			'asc' => ['creation.displayname' => SORT_ASC],
@@ -89,22 +106,16 @@ class Events extends EventsModel
 			'asc' => ['modified.displayname' => SORT_ASC],
 			'desc' => ['modified.displayname' => SORT_DESC],
 		];
-		$attributes['tag_search'] = [
-			'asc' => ['view.tags' => SORT_ASC],
-			'desc' => ['view.tags' => SORT_DESC],
-		];
-		$attributes['blasting_search'] = [
-			'asc' => ['view.blasting_condition' => SORT_ASC],
-			'desc' => ['view.blasting_condition' => SORT_DESC],
-		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
 			'defaultOrder' => ['event_id' => SORT_DESC],
 		]);
 
+		if(Yii::$app->request->get('event_id'))
+			unset($params['event_id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -112,10 +123,10 @@ class Events extends EventsModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.event_id' => isset($params['id']) ? $params['id'] : $this->event_id,
-			't.publish' => isset($params['publish']) ? 1 : $this->publish,
+			't.event_id' => $this->event_id,
 			't.cat_id' => isset($params['category']) ? $params['category'] : $this->cat_id,
 			't.registered_enable' => $this->registered_enable,
+			't.registered_type' => $this->registered_type,
 			't.enable_filter' => $this->enable_filter,
 			'cast(t.published_date as date)' => $this->published_date,
 			'cast(t.creation_date as date)' => $this->creation_date,
@@ -123,12 +134,29 @@ class Events extends EventsModel
 			'cast(t.modified_date as date)' => $this->modified_date,
 			't.modified_id' => isset($params['modified']) ? $params['modified'] : $this->modified_id,
 			'cast(t.updated_date as date)' => $this->updated_date,
+			'genders.gender' => $this->gender,
 		]);
 
-		if(!isset($params['trash']))
-			$query->andFilterWhere(['IN', 't.publish', [0,1]]);
-		else
+		if(isset($params['trash']))
 			$query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
+		else {
+			if(!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == ''))
+				$query->andFilterWhere(['IN', 't.publish', [0,1]]);
+			else
+				$query->andFilterWhere(['t.publish' => $this->publish]);
+		}
+
+		if(isset($params['tagId']) && $params['tagId'])
+			$query->andFilterWhere(['tags.tag_id' => $params['tagId']]);
+
+		if(isset($params['majorId']) && $params['majorId'])
+			$query->andFilterWhere(['majors.major_id' => $params['majorId']]);
+
+		if(isset($params['majorGroupId']) && $params['majorGroupId'])
+			$query->andFilterWhere(['majorGroups.major_group_id' => $params['majorGroupId']]);
+
+		if(isset($params['universityId']) && $params['universityId'])
+			$query->andFilterWhere(['universities.university_id' => $params['universityId']]);
 
 		$query->andFilterWhere(['like', 't.title', $this->title])
 			->andFilterWhere(['like', 't.theme', $this->theme])
@@ -137,17 +165,14 @@ class Events extends EventsModel
 			->andFilterWhere(['like', 't.cover_filename', $this->cover_filename])
 			->andFilterWhere(['like', 't.banner_filename', $this->banner_filename])
 			->andFilterWhere(['like', 't.registered_message', $this->registered_message])
-			->andFilterWhere(['like', 't.registered_type', $this->registered_type])
-			->andFilterWhere(['like', 'name.message', $this->category_search])
+			->andFilterWhere(['like', 't.package_reward', $this->package_reward])
+			->andFilterWhere(['like', 'category.message', $this->categoryName])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
-			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname]);
-
-		if (isset($this->blasting_search)) {
-			if ($this->blasting_search == '' || $this->blasting_search == 1)
-			$query->andFilterWhere(['view.blasting_condition' => $this->blasting_search]);
-			else
-			$query->andWhere(['view.blasting_condition' => null]);
-		}
+			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname])
+			->andFilterWhere(['like', 'tagsRltn.body', $this->tag])
+			->andFilterWhere(['like', 'majorsRltn.major_name', $this->major])
+			->andFilterWhere(['like', 'majorGroupsRltn.group_name', $this->majorGroup])
+			->andFilterWhere(['like', 'universitiesRltn.company_name', $this->university]);
 
 		return $dataProvider;
 	}

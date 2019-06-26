@@ -1,7 +1,7 @@
 <?php
 /**
  * UniversityController
- * @var ommu\event\controllers\filter\UniversityController
+ * @var $this ommu\event\controllers\filter\UniversityController
  * @var $model ommu\event\models\EventFilterUniversity
  *
  * UniversityController implements the CRUD actions for EventFilterUniversity model.
@@ -18,10 +18,11 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:25 WIB
+ * @modified date 24 June 2019, 20:21 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
- 
+
 namespace ommu\event\controllers\filter;
 
 use Yii;
@@ -34,7 +35,7 @@ use ommu\event\models\search\EventFilterUniversity as EventFilterUniversitySearc
 class UniversityController extends Controller
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function behaviors()
 	{
@@ -78,26 +79,33 @@ class UniversityController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Filter Universities');
+		if(($event = Yii::$app->request->get('event')) != null)
+			$event = \ommu\event\models\Events::findOne($event);
+		if(($university = Yii::$app->request->get('university')) != null)
+			$university = \ommu\ipedia\models\IpediaUniversities::findOne($university);
+
+		$this->view->title = Yii::t('app', 'Filter Universities');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 			'columns' => $columns,
+			'event' => $event,
+			'university' => $university,
 		]);
 	}
 
 	/**
 	 * Displays a single EventFilterUniversity model.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionView($id)
 	{
 		$model = $this->findModel($id);
 
-		$this->view->title = Yii::t('app', 'View Event Filter University: {id}', ['id' => $model->id]);
+		$this->view->title = Yii::t('app', 'Detail Filter University: {event-id}', ['event-id' => $model->event->title]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -108,28 +116,28 @@ class UniversityController extends Controller
 	/**
 	 * Deletes an existing EventFilterUniversity model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionDelete($id)
 	{
 		$model = $this->findModel($id);
 		$model->delete();
-		
-		Yii::$app->session->setFlash('success', Yii::t('app', 'Event Filter University success deleted.'));
-		return $this->redirect(['index']);
+
+		Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter university success deleted.'));
+		return $this->redirect(['manage']);
 	}
 
 	/**
 	 * Finds the EventFilterUniversity model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
-	 * @param string $id
+	 * @param integer $id
 	 * @return EventFilterUniversity the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id)
 	{
-		if (($model = EventFilterUniversity::findOne($id)) !== null)
+		if(($model = EventFilterUniversity::findOne($id)) !== null)
 			return $model;
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

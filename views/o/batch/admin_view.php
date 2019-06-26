@@ -47,7 +47,7 @@ $attributes = [
 	[
 		'attribute' => 'batch_time',
 		'value' => $model->batch_time ? $model->batch_time : '-',
-		'format'	=> 'html',
+		'format' => 'html',
 	],
 	'registered_limit',
 	[

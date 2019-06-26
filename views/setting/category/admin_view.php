@@ -67,6 +67,14 @@ $attributes = [
 		'value' => Yii::$app->formatter->asDatetime($model->updated_date, 'medium'),
 	],
 	[
+		'attribute' => 'events',
+		'value' => function ($model) {
+			$events = $model->getEvents(true);
+			return Html::a($events, ['admin/manage', 'category'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} events', ['count'=>$events])]);
+		},
+		'format' => 'html',
+	],
+	[
 		'attribute' => '',
 		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
 		'format' => 'html',

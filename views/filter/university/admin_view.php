@@ -9,6 +9,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:25 WIB
+ * @modified date 24 June 2019, 20:21 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -17,27 +18,34 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Filter Universities'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-
-$this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id'=>$model->id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
-	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
-];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Filter Universities'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $model->event->title;
 ?>
 
-<div class="event-xxx-view">
+<div class="event-filter-university-view">
 
 <?php
 $attributes = [
 	'id',
 	[
 		'attribute' => 'eventTitle',
-		'value' => $model->event->title,
+		'value' => function ($model) {
+			$eventTitle = isset($model->event) ? $model->event->title : '-';
+			if($eventTitle != '-')
+				return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+			return $eventTitle;
+		},
+		'format' => 'html',
 	],
 	[
-		'attribute' => 'university_search',
-		'value' => $model->university->university_id,
+		'attribute' => 'universityName',
+		'value' => function ($model) {
+			$universityName = isset($model->university) ? $model->university->company->company_name : '-';
+			if($universityName != '-')
+				return Html::a($universityName, ['university/view', 'id'=>$model->university_id], ['title'=>$universityName, 'class'=>'modal-btn']);
+			return $universityName;
+		},
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'creation_date',
@@ -46,6 +54,12 @@ $attributes = [
 	[
 		'attribute' => 'creationDisplayname',
 		'value' => isset($model->creation) ? $model->creation->displayname : '-',
+	],
+	[
+		'attribute' => '',
+		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
+		'format' => 'html',
+		'visible' => Yii::$app->request->isAjax ? true : false,
 	],
 ];
 

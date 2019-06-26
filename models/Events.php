@@ -1,17 +1,18 @@
 <?php
 /**
  * Events
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 13:19 WIB
+ * @modified date 24 June 2019, 08:55 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_events".
  *
  * The followings are the available columns in table "ommu_events":
- * @property string $event_id
+ * @property integer $event_id
  * @property integer $publish
  * @property integer $cat_id
  * @property string $title
@@ -23,22 +24,26 @@
  * @property integer $registered_enable
  * @property string $registered_message
  * @property string $registered_type
+ * @property string $package_reward
  * @property integer $enable_filter
  * @property string $published_date
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  * @property string $modified_date
- * @property string $modified_id
+ * @property integer $modified_id
  * @property string $updated_date
  *
  * The followings are the available model relations:
  * @property EventBatch[] $batches
- * @property EventBlastings[] $blastings
+ * @property EventFilterGender[] $genders
  * @property EventFilterMajor[] $majors
+ * @property EventFilterMajorGroup[] $groups
  * @property EventFilterUniversity[] $universities
- * @property EventFilterGender[] $filters
+ * @property EventRegistered[] $registereds
  * @property EventTag[] $tags
  * @property EventCategory $category
+ * @property Users $creation
+ * @property Users $modified
  *
  */
 
@@ -47,36 +52,32 @@ namespace ommu\event\models;
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\UploadedFile;
+use thamtech\uuid\helpers\UuidHelper;
 use ommu\users\models\Users;
-use app\modules\ipedia\models\IpediaAnother;
-use app\modules\ipedia\models\IpediaMajor;
-use ommu\event\models\view\Events as EventsView;
-use app\models\CoreTags;
+use yii\base\Event;
 
 class Events extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
+	use \ommu\traits\FileTrait;
 
-	// Include semua fungsi yang ada pada traits FileSystem;
-	use \app\components\traits\FileSystem;
+	public $gridForbiddenColumn = ['theme', 'introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'package_reward', 'creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'updated_date', 'tag', 'gender', 'major', 'majorGroup', 'university', 'batches', 'registereds'];
 
-	public $gridForbiddenColumn = ['introduction', 'theme', 'description','cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'updated_date'];
-
-	// Search Variable
-	public $category_search;
+	public $old_cover_filename;
+	public $old_banner_filename;
+	public $categoryName;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
-	public $old_cover;
-	public $old_banner;
-	public $tag_search;
-	public $tag_id_i;
-	public $tag_hidden;
-	public $filter_gender;
-	public $filter_major;
-	public $major_hidden;
-	public $filter_university;
-	public $university_hidden;
-	public $blasting_search;
+	public $tag;
+	public $gender;
+	public $major;
+	public $majorGroup;
+	public $university;
+
+	const SCENARIO_FILTER = 'filterForm';
+
+	const EVENT_BEFORE_SAVE_EVENTS = 'BeforeSaveEvents';
 
 	/**
 	 * @return string the associated database table name
@@ -92,18 +93,26 @@ class Events extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['cat_id', 'title', 'theme', 'introduction', 'description', 'published_date', 'creation_id'], 'required'],
-			[['cover_filename', 'banner_filename'], 'required', 'on' => 'formCreate'],
+			[['cat_id', 'title', 'introduction', 'description', 'published_date'], 'required'],
+			[['enable_filter'], 'required', 'on' => self::SCENARIO_FILTER],
 			[['publish', 'cat_id', 'registered_enable', 'enable_filter', 'creation_id', 'modified_id'], 'integer'],
-			// [['introduction', 'description', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type'], 'string'],
 			[['introduction', 'description', 'registered_message', 'registered_type'], 'string'],
-			[['tag_hidden', 'tag_id_i', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'published_date', 'creation_date', 'modified_id', 'modified_date', 'updated_date', 'filter_gender', 'major_hidden', 'filter_major', 'university_hidden'], 'safe'],
+			//[['registered_message', 'package_reward'], 'serialize'],
+			[['theme', 'cover_filename', 'banner_filename', 'registered_message', 'registered_type', 'tag', 'gender', 'major', 'majorGroup', 'university'], 'safe'],
 			[['title'], 'string', 'max' => 64],
 			[['theme'], 'string', 'max' => 128],
 			[['cat_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventCategory::className(), 'targetAttribute' => ['cat_id' => 'cat_id']],
-			[['cover_filename'], 'file', 'extensions' => 'jpeg, jpg, png, bmp, gif'],
-			[['banner_filename'], 'file', 'extensions' => 'jpeg, jpg, png, bmp, gif'],
 		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function scenarios()
+	{
+		$scenarios = parent::scenarios();
+		$scenarios[self::SCENARIO_FILTER] = ['enable_filter', 'gender', 'major', 'majorGroup', 'university'];
+		return $scenarios;
 	}
 
 	/**
@@ -121,73 +130,121 @@ class Events extends \app\components\ActiveRecord
 			'description' => Yii::t('app', 'Description'),
 			'cover_filename' => Yii::t('app', 'Cover Filename'),
 			'banner_filename' => Yii::t('app', 'Banner Filename'),
-			'registered_enable' => Yii::t('app', 'Registered Enable'),
+			'registered_enable' => Yii::t('app', 'Registered Online'),
 			'registered_message' => Yii::t('app', 'Registered Message'),
 			'registered_type' => Yii::t('app', 'Registered Type'),
-			'enable_filter' => Yii::t('app', 'Enable Filter'),
+			'package_reward' => Yii::t('app', 'Package Reward'),
+			'enable_filter' => Yii::t('app', 'Registered Filter'),
 			'published_date' => Yii::t('app', 'Published Date'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
-			'category_search' => Yii::t('app', 'Category'),
+			'old_cover_filename' => Yii::t('app', 'Old Cover Filename'),
+			'old_banner_filename' => Yii::t('app', 'Old Banner Filename'),
+			'batches' => Yii::t('app', 'Batches'),
+			'registereds' => Yii::t('app', 'Registereds'),
+			'categoryName' => Yii::t('app', 'Category'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
-			'tag_search' => Yii::t('app', 'Tags'),
-			'tag_id_i' => Yii::t('app', 'Tags'),
-			'filter_gender' => Yii::t('app', 'Gender'),
-			'filter_major' => Yii::t('app', 'Major'),
-			'filter_university' => Yii::t('app', 'University'),
-			'blasting_search' => Yii::t('app', 'Blasting'),
+			'tag' => Yii::t('app', 'Tags'),
+			'gender' => Yii::t('app', 'Gender'),
+			'major' => Yii::t('app', 'Majors'),
+			'majorGroup' => Yii::t('app', 'Major Groups'),
+			'university' => Yii::t('app', 'Universities'),
 		];
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getBatches()
+	public function getBatches($count=false, $publish=1)
 	{
-		return $this->hasMany(EventBatch::className(), ['event_id' => 'event_id']);
+		if($count == false)
+			return $this->hasMany(EventBatch::className(), ['event_id' => 'event_id'])
+			->andOnCondition([sprintf('%s.publish', EventBatch::tableName()) => $publish]);
+
+		$model = EventBatch::find()
+			->where(['event_id' => $this->event_id]);
+		if($publish == 0)
+			$model->unpublish();
+		elseif($publish == 1)
+			$model->published();
+		elseif($publish == 2)
+			$model->deleted();
+		$batches = $model->count();
+
+		return $batches ? $batches : 0;
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getBlastings()
+	public function getGenders($result=false)
 	{
-		return $this->hasMany(EventBlastings::className(), ['event_id' => 'event_id']);
-	}
+		if($result == true)
+			return \yii\helpers\ArrayHelper::map($this->genders, 'gender', 'id');
 
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getMajors()
-	{
-		return $this->hasMany(EventFilterMajor::className(), ['event_id' => 'event_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getUniversities()
-	{
-		return $this->hasMany(EventFilterUniversity::className(), ['event_id' => 'event_id']);
-	}
-
-	/**
-	 * @return \yii\db\ActiveQuery
-	 */
-	public function getFilters()
-	{
 		return $this->hasMany(EventFilterGender::className(), ['event_id' => 'event_id']);
 	}
 
 	/**
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getTags()
+	public function getMajors($result=false, $val='id')
 	{
+		if($result == true)
+			return \yii\helpers\ArrayHelper::map($this->majors, 'major_id', $val=='id' ? 'id' : 'major.major_name');
+
+		return $this->hasMany(EventFilterMajor::className(), ['event_id' => 'event_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getMajorGroups($result=false, $val='id')
+	{
+		if($result == true)
+			return \yii\helpers\ArrayHelper::map($this->majorGroups, 'major_group_id', $val=='id' ? 'id' : 'group.group_name');
+
+		return $this->hasMany(EventFilterMajorGroup::className(), ['event_id' => 'event_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getUniversities($result=false, $val='id')
+	{
+		if($result == true)
+			return \yii\helpers\ArrayHelper::map($this->universities, 'university_id', $val=='id' ? 'id' : 'university.company.company_name');
+
+		return $this->hasMany(EventFilterUniversity::className(), ['event_id' => 'event_id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getRegistereds($count=false)
+	{
+		if($count == false)
+			return $this->hasMany(EventRegistered::className(), ['event_id' => 'event_id']);
+
+		$model = EventRegistered::find()
+			->where(['event_id' => $this->event_id]);
+		$registereds = $model->count();
+
+		return $registereds ? $registereds : 0;
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getTags($result=false, $val='id')
+	{
+		if($result == true)
+			return \yii\helpers\ArrayHelper::map($this->tags, 'tag_id', $val=='id' ? 'id' : 'tag.body');
+
 		return $this->hasMany(EventTag::className(), ['event_id' => 'event_id']);
 	}
 
@@ -197,11 +254,6 @@ class Events extends \app\components\ActiveRecord
 	public function getCategory()
 	{
 		return $this->hasOne(EventCategory::className(), ['cat_id' => 'cat_id']);
-	}
-
-	public function getView()
-	{
-		return $this->hasOne(EventsView::className(), ['event_id' => 'event_id']);
 	}
 
 	/**
@@ -221,6 +273,15 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\Events the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\Events(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -236,49 +297,76 @@ class Events extends \app\components\ActiveRecord
 			'contentOptions' => ['class'=>'center'],
 		];
 		if(!Yii::$app->request->get('category')) {
-			$this->templateColumns['category_search'] = [
-				'attribute' => 'category_search',
+			$this->templateColumns['cat_id'] = [
+				'attribute' => 'cat_id',
 				'value' => function($model, $key, $index, $column) {
-					return $model->category->title->message;
+					return isset($model->category) ? $model->category->title->message : '-';
+					// return $model->categoryName;
 				},
+				'filter' => EventCategory::getCategory(),
 			];
 		}
-		$this->templateColumns['title'] = 'title';
-		$this->templateColumns['theme'] = 'theme';
-		// $this->templateColumns['introduction'] = 'introduction';
+		$this->templateColumns['title'] = [
+			'attribute' => 'title',
+			'value' => function($model, $key, $index, $column) {
+				return $model->title;
+			},
+		];
+		$this->templateColumns['theme'] = [
+			'attribute' => 'theme',
+			'value' => function($model, $key, $index, $column) {
+				return $model->theme;
+			},
+		];
 		$this->templateColumns['introduction'] = [
 			'attribute' => 'introduction',
 			'value' => function($model, $key, $index, $column) {
-					return $model->introduction ? $model->introduction : '-';
-				},
+				return $model->introduction;
+			},
 			'format' => 'html',
 		];
-		// $this->templateColumns['description'] = 'description';
 		$this->templateColumns['description'] = [
 			'attribute' => 'description',
 			'value' => function($model, $key, $index, $column) {
-					return  $model->description ? $model->description : '-';
-				},
+				return $model->description;
+			},
 			'format' => 'html',
 		];
-		$this->templateColumns['cover_filename'] = 'cover_filename';
-		$this->templateColumns['banner_filename'] = 'banner_filename';
-		// $this->templateColumns['registered_message'] = 'registered_message';
-		$this->templateColumns['registered_message'] =  [
+		$this->templateColumns['cover_filename'] = [
+			'attribute' => 'cover_filename',
+			'value' => function($model, $key, $index, $column) {
+				$uploadPath = join('/', [self::getUploadPath(false), $model->event_id]);
+				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt' => $model->cover_filename]) : '-';
+			},
+			'format' => 'html',
+		];
+		$this->templateColumns['banner_filename'] = [
+			'attribute' => 'banner_filename',
+			'value' => function($model, $key, $index, $column) {
+				$uploadPath = join('/', [self::getUploadPath(false), $model->event_id]);
+				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt' => $model->banner_filename]) : '-';
+			},
+			'format' => 'html',
+		];
+		$this->templateColumns['registered_message'] = [
 			'attribute' => 'registered_message',
 			'value' => function($model, $key, $index, $column) {
-					return $model->registered_message ? $model->registered_message : '-';
-				},
+				return serialize($model->registered_message);
+			},
 			'format' => 'html',
 		];
-		// $this->templateColumns['registered_type'] = 'registered_type';
 		$this->templateColumns['registered_type'] = [
 			'attribute' => 'registered_type',
-			'filter'=>array("single"=>"Single", "multiple"=>"Multiple", "package"=>"Package"),
 			'value' => function($model, $key, $index, $column) {
-				return $model->registered_type;
+				return self::getRegisteredType($model->registered_type);
 			},
-			'contentOptions' => ['class'=>'center'],
+			'filter' => self::getRegisteredType(),
+		];
+		$this->templateColumns['package_reward'] = [
+			'attribute' => 'package_reward',
+			'value' => function($model, $key, $index, $column) {
+				return serialize($model->package_reward);
+			},
 		];
 		$this->templateColumns['published_date'] = [
 			'attribute' => 'published_date',
@@ -287,14 +375,36 @@ class Events extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'published_date'),
 		];
-		$this->templateColumns['tag_search'] = [
-			'attribute' => 'tag_search',
+		$this->templateColumns['tag'] = [
+			'attribute' => 'tag',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['tag/index', 'event'=>$model->primaryKey]);
-				return Html::a($model->view->tags ? $model->view->tags : 0, $url);
+				return implode(', ', $model->getTags(true, 'title'));
 			},
-			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
+		];
+		$this->templateColumns['gender'] = [
+			'attribute' => 'gender',
+			'value' => function($model, $key, $index, $column) {
+				return self::parseGender(array_flip($model->getGenders(true)), ', ');
+			},
+			'filter' => EventFilterGender::getGender(),
+		];
+		$this->templateColumns['major'] = [
+			'attribute' => 'major',
+			'value' => function($model, $key, $index, $column) {
+				return implode(', ', $model->getMajors(true, 'title'));
+			},
+		];
+		$this->templateColumns['majorGroup'] = [
+			'attribute' => 'majorGroup',
+			'value' => function($model, $key, $index, $column) {
+				return implode(', ', $model->getMajorGroups(true, 'title'));
+			},
+		];
+		$this->templateColumns['university'] = [
+			'attribute' => 'university',
+			'value' => function($model, $key, $index, $column) {
+				return implode(', ', $model->getUniversities(true, 'title'));
+			},
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
@@ -308,6 +418,7 @@ class Events extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
@@ -334,34 +445,45 @@ class Events extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'updated_date'),
 		];
-		$this->templateColumns['registered_enable'] = [
-			'attribute' => 'registered_enable',
-			// 'value' => function($model, $key, $index, $column) {
-			// 	return $model->registered_enable;
-			// },
-			'filter'=>array(0=>"Offline", 1=>"Online"),
+		$this->templateColumns['batches'] = [
+			'attribute' => 'batches',
 			'value' => function($model, $key, $index, $column) {
-				return $model->registered_enable ? Yii::t('app', 'Online') : Yii::t('app', 'Offline');
+				$batches = $model->getBatches(true);
+				return Html::a($batches, ['o/batch/manage', 'event'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
 			},
+			'filter' => false,
 			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
+		];
+		$this->templateColumns['registereds'] = [
+			'attribute' => 'registereds',
+			'value' => function($model, $key, $index, $column) {
+				$registereds = $model->getRegistereds(true);
+				return Html::a($registereds, ['registered/admin/manage', 'event'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+			},
+			'filter' => false,
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
 		];
 		$this->templateColumns['enable_filter'] = [
 			'attribute' => 'enable_filter',
+			'label' => Yii::t('app', 'Filter'),
 			'value' => function($model, $key, $index, $column) {
-				return $model->enable_filter ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
+				return $this->getRegisteredEnable($model->enable_filter);
 			},
 			'filter' => $this->filterYesNo(),
 			'contentOptions' => ['class'=>'center'],
 		];
-		$this->templateColumns['blasting_search'] = [
-			'attribute' => 'blasting_search',
+		$this->templateColumns['registered_enable'] = [
+			'attribute' => 'registered_enable',
+			'label' => Yii::t('app', 'Registered'),
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['blastings/index', 'event_id'=>$model->primaryKey]);
-				return  Html::a($model->view->blasting_condition ? Yii::t('app', 'Yes') : Yii::t('app', 'No'), $url);
+				$url = Url::to(['registered', 'id'=>$model->primaryKey]);
+				return $this->quickAction($url, $model->registered_enable, 'Enable,Disable');
 			},
 			'filter' => $this->filterYesNo(),
 			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
+			'format' => 'raw',
 		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [
@@ -375,6 +497,66 @@ class Events extends \app\components\ActiveRecord
 				'format' => 'raw',
 			];
 		}
+	}
+
+	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['event_id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * function getRegisteredEnable
+	 */
+	public static function getRegisteredEnable($value=null)
+	{
+		$items = array(
+			1 => Yii::t('app', 'Enable'),
+			0 => Yii::t('app', 'Disable'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * function getRegisteredType
+	 */
+	public static function getRegisteredType($value=null)
+	{
+		$items = array(
+			'single' => Yii::t('app', 'Single'),
+			'multiple' => Yii::t('app', 'Multiple'),
+			'package' => Yii::t('app', 'Package'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
+	 * @param returnAlias set true jika ingin kembaliannya path alias atau false jika ingin string
+	 * relative path. default true.
+	 */
+	public static function getUploadPath($returnAlias=true) 
+	{
+		return ($returnAlias ? Yii::getAlias('@public/event') : 'event');
 	}
 
 	/**
@@ -398,44 +580,81 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * Mengembalikan lokasi cover
-	 *
-	 * @param returnAlias set true jika ingin kembaliannya path alias atau false jika ingin string
-	 * relative path. default true.
+	 * function parseGender
 	 */
-	public static function getCoverPath($returnAlias=true) 
+	public static function parseGender($gender, $sep='li')
 	{
-		return ($returnAlias ? Yii::getAlias('@webroot/public/event/admin/cover') : 'public/event/admin/cover');
+		if(!is_array($gender) || (is_array($gender) && empty($gender)))
+			return '-';
+
+		$genders = EventFilterGender::getGender();
+		$items = [];
+		foreach ($gender as $val) {
+			if(array_key_exists($val, $genders))
+				$items[] = $genders[$val];
+		}
+
+		if($sep == 'li') {
+			return Html::ul($items, ['item' => function($item, $index) {
+				return Html::tag('li', $item);
+			}, 'class'=>'list-boxed']);
+		}
+
+		return implode($sep, $items);
 	}
 
 	/**
-	 * Mengembalikan lokasi banner
-	 *
-	 * @param returnAlias set true jika ingin kembaliannya path alias atau false jika ingin string
-	 * relative path. default true.
+	 * after find attributes
 	 */
-	public static function getBannerPath($returnAlias=true) 
+	public function afterFind()
 	{
-		return ($returnAlias ? Yii::getAlias('@webroot/public/event/admin/banner') : 'public/event/admin/banner');
-	}
+		parent::afterFind();
 
-	/**
-	 * afterFind
-	 *
-	 * Simpan nama cover lama untuk keperluan jikalau kondisi update tp covernya tidak diupdate.
-	 */
-	public function afterFind() 
-	{
-		$this->old_cover = $this->cover_filename;
-		$this->old_banner = $this->banner_filename;
+		$this->old_cover_filename = $this->cover_filename;
+		$this->old_banner_filename = $this->banner_filename;
+		$this->registered_message = unserialize($this->registered_message);
+		$this->package_reward = unserialize($this->package_reward);
+		// $this->categoryName = isset($this->category) ? $this->category->title->message : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
+		$this->tag = implode(',', $this->getTags(true, 'title'));
+		$this->gender = array_flip($this->getGenders(true));
+		$this->major = implode(',', $this->getMajors(true, 'title'));
+		$this->majorGroup = implode(',', $this->getMajorGroups(true, 'title'));
+		$this->university = implode(',', $this->getUniversities(true, 'title'));
 	}
 
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
+			// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
+			if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+				$coverFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
+				if(!in_array(strtolower($this->cover_filename->getExtension()), $coverFilenameFileType)) {
+					$this->addError('cover_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
+						'name'=>$this->cover_filename->name,
+						'extensions'=>$this->formatFileType($coverFilenameFileType, false),
+					]));
+				}
+			} else {
+				if($this->isNewRecord || (!$this->isNewRecord && $this->old_cover_filename == ''))
+					$this->addError('cover_filename', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('cover_filename')]));
+			}
+
+			// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
+			if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+				$bannerFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
+				if(!in_array(strtolower($this->banner_filename->getExtension()), $bannerFilenameFileType)) {
+					$this->addError('banner_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
+						'name'=>$this->banner_filename->name,
+						'extensions'=>$this->formatFileType($bannerFilenameFileType, false),
+					]));
+				}
+			}
+
 			if($this->isNewRecord) {
 				if($this->creation_id == null)
 					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
@@ -444,10 +663,11 @@ class Events extends \app\components\ActiveRecord
 					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
 			}
 
-			if ($this->registered_enable == 0 && $this->registered_message == null) {
-				$this->addError('registered_message', Yii::t('app', 'Registered Message harus diisi.'));
-			} else if ($this->registered_enable == 1 && $this->registered_type == null) {
-				$this->addError('registered_type', Yii::t('app', 'Registered Type harus diisi.'));
+			if($this->registered_enable) {
+				if ($this->registered_message == '')
+					$this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_message')]));
+				if ($this->registered_type == '')
+					$this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
 			}
 		}
 		return true;
@@ -456,459 +676,99 @@ class Events extends \app\components\ActiveRecord
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
 		if(parent::beforeSave($insert)) {
+			if(!$insert) {
+				$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+				$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
+				$this->createUploadDirectory(self::getUploadPath(), $this->event_id);
+
+				// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
+				if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
+					if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+						if($this->old_cover_filename != '' && file_exists(join('/', [$uploadPath, $this->old_cover_filename])))
+							rename(join('/', [$uploadPath, $this->old_cover_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_change_'.$this->old_cover_filename]));
+						$this->cover_filename = $fileName;
+					}
+				} else {
+					if($this->cover_filename == '')
+						$this->cover_filename = $this->old_cover_filename;
+				}
+
+				// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
+				if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
+					if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+						if($this->old_banner_filename != '' && file_exists(join('/', [$uploadPath, $this->old_banner_filename])))
+							rename(join('/', [$uploadPath, $this->old_banner_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_change_'.$this->old_banner_filename]));
+						$this->banner_filename = $fileName;
+					}
+				} else {
+					if($this->banner_filename == '')
+						$this->banner_filename = $this->old_banner_filename;
+				}
+
+				// set filters
+				$event = new Event(['sender' => $this]);
+				Event::trigger(self::className(), self::EVENT_BEFORE_SAVE_EVENTS, $event);
+			}
+
+			$this->registered_message = serialize($this->registered_message);
+			$this->package_reward = serialize($this->package_reward);
 			$this->published_date = Yii::$app->formatter->asDate($this->published_date, 'php:Y-m-d');
-
-			// cover path
-			$coverPath = Yii::getAlias('@webroot/public/event/admin/cover');
-			$bannerPath = Yii::getAlias('@webroot/public/event/admin/banner');
-
-			// Add directory cover
-			if(!file_exists($coverPath)) {
-				@mkdir($coverPath, 0755,true);
-
-				// Add file in directory (index.php)
-				$indexFile = join('/', [$coverPath, 'index.php']);
-				if(!file_exists($indexFile)) {
-					file_put_contents($indexFile, "<?php\n");
-				}
-
-			}else {
-				@chmod($coverPath, 0755,true);
-			}
-
-			// Add directory banner
-			if(!file_exists($bannerPath)) {
-				@mkdir($bannerPath, 0755,true);
-
-				// Add file in directory (index.php)
-				$indexFile = join('/', [$bannerPath, 'index.php']);
-				if(!file_exists($indexFile)) {
-					file_put_contents($indexFile, "<?php\n");
-				}
-
-			}else {
-				@chmod($bannerPath, 0755,true);
-			}
-
-			// Upload cover
-			if($this->cover_filename instanceof \yii\web\UploadedFile) {
-				$imageName = time().'_'.$this->sanitizeFileName($this->title).'.'. $this->cover_filename->extension; 
-				if($this->cover_filename->saveAs($coverPath.'/'.$imageName)) {
-					$this->cover_filename = $imageName;
-					@chmod($imageName, 0777);
-				}
-			}
-
-			// Upload banner
-			if($this->banner_filename instanceof \yii\web\UploadedFile) {
-				$imageName = time().'_'.$this->sanitizeFileName($this->title).'.'. $this->banner_filename->extension; 
-				if($this->banner_filename->saveAs($bannerPath.'/'.$imageName)) {
-					$this->banner_filename = $imageName;
-					@chmod($imageName, 0777);
-				}
-			}
 		}
-		return true;	
+		return true;
 	}
 
-	// /**
-	//  * after validate attributes
-	//  */
-	// public function afterValidate()
-	// {
-	// 	parent::afterValidate();
-	// 	// Create action
-		
-	// 	return true;
-	// }
-	
 	/**
 	 * After save attributes
 	 */
-	public function afterSave($insert, $changedAttributes) 
+	public function afterSave($insert, $changedAttributes)
 	{
-		$module = strtolower(Yii::$app->controller->module->id);
-		$controller = strtolower(Yii::$app->controller->id);
-		$action = strtolower(Yii::$app->controller->action->id);
-
 		parent::afterSave($insert, $changedAttributes);
-		// jika cover diperbarui, hapus cover yg lama.
-		if(!$insert && $this->cover_filename != $this->old_cover) {
-			$fname = join('/', [self::getCoverPath(), $this->old_cover]);
-			if(file_exists($fname)) {
-				@unlink($fname);
+
+		$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
+		$this->createUploadDirectory(self::getUploadPath(), $this->event_id);
+
+		if($insert) {
+			// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
+			if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
+				if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName])))
+					self::updateAll(['cover_filename' => $fileName], ['event_id' => $this->event_id]);
 			}
-		}
 
-		// jika banner diperbarui, hapus cover yg lama.
-		if(!$insert && $this->banner_filename != $this->old_banner) {
-			$fname = join('/', [self::getBannerPath(), $this->old_banner]);
-			if(file_exists($fname)) {
-				@unlink($fname);
+			// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
+			if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
+				if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName])))
+					self::updateAll(['banner_filename' => $fileName], ['event_id' => $this->event_id]);
 			}
-		}
 
-		//menyimpan tag di table coretags dan event tag
-		if($action == 'create' && $this->tag_hidden)
-		{	
-			$arrayTag = explode(',', $this->tag_hidden);
-			if (count($arrayTag)>0){
-				foreach ($arrayTag as $value) {
-					// mengecek apakah tag yang sama sudah ada sebelumnya
-					$tag_id = CoreTags::find()->where(['body' => trim($value)])->one();
-					if (trim($value) != '') {
-						// jika belum buat tag baru
-						if ($tag_id == null) {
-							$tag_id = new CoreTags();
-							$tag_id->body = trim($value);
-							$tag_id->save(false);
-						} 					
-						$model = new EventTag();
-						$model->event_id = $this->event_id;
-						$model->tag_id = $tag_id->tag_id;
-						
-						$model->save();
-					}
-				}	
-			}
-		} else if ($action == 'update') {
-			if (isset($this->tag_hidden)) {
-				$arrayTag = explode(',', $this->tag_hidden);
-				$tag = EventTag::find()->select(['id', 'tag_id'])->where(['event_id' => $this->event_id, 'publish' => 1])->all();
-				if ($tag != null) {
-					//delete if not in array
-				 	$arrIdToBeDel = array();
-			        $arrIdTagNotInsert = array();
-
-					foreach($tag as $val) {
-						if(!in_array( (string)$val->tag->body, $arrayTag)) {
-							$arrIdToBeDel[] = $val->id;
-						}
-						if(in_array( (string)$val->tag->body, $arrayTag)) {
-							$arrIdTagNotInsert[] = $val->tag->body;
-						}
-					}
-
-					if(count($arrIdToBeDel) > 0) {
-						$listIdToBeDel = implode(',', $arrIdToBeDel);
-						EventTag::updateAll(['publish' => 2], "id IN ($listIdToBeDel)");
-					}
-
-					//insert new input
-					$newArr = array_values(array_diff($arrayTag, $arrIdTagNotInsert));	
-					foreach ($newArr as $value) {
-						// mengecek apakah tag yang sama sudah ada sebelumnya
-						$tag_id = CoreTags::find()->where(['body' => trim($value)])->one();
-						if (trim($value) != '') {
-							// jika belum buat tag baru
-							if ($tag_id == null) {
-								$tag_id = new CoreTags();
-								$tag_id->body = trim($value);
-								$tag_id->save(false);
-							} 		
-							$model = EventTag::find()->where(['event_id' => $this->event_id, 'tag_id' => $tag_id->tag_id])->one();	
-							if ($model == null) {		
-								$model = new EventTag();
-								$model->event_id = $this->event_id;
-								$model->tag_id = $tag_id->tag_id;
-							} 
-							$model->publish = 1;
-							
-							$model->save();
-						}
-					}	
-				} else {
-					if (count($arrayTag)>0){
-						foreach ($arrayTag as $value) {
-							// mengecek apakah tag yang sama sudah ada sebelumnya
-							$tag_id = CoreTags::find()->where(['body' => trim($value)])->one();
-							if (trim($value) != '') {
-								// jika belum buat tag baru
-								if ($tag_id == null) {
-									$tag_id = new CoreTags();
-									$tag_id->body = trim($value);
-									$tag_id->save(false);
-								} 					
-								$model = EventTag::find()->where(['event_id' => $this->event_id, 'tag_id' => $tag_id->tag_id])->one();	
-								if ($model == null) {		
-									$model = new EventTag();
-									$model->event_id = $this->event_id;
-									$model->tag_id = $tag_id->tag_id;
-								} 
-								$model->publish = 1;
-								
-								$model->save();
-							}
-						}	
-					}
-				}
-			}
-		}
-
-		if ($action == 'create') {
-			// cek jika enable filter dicentang
-			if ($this->enable_filter == 1) {
-				// gender
-				$filter_gender = new EventFilterGender();
-
-				$filter_gender->event_id = $this->event_id;
-				$filter_gender->gender = $this->filter_gender;
-				$filter_gender->save();
-
-				// major
-				$arrayMajor = explode(',', $this->major_hidden);
-				
-				// if (count($arrayMajor)>0){
-				// 	foreach ($arrayMajor as $value) {
-				// 		$filter_major = new EventFilterMajor();
-				// 		$filter_major->event_id = $this->event_id;
-				// 		$filter_major->major_id = $value;
-						
-				// 		$filter_major->save();
-				// 	}	
-				// }
-				if (count($arrayMajor)>0){
-					foreach ($arrayMajor as $value) {
-						// mengecek apakah tag yang sama sudah ada sebelumnya
-						$ipedia_another = IpediaAnother::find()->where(['another_name' => trim($value)])->one();
-						if (trim($value) != '') {
-							// jika belum buat tag baru
-							if ($ipedia_another == null) {
-								$ipedia_another = new IpediaAnother();
-								$ipedia_another->another_name = trim($value);
-
-								if ($ipedia_another->save(false)) {
-									$ipedia_major = new IpediaMajor();
-									$ipedia_major->another_id = $ipedia_another->another_id;
-									$ipedia_major->save(false);
-								}
-							} else {
-								$ipedia_major = IpediaMajor::find()->where(['another_id' => $ipedia_another->another_id])->one();
-							}					
-
-							$model = EventFilterMajor::find()->where(['event_id' => $this->event_id, 'major_id' => $ipedia_major->major_id])->one();	
-							if ($model == null) {		
-								$model = new EventFilterMajor();
-								$model->event_id = $this->event_id;
-								$model->major_id = $ipedia_major->major_id;
-							} 
-							$model->save();
-						}
-					}	
-				}
-
-
-				// university
-				$arrayUniversity = explode(',', $this->university_hidden);
-				
-				if (count($arrayUniversity)>0){
-					foreach ($arrayUniversity as $value) {
-						$filter_university = new EventFilterUniversity();
-						$filter_university->event_id = $this->event_id;
-						$filter_university->university_id = $value;
-						
-						$filter_university->save();
-					}	
-				}
-			}
-		} else if ($action == 'update') {
-			if ($this->enable_filter == 1) {
-				// gender
-				$filter_gender = EventFilterGender::find()->where(['event_id' => $this->event_id])->one();
-				if ($this->filter_gender != null) {
-					if ($filter_gender == null) {
-						$filter_gender = new EventFilterGender();
-						$filter_gender->event_id = $this->event_id;
-					}
-					$filter_gender->gender = $this->filter_gender;
-					$filter_gender->save();
-				} else {
-					if ($filter_gender != null) {
-						$filter_gender->delete();
-					}
-				}
-
-				// major
-				if (isset($this->major_hidden)) {
-					$arrayMajor = explode(',', $this->major_hidden);
-					$filter_major = EventFilterMajor::find()->select(['id', 'major_id'])->where(['event_id' => $this->event_id])->all();
-					if ($filter_major != null) {
-					 	//delete if not in array
-					 	$arrIdToBeDel = array();
-				        $arrIdMajorNotInsert = array();
-
-						foreach($filter_major as $val) {
-							if(!in_array( (string)$val->major->another->another_name, $arrayMajor)) {
-								$arrIdToBeDel[] = $val->id;
-							}
-							if(in_array( (string)$val->major->another->another_name, $arrayMajor)) {
-								$arrIdMajorNotInsert[] = $val->major->another->another_name;
-							}
-						}
-
-						if(count($arrIdToBeDel) > 0) {
-							$listIdToBeDel = implode(',', $arrIdToBeDel);
-							EventFilterMajor::deleteAll("id IN ($listIdToBeDel)");
-						}
-
-						 //insert new input
-						$newArr = array_values(array_diff($arrayMajor, $arrIdMajorNotInsert));						
-						// foreach($newArr as $val) {
-						// 	$model = new EventFilterMajor;
-						// 	$model->event_id = $this->event_id;
-						// 	$model->major_id = $val;
-						// 	if(!$model->save()) {
-						// 		print_r($model->getErrors());
-						// 	}
-						// }
-						foreach ($newArr as $value) {
-							// mengecek apakah major yang sama sudah ada sebelumnya
-							$ipedia_another = IpediaAnother::find()->where(['another_name' => trim($value)])->one();
-							if (trim($value) != '') {
-								// jika belum buat tag baru
-								if ($ipedia_another == null) {
-									$ipedia_another = new IpediaAnother();
-									$ipedia_another->another_name = trim($value);
-
-									if ($ipedia_another->save(false)) {
-										$ipedia_major = new IpediaMajor();
-										$ipedia_major->another_id = $ipedia_another->another_id;
-										$ipedia_major->save(false);
-									}
-								} else {
-									$ipedia_major = IpediaMajor::find()->where(['another_id' => $ipedia_another->another_id])->one();
-								}					
-
-								$model = EventFilterMajor::find()->where(['event_id' => $this->event_id, 'major_id' => $ipedia_major->major_id])->one();	
-								if ($model == null) {		
-									$model = new EventFilterMajor();
-									$model->event_id = $this->event_id;
-									$model->major_id = $ipedia_major->major_id;
-								} 
-								$model->save();
-							}
-						}	
-					} else {
-						// if (count($arrayMajor)>0){
-						// 	foreach ($arrayMajor as $value) {
-						// 		$filter_major = new EventFilterMajor();
-						// 		$filter_major->event_id = $this->event_id;
-						// 		$filter_major->major_id = $value;
-								
-						// 		$filter_major->save();
-						// 	}	
-						// }
-						if (count($arrayMajor)>0){
-							foreach ($arrayMajor as $value) {
-								// mengecek apakah tag yang sama sudah ada sebelumnya
-								$ipedia_another = IpediaAnother::find()->where(['another_name' => trim($value)])->one();
-								if (trim($value) != '') {
-									// jika belum buat tag baru
-									if ($ipedia_another == null) {
-										$ipedia_another = new IpediaAnother();
-										$ipedia_another->another_name = trim($value);
-
-										if ($ipedia_another->save(false)) {
-											$ipedia_major = new IpediaMajor();
-											$ipedia_major->another_id = $ipedia_another->another_id;
-											$ipedia_major->save(false);
-										}
-									} else {
-										$ipedia_major = IpediaMajor::find()->where(['another_id' => $ipedia_another->another_id])->one();
-									}					
-
-									$model = EventFilterMajor::find()->where(['event_id' => $this->event_id, 'major_id' => $ipedia_major->major_id])->one();	
-									if ($model == null) {		
-										$model = new EventFilterMajor();
-										$model->event_id = $this->event_id;
-										$model->major_id = $ipedia_major->major_id;
-									} 
-									$model->save();
-								}
-							}	
-						}
-					}
-				}
-
-				// university
-				if (isset($this->university_hidden)) {
-					$arrayUniversity = explode(',', $this->university_hidden);
-					$filter_university = EventFilterUniversity::find()->select(['id', 'university_id'])->where(['event_id' => $this->event_id])->all();
-					if ($filter_university != null) {
-					 	//delete if not in array
-					 	$arrIdToBeDel = array();
-				        $arrIdUniversityNotInsert = array();
-
-						foreach($filter_university as $val) {
-							if(!in_array( (string)$val->university_id, $arrayUniversity)) {
-								$arrIdToBeDel[] = $val->id;
-							}
-							if(in_array( (string)$val->university_id, $arrayUniversity)) {
-								$arrIdUniversityNotInsert[] = $val->university_id;
-							}
-						}
-
-						if(count($arrIdToBeDel) > 0) {
-							$listIdToBeDel = implode(',', $arrIdToBeDel);
-							EventFilterUniversity::deleteAll("id IN ($listIdToBeDel)");
-						}
-
-						 //insert new input
-						$newArr = array_values(array_diff($arrayUniversity, $arrIdUniversityNotInsert));						
-						foreach($newArr as $val) {
-							$model = new EventFilterUniversity;
-							$model->event_id = $this->event_id;
-							$model->university_id = $val;
-							if(!$model->save()) {
-								print_r($model->getErrors());
-							}
-						}
-					} else {
-						if (count($arrayUniversity)>0){
-							foreach ($arrayUniversity as $value) {
-								$filter_university = new EventFilterUniversity();
-								$filter_university->event_id = $this->event_id;
-								$filter_university->university_id = $value;
-								
-								$filter_university->save();
-							}	
-						}
-					}
-				}
-			}
+			// set filters
+			$event = new Event(['sender' => $this]);
+			Event::trigger(self::className(), self::EVENT_BEFORE_SAVE_EVENTS, $event);
 		}
 	}
-
-	// /**
-	//  * Before delete attributes
-	//  */
-	// public function beforeDelete() 
-	// {
-	// 	if(parent::beforeDelete()) {
-	// 		// Create action
-	// 	}
-	// 	return true;
-	// }
 
 	/**
 	 * After delete attributes
 	 */
-	public function afterDelete() 
+	public function afterDelete()
 	{
 		parent::afterDelete();
-		// Create action
 
-		$fname = join('/', [self::getCoverPath(), $this->cover_filename]);
-		if(file_exists($fname)) {
-			@unlink($fname);
-		}
+		$uploadPath = join('/', [self::getUploadPath(), $this->event_id]);
+		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
 
-		$fname = join('/', [self::getBannerPath(), $this->banner_filename]);
-		if(file_exists($fname)) {
-			@unlink($fname);
-		}
+		if($this->cover_filename != '' && file_exists(join('/', [$uploadPath, $this->cover_filename])))
+			rename(join('/', [$uploadPath, $this->cover_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_deleted_'.$this->cover_filename]));
+
+		if($this->banner_filename != '' && file_exists(join('/', [$uploadPath, $this->banner_filename])))
+			rename(join('/', [$uploadPath, $this->banner_filename]), join('/', [$verwijderenPath, $this->event_id.'-'.time().'_deleted_'.$this->banner_filename]));
+
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * MajorController
- * @var ommu\event\controllers\filter\MajorController
+ * @var $this ommu\event\controllers\filter\MajorController
  * @var $model ommu\event\models\EventFilterMajor
  *
  * MajorController implements the CRUD actions for EventFilterMajor model.
@@ -18,10 +18,11 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 09:22 WIB
+ * @modified date 24 June 2019, 20:13 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
- 
+
 namespace ommu\event\controllers\filter;
 
 use Yii;
@@ -34,7 +35,7 @@ use ommu\event\models\search\EventFilterMajor as EventFilterMajorSearch;
 class MajorController extends Controller
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function behaviors()
 	{
@@ -78,26 +79,33 @@ class MajorController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Filter Majors');
+		if(($event = Yii::$app->request->get('event')) != null)
+			$event = \ommu\event\models\Events::findOne($event);
+		if(($major = Yii::$app->request->get('major')) != null)
+			$major = \ommu\ipedia\models\IpediaMajors::findOne($major);
+
+		$this->view->title = Yii::t('app', 'Filter Majors');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 			'columns' => $columns,
+			'event' => $event,
+			'major' => $major,
 		]);
 	}
 
 	/**
 	 * Displays a single EventFilterMajor model.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionView($id)
 	{
 		$model = $this->findModel($id);
 
-		$this->view->title = Yii::t('app', 'View Event Filter Major: {id}', ['id' => $model->id]);
+		$this->view->title = Yii::t('app', 'Detail Filter Major: {event-id}', ['event-id' => $model->event->title]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -108,28 +116,28 @@ class MajorController extends Controller
 	/**
 	 * Deletes an existing EventFilterMajor model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionDelete($id)
 	{
 		$model = $this->findModel($id);
 		$model->delete();
-		
-		Yii::$app->session->setFlash('success', Yii::t('app', 'Event Filter Major success deleted.'));
-		return $this->redirect(['index']);
+
+		Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter major success deleted.'));
+		return $this->redirect(['manage']);
 	}
 
 	/**
 	 * Finds the EventFilterMajor model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
-	 * @param string $id
+	 * @param integer $id
 	 * @return EventFilterMajor the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id)
 	{
-		if (($model = EventFilterMajor::findOne($id)) !== null)
+		if(($model = EventFilterMajor::findOne($id)) !== null)
 			return $model;
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
