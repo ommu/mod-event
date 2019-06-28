@@ -27,11 +27,21 @@ $this->params['breadcrumbs'][] = $model->title;
 
 <?php
 $attributes = [
-	'id',
+	[
+		'attribute' => 'id',
+		'value' => $model->id ? $model->id : '-',
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'publish',
 		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'published_date',
+		'value' => Yii::$app->formatter->asDate($model->published_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'categoryName',
@@ -43,8 +53,10 @@ $attributes = [
 		},
 		'format' => 'html',
 	],
-	'title',
-	'theme',
+	[
+		'attribute' => 'title',
+		'value' => $model->title ? $model->title : '-',
+	],
 	[
 		'attribute' => 'introduction',
 		'value' => $model->introduction ? $model->introduction : '-',
@@ -54,6 +66,7 @@ $attributes = [
 		'attribute' => 'description',
 		'value' => $model->description ? $model->description : '-',
 		'format' => 'html',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'cover_filename',
@@ -62,6 +75,7 @@ $attributes = [
 			return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['class'=>'mb-3']).$model->cover_filename : '-';
 		},
 		'format' => 'html',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'banner_filename',
@@ -70,78 +84,113 @@ $attributes = [
 			return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['class'=>'mb-3']).$model->banner_filename : '-';
 		},
 		'format' => 'html',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'theme',
+		'value' => $model->theme ? $model->theme : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'tag',
 		'value' => implode(', ', $model->getTags(true, 'title')),
-	],
-	[
-		'attribute' => 'published_date',
-		'value' => Yii::$app->formatter->asDate($model->published_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'registered_enable',
 		'value' => $model->quickAction(Url::to(['registered', 'id'=>$model->primaryKey]), $model->registered_enable, 'Enable,Disable'),
 		'format' => 'raw',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'registered_type',
 		'value' => Events::getRegisteredType($model->registered_type),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'package_reward',
 		'value' => Events::parseReward($model->package_reward),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'registered_message',
 		'value' => serialize($model->registered_message),
 		'format' => 'html',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'enable_filter',
-		'value' => $model->filterYesNo($model->enable_filter),
+		'value' => $model->getRegisteredEnable($model->enable_filter),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'gender',
 		'value' => $model::parseGender(array_flip($model->getGenders(true)), ', '),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'major',
 		'value' => implode(', ', $model->getMajors(true, 'title')),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'majorGroup',
 		'value' => implode(', ', $model->getMajorGroups(true, 'title')),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'university',
 		'value' => implode(', ', $model->getUniversities(true, 'title')),
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'batches',
+		'value' => function ($model) {
+			$batches = $model->getBatches(true);
+			return Html::a($batches, ['o/batch/manage', 'id'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
+		},
+		'format' => 'html',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'registereds',
+		'value' => function ($model) {
+			$registereds = $model->getRegistereds(true);
+			return Html::a($registereds, ['registered/admin/manage', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+		},
+		'format' => 'html',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'creation_date',
 		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'creationDisplayname',
 		'value' => isset($model->creation) ? $model->creation->displayname : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'modified_date',
 		'value' => Yii::$app->formatter->asDatetime($model->modified_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'modifiedDisplayname',
 		'value' => isset($model->modified) ? $model->modified->displayname : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'updated_date',
 		'value' => Yii::$app->formatter->asDatetime($model->updated_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => '',
 		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
 		'format' => 'html',
-		'visible' => Yii::$app->request->isAjax ? true : false,
+		'visible' => !$small && Yii::$app->request->isAjax ? true : false,
 	],
 ];
 

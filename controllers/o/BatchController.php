@@ -82,6 +82,8 @@ class BatchController extends Controller
 	public function actionManage()
 	{
 		$searchModel = new EventBatchSearch();
+		if(($id = Yii::$app->request->get('id')) != null)
+			$searchModel = new EventBatchSearch(['event_id'=>$id]);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		$gridColumn = Yii::$app->request->get('GridColumn', null);
@@ -94,7 +96,7 @@ class BatchController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		if(($event = Yii::$app->request->get('event')) != null)
+		if(($event = Yii::$app->request->get('event')) != null || ($event = Yii::$app->request->get('id')) != null)
 			$event = \ommu\event\models\Events::findOne($event);
 
 		$this->view->title = Yii::t('app', 'Batches');
@@ -119,6 +121,7 @@ class BatchController extends Controller
 			throw new \yii\web\NotAcceptableHttpException(Yii::t('app', 'The requested page does not exist.'));
 
 		$model = new EventBatch(['event_id'=>$id]);
+		$this->subMenuParam = $model->event_id;
 
 		if(Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
@@ -127,8 +130,7 @@ class BatchController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success created.'));
-				return $this->redirect(['manage']);
-				//return $this->redirect(['view', 'id'=>$model->id]);
+				return $this->redirect(['manage', 'id'=>$model->event_id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)
@@ -164,7 +166,7 @@ class BatchController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
-				return $this->redirect(['manage']);
+				return $this->redirect(['update', 'id'=>$model->id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)
@@ -211,7 +213,7 @@ class BatchController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success deleted.'));
-			return $this->redirect(['manage']);
+			return $this->redirect(['manage', 'id'=>$model->event_id]);
 		}
 	}
 
@@ -229,7 +231,7 @@ class BatchController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
-			return $this->redirect(['manage']);
+			return $this->redirect(['manage', 'id'=>$model->event_id]);
 		}
 	}
 

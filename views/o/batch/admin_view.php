@@ -17,27 +17,43 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
-use ommu\event\models\EventBatch;
+use app\components\grid\GridView;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Batches'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $model->batch_name;
 
+if(!$small) {
 $this->params['menu']['content'] = [
 	['label' => Yii::t('app', 'Detail'), 'url' => Url::to(['view', 'id'=>$model->id]), 'icon' => 'eye', 'htmlOptions' => ['class'=>'btn btn-success']],
 	['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id'=>$model->id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
 	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
 ];
-?>
+} ?>
 
 <div class="event-batch-view">
 
 <?php
 $attributes = [
-	'id',
+	[
+		'attribute' => 'id',
+		'value' => $model->id ? $model->id : '-',
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'publish',
 		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'eventCategoryId',
+		'value' => function ($model) {
+			$eventCategoryName = isset($model->event->category) ? $model->event->category->title->message : '-';
+			if($eventCategoryName != '-')
+				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
+			return $eventCategoryName;
+		},
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'eventTitle',
@@ -49,33 +65,83 @@ $attributes = [
 		},
 		'format' => 'html',
 	],
-	'batch_name',
+	[
+		'attribute' => 'batch_name',
+		'value' => $model->batch_name ? $model->batch_name : '-',
+	],
 	[
 		'attribute' => 'batch_desc',
 		'value' => $model->batch_desc ? $model->batch_desc : '-',
 		'format' => 'html',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'batch_location',
+		'value' => $model->batch_location ? $model->batch_location : '-',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'location_name',
+		'value' => $model->location_name ? $model->location_name : '-',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'location_address',
+		'value' => $model->location_address ? $model->location_address : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'batch_date',
 		'value' => Yii::$app->formatter->asDate($model->batch_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'batch_time',
-		'value' => serialize($model->batch_time),
+		'value' => $model::parseBatchTime($model->batch_time),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'speakers',
-		'value' => function ($model) {
-			$speakers = $model->getSpeakers(true);
-			return Html::a($speakers, ['o/speaker/manage', 'batch'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$speakers])]);
-		},
+		'value' => GridView::widget([
+			'dataProvider' => $model->getSpeakers('dataProvider'),
+			'columns' => [
+				[
+					'attribute' => 'speaker_name',
+					'value' => function($model, $key, $index, $column) {
+						return $model->speaker_name;
+					},
+					'enableSorting' => false,
+				],
+				[
+					'attribute' => 'speaker_position',
+					'value' => function($model, $key, $index, $column) {
+						return $model->speaker_position;
+					},
+					'enableSorting' => false,
+				],
+				[
+					'attribute' => 'session_title',
+					'value' => function($model, $key, $index, $column) {
+						return $model->session_title;
+					},
+					'enableSorting' => false,
+				],
+			],
+			'layout' => '{items}'.Html::a(Yii::t('app', 'show speaker manage'), ['o/speaker/manage', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$model->getSpeakers('count')])]),
+		]),
 		'format' => 'html',
+		'visible' => !$small,
 	],
-	'batch_price',
-	'batch_location',
-	'location_name',
-	'location_address',
-	'registered_limit',
+	[
+		'attribute' => 'batch_price',
+		'value' => $model->batch_price ? $model->batch_price : '-',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'registered_limit',
+		'value' => $model->registered_limit ? $model->registered_limit : '-',
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'registereds',
 		'value' => function ($model) {
@@ -83,32 +149,38 @@ $attributes = [
 			return Html::a($registereds, ['registered/batch/manage', 'batch'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
 		},
 		'format' => 'html',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'creation_date',
 		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'creationDisplayname',
 		'value' => isset($model->creation) ? $model->creation->displayname : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'modified_date',
 		'value' => Yii::$app->formatter->asDatetime($model->modified_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'modifiedDisplayname',
 		'value' => isset($model->modified) ? $model->modified->displayname : '-',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'updated_date',
 		'value' => Yii::$app->formatter->asDatetime($model->updated_date, 'medium'),
+		'visible' => !$small,
 	],
 	[
 		'attribute' => '',
 		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
 		'format' => 'html',
-		'visible' => Yii::$app->request->isAjax ? true : false,
+		'visible' => !$small && Yii::$app->request->isAjax ? true : false,
 	],
 ];
 

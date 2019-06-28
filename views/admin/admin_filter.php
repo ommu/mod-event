@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Filter');
 
 <?php $enableFilter = Events::getRegisteredEnable();
 echo $form->field($model, 'enable_filter')
-	->dropDownList($enableFilter, ['prompt' => ''])
+	->dropDownList($enableFilter, ['prompt'=>''])
 	->label($model->getAttributeLabel('enable_filter')); ?>
 
 <?php echo $form->field($model, 'gender')

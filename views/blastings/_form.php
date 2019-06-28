@@ -24,7 +24,7 @@ $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
 	'imageUpload' => ['/redactor/upload/image'],
 	'fileUpload' => ['/redactor/upload/file'],
-	'plugins' => ['clips', 'fontcolor','imagemanager']
+	'plugins' => ['clips', 'fontcolor', 'imagemanager']
 ];
 ?>
 
@@ -64,7 +64,7 @@ else {
 // bila tidak dari event maka pilih event melalui dropdown
 $get_event = Events::getEvent(1);
 echo $form->field($model, 'event_id')
-	->dropDownList($get_event, ['prompt' => ''])
+	->dropDownList($get_event, ['prompt'=>''])
 	->label($model->getAttributeLabel('event_id')); 
 }
 ?>

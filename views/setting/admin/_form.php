@@ -66,7 +66,7 @@ echo $form->field($model, 'permission', ['template' => '{label}{beginWrapper}{hi
 
 <?php $eventNotifyDiffType = EventSetting::getEventNotifyDiffType();
 $event_notify_diff_type = $form->field($model, 'event_notify_diff_type', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6'], 'options' => ['tag' => null]])
-	->dropDownList($eventNotifyDiffType, ['prompt' => ''])
+	->dropDownList($eventNotifyDiffType, ['prompt'=>''])
 	->label($model->getAttributeLabel('event_notify_diff_type')); ?>
 
 <?php echo $form->field($model, 'event_notify_difference', ['template' => '{label}{beginWrapper}{input}{endWrapper}'.$event_notify_diff_type.'{error}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6', 'error'=>'col-md-6 col-sm-9 col-xs-12 col-sm-offset-3']])
@@ -74,7 +74,7 @@ $event_notify_diff_type = $form->field($model, 'event_notify_diff_type', ['templ
 	->label($model->getAttributeLabel('event_notify_difference')); ?>
 
 <?php $event_banned_diff_type = $form->field($model, 'event_banned_diff_type', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6'], 'options' => ['tag' => null]])
-	->dropDownList($eventNotifyDiffType, ['prompt' => ''])
+	->dropDownList($eventNotifyDiffType, ['prompt'=>''])
 	->label($model->getAttributeLabel('event_banned_diff_type')); ?>
 
 <?php echo $form->field($model, 'event_banned_difference', ['template' => '{label}{beginWrapper}{input}{endWrapper}'.$event_banned_diff_type.'{error}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6', 'error'=>'col-md-6 col-sm-9 col-xs-12 col-sm-offset-3']])

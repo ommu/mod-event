@@ -24,7 +24,7 @@ $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
 	'imageUpload' => ['/redactor/upload/image'],
 	'fileUpload' => ['/redactor/upload/file'],
-	'plugins' => ['clips', 'fontcolor','imagemanager']
+	'plugins' => ['clips', 'fontcolor', 'imagemanager']
 ];
 ?>
 
@@ -48,25 +48,7 @@ $redactorOptions = [
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('batch_desc')); ?>
 
-<?php echo $form->field($model, 'batch_date')
-	->textInput(['type'=>'date'])
-	->label($model->getAttributeLabel('batch_date')); ?>
-
-<?php $batch_time_start = $form->field($model, 'batch_time[start]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
-	->textInput(['type'=>'time'])
-	->label($model->getAttributeLabel('batch_time[start]')); ?>
-
-<?php echo $form->field($model, 'batch_time[end]', ['template' => '{label}'.$batch_time_start.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
-	->textInput(['type'=>'time'])
-	->label($model->getAttributeLabel('batch_time')); ?>
-
-<?php echo $form->field($model, 'batch_price')
-	->textInput(['type'=>'number', 'min'=>'0'])
-	->label($model->getAttributeLabel('batch_price')); ?>
-
-<?php echo $form->field($model, 'registered_limit')
-	->textInput(['type'=>'number', 'min'=>'0'])
-	->label($model->getAttributeLabel('registered_limit')); ?>
+<div class="ln_solid"></div>
 
 <?php echo $form->field($model, 'batch_location')
 	->textInput(['maxlength'=>true])
@@ -79,6 +61,28 @@ $redactorOptions = [
 <?php echo $form->field($model, 'location_address')
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('location_address')); ?>
+
+<?php echo $form->field($model, 'batch_date')
+	->textInput(['type'=>'date'])
+	->label($model->getAttributeLabel('batch_date')); ?>
+
+<?php $batch_time_start = $form->field($model, 'batch_time[start]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
+	->textInput(['type'=>'time'])
+	->label($model->getAttributeLabel('batch_time[start]')); ?>
+
+<?php echo $form->field($model, 'batch_time[end]', ['template' => '{label}'.$batch_time_start.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type'=>'time'])
+	->label($model->getAttributeLabel('batch_time')); ?>
+
+<div class="ln_solid"></div>
+
+<?php echo $form->field($model, 'batch_price')
+	->textInput(['type'=>'number', 'min'=>'0'])
+	->label($model->getAttributeLabel('batch_price')); ?>
+
+<?php echo $form->field($model, 'registered_limit')
+	->textInput(['type'=>'number', 'min'=>'0'])
+	->label($model->getAttributeLabel('registered_limit')); ?>
 
 <?php echo $form->field($model, 'publish')
 	->checkbox()

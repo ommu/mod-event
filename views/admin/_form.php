@@ -18,7 +18,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\components\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\redactor\widgets\Redactor;
 use ommu\event\models\Events;
 use ommu\event\models\EventCategory;
@@ -104,12 +103,12 @@ echo $form->field($model, 'tag')
 
 <?php $registeredEnable = Events::getRegisteredEnable();
 echo $form->field($model, 'registered_enable')
-	->dropDownList($registeredEnable, ['prompt' => ''])
+	->dropDownList($registeredEnable, ['prompt'=>''])
 	->label($model->getAttributeLabel('registered_enable')); ?>
 
 <?php $registeredType = Events::getRegisteredType();
 echo $form->field($model, 'registered_type')
-	->dropDownList($registeredType, ['prompt' => ''])
+	->dropDownList($registeredType, ['prompt'=>''])
 	->label($model->getAttributeLabel('registered_type')); ?>
 
 <?php $packageRewardType = Events::getPackageRewardType();

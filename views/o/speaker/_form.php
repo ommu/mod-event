@@ -10,14 +10,16 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 11:43 WIB
+ * @modified date 26 June 2019, 22:56 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
 
 use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
-use ommu\event\models\EventBatch;
 ?>
+
+<div class="event-speaker-form">
 
 <?php $form = ActiveForm::begin([
 	'options' => ['class'=>'form-horizontal form-label-left'],
@@ -29,7 +31,7 @@ use ommu\event\models\EventBatch;
 <?php //echo $form->errorSummary($model);?>
 
 <?php echo $form->field($model, 'user_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['type'=>'number'])
 	->label($model->getAttributeLabel('user_id')); ?>
 
 <?php echo $form->field($model, 'speaker_name')
@@ -39,6 +41,10 @@ use ommu\event\models\EventBatch;
 <?php echo $form->field($model, 'speaker_position')
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('speaker_position')); ?>
+
+<?php echo $form->field($model, 'session_title')
+	->textInput(['maxlength'=>true])
+	->label($model->getAttributeLabel('session_title')); ?>
 
 <?php echo $form->field($model, 'publish')
 	->checkbox()
@@ -50,3 +56,5 @@ use ommu\event\models\EventBatch;
 	->submitButton(); ?>
 
 <?php ActiveForm::end(); ?>
+
+</div>

@@ -19,8 +19,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use app\components\grid\GridView;
 use yii\widgets\Pjax;
-use yii\widgets\DetailView;
-use ommu\event\models\Events;
 
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -38,41 +36,8 @@ $this->params['menu']['option'] = [
 <div class="event-batch-manage">
 <?php Pjax::begin(); ?>
 
-<?php if($event != null) {
-$model = $event;
-echo DetailView::widget([
-	'model' => $model,
-	'options' => [
-		'class'=>'table table-striped detail-view',
-	],
-	'attributes' => [
-		[
-			'attribute' => 'categoryName',
-			'value' => function ($model) {
-				$categoryName = isset($model->category) ? $model->category->title->message : '-';
-				if($categoryName != '-')
-					return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
-				return $categoryName;
-			},
-			'format' => 'html',
-		],
-		[
-			'attribute' => 'title',
-			'value' => function ($model) {
-				if($model->title != '')
-					return Html::a($model->title, ['admin/view', 'id'=>$model->id], ['title'=>$model->title, 'class'=>'modal-btn']);
-				return $model->title;
-			},
-			'format' => 'html',
-		],
-		[
-			'attribute' => 'introduction',
-			'value' => $model->introduction ? $model->introduction : '-',
-			'format' => 'html',
-		],
-	],
-]);
-}?>
+<?php if($event != null)
+	echo $this->render('/admin/admin_view', ['model'=>$event, 'small'=>true]); ?>
 
 <?php //echo $this->render('_search', ['model'=>$searchModel]); ?>
 

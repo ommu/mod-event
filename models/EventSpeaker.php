@@ -43,12 +43,13 @@ class EventSpeaker extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
 
-	public $gridForbiddenColumn = ['creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
+	public $gridForbiddenColumn = ['userDisplayname', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
 
 	public $batchName;
 	public $userDisplayname;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
+	public $eventCategoryId;
 	public $eventTitle;
 
 	/**
@@ -65,8 +66,9 @@ class EventSpeaker extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['batch_id', 'user_id', 'speaker_name', 'speaker_position', 'session_title'], 'required'],
+			[['batch_id', 'speaker_name', 'speaker_position', 'session_title'], 'required'],
 			[['publish', 'batch_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
+			[['user_id'], 'safe'],
 			[['speaker_name', 'speaker_position'], 'string', 'max' => 64],
 			[['session_title'], 'string', 'max' => 128],
 			[['batch_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventBatch::className(), 'targetAttribute' => ['batch_id' => 'id']],
@@ -95,6 +97,7 @@ class EventSpeaker extends \app\components\ActiveRecord
 			'userDisplayname' => Yii::t('app', 'User'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'eventCategoryId' => Yii::t('app', 'Category'),
 			'eventTitle' => Yii::t('app', 'Event'),
 		];
 	}
@@ -155,11 +158,20 @@ class EventSpeaker extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('batch')) {
+		if(!Yii::$app->request->get('batch') && !Yii::$app->request->get('id')) {
+			$this->templateColumns['eventCategoryId'] = [
+				'attribute' => 'eventCategoryId',
+				'value' => function($model, $key, $index, $column) {
+					return isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
+					// return $model->eventCategoryId;
+				},
+				'filter' => EventCategory::getCategory(),
+			];
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
-					return $model->batch->event->title;
+					return isset($model->batch->event) ? $model->batch->event->title : '-';
+					// return $model->eventTitle;
 				},
 			];
 			$this->templateColumns['batchName'] = [
@@ -279,6 +291,8 @@ class EventSpeaker extends \app\components\ActiveRecord
 		// $this->userDisplayname = isset($this->user) ? $this->user->displayname : '-';
 		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
 		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
+		// $this->eventCategoryId = isset($this->batch->event->category) ? $this->batch->event->category->title->message : '-';
+		// $this->eventTitle = isset($this->batch->event) ? $this->batch->event->title : '-';
 	}
 
 	/**

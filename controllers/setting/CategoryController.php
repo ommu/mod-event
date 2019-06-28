@@ -120,6 +120,7 @@ class CategoryController extends Controller
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event category success created.'));
 				return $this->redirect(['manage']);
+				//return $this->redirect(['view', 'id'=>$model->id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)

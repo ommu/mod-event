@@ -54,7 +54,7 @@ $form = ActiveForm::begin([
 
 $event = Events::getEvent(1);
 echo $form->field($model, 'event_id')
-	->dropDownList($event, ['prompt' => ''])
+	->dropDownList($event, ['prompt'=>''])
 	->label($model->getAttributeLabel('event_id'));
 ?>
 

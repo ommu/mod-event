@@ -103,7 +103,8 @@ class EventCategory extends \app\components\ActiveRecord
 	{
 		if($count == false)
 			return $this->hasMany(Events::className(), ['cat_id' => 'id'])
-			->andOnCondition([sprintf('%s.publish', Events::tableName()) => $publish]);
+			->alias('events')
+			->andOnCondition([sprintf('%s.publish', 'events') => $publish]);
 
 		$model = Events::find()
 			->where(['cat_id' => $this->id]);

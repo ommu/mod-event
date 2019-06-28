@@ -26,7 +26,11 @@ $this->params['breadcrumbs'][] = $model->event->title;
 
 <?php
 $attributes = [
-	'id',
+	[
+		'attribute' => 'id',
+		'value' => $model->id ? $model->id : '-',
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'eventTitle',
 		'value' => function ($model) {

@@ -37,7 +37,7 @@
  * @property EventBatch[] $batches
  * @property EventFilterGender[] $genders
  * @property EventFilterMajor[] $majors
- * @property EventFilterMajorGroup[] $groups
+ * @property EventFilterMajorGroup[] $majorGroups
  * @property EventFilterUniversity[] $universities
  * @property EventRegistered[] $registereds
  * @property EventTag[] $tags
@@ -124,7 +124,7 @@ class Events extends \app\components\ActiveRecord
 			'id' => Yii::t('app', 'Event'),
 			'publish' => Yii::t('app', 'Publish'),
 			'cat_id' => Yii::t('app', 'Category'),
-			'title' => Yii::t('app', 'Title'),
+			'title' => Yii::t('app', 'Event'),
 			'theme' => Yii::t('app', 'Theme'),
 			'introduction' => Yii::t('app', 'Introduction'),
 			'description' => Yii::t('app', 'Description'),
@@ -165,7 +165,8 @@ class Events extends \app\components\ActiveRecord
 	{
 		if($count == false)
 			return $this->hasMany(EventBatch::className(), ['event_id' => 'id'])
-			->andOnCondition([sprintf('%s.publish', EventBatch::tableName()) => $publish]);
+			->alias('batches')
+			->andOnCondition([sprintf('%s.publish', 'batches') => $publish]);
 
 		$model = EventBatch::find()
 			->where(['event_id' => $this->id]);
@@ -314,12 +315,6 @@ class Events extends \app\components\ActiveRecord
 				return $model->title;
 			},
 		];
-		$this->templateColumns['theme'] = [
-			'attribute' => 'theme',
-			'value' => function($model, $key, $index, $column) {
-				return $model->theme;
-			},
-		];
 		$this->templateColumns['introduction'] = [
 			'attribute' => 'introduction',
 			'value' => function($model, $key, $index, $column) {
@@ -350,24 +345,16 @@ class Events extends \app\components\ActiveRecord
 			},
 			'format' => 'html',
 		];
-		$this->templateColumns['registered_message'] = [
-			'attribute' => 'registered_message',
+		$this->templateColumns['tag'] = [
+			'attribute' => 'tag',
 			'value' => function($model, $key, $index, $column) {
-				return serialize($model->registered_message);
+				return implode(', ', $model->getTags(true, 'title'));
 			},
-			'format' => 'html',
 		];
-		$this->templateColumns['registered_type'] = [
-			'attribute' => 'registered_type',
+		$this->templateColumns['theme'] = [
+			'attribute' => 'theme',
 			'value' => function($model, $key, $index, $column) {
-				return self::getRegisteredType($model->registered_type);
-			},
-			'filter' => self::getRegisteredType(),
-		];
-		$this->templateColumns['package_reward'] = [
-			'attribute' => 'package_reward',
-			'value' => function($model, $key, $index, $column) {
-				return Events::parseReward($model->package_reward);
+				return $model->theme;
 			},
 		];
 		$this->templateColumns['published_date'] = [
@@ -377,10 +364,24 @@ class Events extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'published_date'),
 		];
-		$this->templateColumns['tag'] = [
-			'attribute' => 'tag',
+		$this->templateColumns['registered_type'] = [
+			'attribute' => 'registered_type',
 			'value' => function($model, $key, $index, $column) {
-				return implode(', ', $model->getTags(true, 'title'));
+				return self::getRegisteredType($model->registered_type);
+			},
+			'filter' => self::getRegisteredType(),
+		];
+		$this->templateColumns['registered_message'] = [
+			'attribute' => 'registered_message',
+			'value' => function($model, $key, $index, $column) {
+				return serialize($model->registered_message);
+			},
+			'format' => 'html',
+		];
+		$this->templateColumns['package_reward'] = [
+			'attribute' => 'package_reward',
+			'value' => function($model, $key, $index, $column) {
+				return Events::parseReward($model->package_reward);
 			},
 		];
 		$this->templateColumns['gender'] = [

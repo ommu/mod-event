@@ -71,8 +71,9 @@ use ommu\event\models\EventCategory;
 		<?php echo $form->field($model, 'updated_date')
 			->input('date');?>
 
-		<?php echo $form->field($model, 'registered_enable')
-			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+		<?php $registeredEnable = Events::getRegisteredEnable();
+			echo $form->field($model, 'registered_enable')
+			->dropDownList($registeredEnable, ['prompt'=>'']);?>
 
 		<?php echo $form->field($model, 'enable_filter')
 			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>

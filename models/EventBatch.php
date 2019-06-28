@@ -46,16 +46,19 @@ use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use ommu\users\models\Users;
+use yii\data\ActiveDataProvider;
 
 class EventBatch extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
 
-	public $gridForbiddenColumn = ['batch_desc', 'batch_date', 'batch_time', 'batch_price', 'batch_location', 'location_name', 'location_address', 'registered_limit', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
+	public $gridForbiddenColumn = ['batch_desc', 'batch_time', 'batch_price', 'batch_location', 'location_name', 'location_address', 'registered_limit', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
 
 	public $eventTitle;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
+	public $eventCategoryId;
+	public $speaker;
 
 	/**
 	 * @return string the associated database table name
@@ -98,7 +101,7 @@ class EventBatch extends \app\components\ActiveRecord
 			'batch_time' => Yii::t('app', 'Batch Time'),
 			'batch_time[start]' => Yii::t('app', 'Time Start'),
 			'batch_time[end]' => Yii::t('app', 'Time Finish'),
-			'batch_price' => Yii::t('app', 'Batch Price'),
+			'batch_price' => Yii::t('app', 'Registered Price'),
 			'batch_location' => Yii::t('app', 'Batch Location'),
 			'location_name' => Yii::t('app', 'Location Name'),
 			'location_address' => Yii::t('app', 'Location Address'),
@@ -109,10 +112,11 @@ class EventBatch extends \app\components\ActiveRecord
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
 			'registereds' => Yii::t('app', 'Registereds'),
-			'speakers' => Yii::t('app', 'Speakers'),
+			'speaker' => Yii::t('app', 'Speakers'),
 			'eventTitle' => Yii::t('app', 'Event'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'eventCategoryId' => Yii::t('app', 'Category'),
 		];
 	}
 
@@ -148,13 +152,24 @@ class EventBatch extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @param $type relation|array|dataProvider|count
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getSpeakers($count=false, $publish=1)
+	public function getSpeakers($type='relation', $publish=1)
 	{
-		if($count == false)
+		if($type == 'relation')
 			return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id'])
-			->andOnCondition([sprintf('%s.publish', EventSpeaker::tableName()) => $publish]);
+			->alias('speakers')
+			->andOnCondition([sprintf('%s.publish', 'speakers') => $publish]);
+
+		if($type == 'array')
+			return \yii\helpers\ArrayHelper::map($this->speakers, 'speaker_name', 'speaker_name');
+
+		if($type == 'dataProvider') {
+			return new ActiveDataProvider([
+				'query' => $this->getSpeakers($type='relation', $publish),
+			]);
+		}
 
 		$model = EventSpeaker::find()
 			->where(['batch_id' => $this->id]);
@@ -209,7 +224,15 @@ class EventBatch extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('event')) {
+		if(!Yii::$app->request->get('event') && !Yii::$app->request->get('id')) {
+			$this->templateColumns['eventCategoryId'] = [
+				'attribute' => 'eventCategoryId',
+				'value' => function($model, $key, $index, $column) {
+					return isset($model->event->category) ? $model->event->category->title->message : '-';
+					// return $model->eventCategoryId;
+				},
+				'filter' => EventCategory::getCategory(),
+			];
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
@@ -241,7 +264,13 @@ class EventBatch extends \app\components\ActiveRecord
 		$this->templateColumns['batch_time'] = [
 			'attribute' => 'batch_time',
 			'value' => function($model, $key, $index, $column) {
-				return serialize($model->batch_time);
+				return self::parseBatchTime($model->batch_time);
+			},
+		];
+		$this->templateColumns['speaker'] = [
+			'attribute' => 'speaker',
+			'value' => function($model, $key, $index, $column) {
+				return implode(', ', $model->getSpeakers('array'));
 			},
 		];
 		$this->templateColumns['batch_price'] = [
@@ -323,16 +352,6 @@ class EventBatch extends \app\components\ActiveRecord
 			'contentOptions' => ['class'=>'center'],
 			'format' => 'html',
 		];
-		$this->templateColumns['speakers'] = [
-			'attribute' => 'speakers',
-			'value' => function($model, $key, $index, $column) {
-				$speakers = $model->getSpeakers(true);
-				return Html::a($speakers, ['o/speaker/manage', 'batch'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$speakers])]);
-			},
-			'filter' => false,
-			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
-		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [
 				'attribute' => 'publish',
@@ -366,6 +385,20 @@ class EventBatch extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function parseBatchTime($batchTime)
+	{
+		if(!is_array($batchTime) || (is_array($batchTime) && empty($batchTime)))
+			return '-';
+
+		if($batchTime['start'] == '' && $batchTime['end'] == '')
+			return '-';
+
+		return $batchTime['start'].' - '.($batchTime['end'] ? $batchTime['end'] : Yii::t('app', 'Finish'));
+	}
+
+	/**
 	 * after find attributes
 	 */
 	public function afterFind()
@@ -376,6 +409,7 @@ class EventBatch extends \app\components\ActiveRecord
 		// $this->eventTitle = isset($this->event) ? $this->event->title : '-';
 		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
 		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
+		// $this->eventCategoryId = isset($this->event->category) ? $this->event->category->title->message : '-';
 	}
 
 	/**

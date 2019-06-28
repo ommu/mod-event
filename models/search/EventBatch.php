@@ -28,8 +28,8 @@ class EventBatch extends EventBatchModel
 	public function rules()
 	{
 		return [
-			[['id', 'publish', 'event_id', 'batch_price', 'registered_limit', 'creation_id', 'modified_id'], 'integer'],
-			[['batch_name', 'batch_desc', 'batch_date', 'batch_time', 'batch_location', 'location_name', 'location_address', 'creation_date', 'modified_date', 'updated_date', 'eventTitle', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
+			[['id', 'publish', 'event_id', 'batch_price', 'registered_limit', 'creation_id', 'modified_id', 'eventCategoryId'], 'integer'],
+			[['batch_name', 'batch_desc', 'batch_date', 'batch_time', 'batch_location', 'location_name', 'location_address', 'creation_date', 'modified_date', 'updated_date', 'eventTitle', 'creationDisplayname', 'modifiedDisplayname', 'speaker'], 'safe'],
 		];
 	}
 
@@ -68,7 +68,9 @@ class EventBatch extends EventBatchModel
 		$query->joinWith([
 			'event event', 
 			'creation creation', 
-			'modified modified'
+			'modified modified',
+			'event.category.title category',
+			'speakers speakers',
 		]);
 
 		// add conditions that should always apply here
@@ -92,6 +94,10 @@ class EventBatch extends EventBatchModel
 		$attributes['modifiedDisplayname'] = [
 			'asc' => ['modified.displayname' => SORT_ASC],
 			'desc' => ['modified.displayname' => SORT_DESC],
+		];
+		$attributes['eventCategoryId'] = [
+			'asc' => ['category.message' => SORT_ASC],
+			'desc' => ['category.message' => SORT_DESC],
 		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
@@ -120,6 +126,7 @@ class EventBatch extends EventBatchModel
 			'cast(t.modified_date as date)' => $this->modified_date,
 			't.modified_id' => isset($params['modified']) ? $params['modified'] : $this->modified_id,
 			'cast(t.updated_date as date)' => $this->updated_date,
+			'event.cat_id' => $this->eventCategoryId,
 		]);
 
 		if(isset($params['trash']))
@@ -131,6 +138,9 @@ class EventBatch extends EventBatchModel
 				$query->andFilterWhere(['t.publish' => $this->publish]);
 		}
 
+		if(isset($params['speakerUserId']) && $params['speakerUserId'])
+			$query->andFilterWhere(['speakers.user_id' => $params['speakerUserId']]);
+
 		$query->andFilterWhere(['like', 't.batch_name', $this->batch_name])
 			->andFilterWhere(['like', 't.batch_desc', $this->batch_desc])
 			->andFilterWhere(['like', 't.batch_time', $this->batch_time])
@@ -139,7 +149,8 @@ class EventBatch extends EventBatchModel
 			->andFilterWhere(['like', 't.location_address', $this->location_address])
 			->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
-			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname]);
+			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname])
+			->andFilterWhere(['like', 'speakers.speaker_name', $this->speaker]);
 
 		return $dataProvider;
 	}

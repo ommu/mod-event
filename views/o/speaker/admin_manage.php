@@ -4,11 +4,13 @@
  * @var $this app\components\View
  * @var $this ommu\event\controllers\o\SpeakerController
  * @var $model ommu\event\models\EventSpeaker
+ * @var $searchModel ommu\event\models\search\EventSpeaker
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 28 November 2017, 11:43 WIB
+ * @modified date 26 June 2019, 22:56 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -20,16 +22,11 @@ use yii\widgets\Pjax;
 
 $this->params['breadcrumbs'][] = $this->title;
 	
-if (($batch = Yii::$app->request->get('batch')) != null) {
+if(($id = Yii::$app->request->get('id')) != null) {
 	$this->params['menu']['content'] = [
-		['label' => Yii::t('app', 'Back To Manage Batch'), 'url' => Url::to(['batch/index']), 'icon' => 'table'],
-		['label' => Yii::t('app', 'Add Event Speaker'), 'url' => Url::to(['create', 'batch' => $batch]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
+		['label' => Yii::t('app', 'Add Speaker'), 'url' => Url::to(['create', 'id' => $id]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn modal-btn btn-success']],
 	];
-} else {
-	$this->params['menu']['content'] = [
-		['label' => Yii::t('app', 'Add Event Speaker'), 'url' => Url::to(['create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
-	];
-}	
+}
 
 $this->params['menu']['option'] = [
 	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
@@ -37,8 +34,11 @@ $this->params['menu']['option'] = [
 ];
 ?>
 
-<div class="event-xxx-manage">
+<div class="event-speaker-manage">
 <?php Pjax::begin(); ?>
+
+<?php if($batch != null)
+	echo $this->render('/o/batch/admin_view', ['model'=>$batch, 'small'=>true]); ?>
 
 <?php //echo $this->render('_search', ['model'=>$searchModel]); ?>
 
@@ -57,6 +57,24 @@ array_push($columnData, [
 		if($action == 'delete')
 			return Url::to(['delete', 'id'=>$key]);
 	},
+	'buttons' => [
+		'view' => function ($url, $model, $key) {
+			$context = $this->context;
+			$url = Url::to(['view', 'id'=>$model->primaryKey]);
+			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title' => Yii::t('app', 'Detail'), 'class'=>'modal-btn']);
+		},
+		'update' => function ($url, $model, $key) {
+			$url = Url::to(['update', 'id'=>$model->primaryKey]);
+			return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, ['title' => Yii::t('app', 'Update'), 'class'=>'modal-btn']);
+		},
+		'delete' => function ($url, $model, $key) {
+			return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+				'title' => Yii::t('app', 'Delete'),
+				'data-confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+				'data-method'  => 'post',
+			]);
+		},
+	],
 	'template' => '{view} {update} {delete}',
 ]);
 
