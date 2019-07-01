@@ -65,9 +65,10 @@ class EventCategory extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['category_name_i', 'category_desc_i'], 'required'],
+			[['category_name_i'], 'required'],
 			[['publish', 'category_name', 'category_desc', 'creation_id', 'modified_id'], 'integer'],
 			[['category_name_i', 'category_desc_i'], 'string'],
+			[['category_desc_i'], 'safe'],
 			[['category_name_i'], 'string', 'max' => 64],
 			[['category_desc_i'], 'string', 'max' => 128],
 		];

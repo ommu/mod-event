@@ -46,13 +46,12 @@ use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use ommu\users\models\Users;
-use yii\data\ActiveDataProvider;
 
 class EventBatch extends \app\components\ActiveRecord
 {
 	use \ommu\traits\UtilityTrait;
 
-	public $gridForbiddenColumn = ['batch_desc', 'batch_time', 'batch_price', 'batch_location', 'location_name', 'location_address', 'registered_limit', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
+	public $gridForbiddenColumn = ['batch_desc', 'batch_time', 'batch_price', 'batch_location', 'location_name', 'location_address', 'creationDisplayname', 'creation_date', 'modifiedDisplayname', 'modified_date', 'updated_date'];
 
 	public $eventTitle;
 	public $creationDisplayname;
@@ -112,11 +111,11 @@ class EventBatch extends \app\components\ActiveRecord
 			'modified_id' => Yii::t('app', 'Modified'),
 			'updated_date' => Yii::t('app', 'Updated Date'),
 			'registereds' => Yii::t('app', 'Registereds'),
-			'speaker' => Yii::t('app', 'Speakers'),
 			'eventTitle' => Yii::t('app', 'Event'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
 			'eventCategoryId' => Yii::t('app', 'Category'),
+			'speaker' => Yii::t('app', 'Speakers'),
 		];
 	}
 
@@ -166,8 +165,8 @@ class EventBatch extends \app\components\ActiveRecord
 			return \yii\helpers\ArrayHelper::map($this->speakers, 'speaker_name', 'speaker_name');
 
 		if($type == 'dataProvider') {
-			return new ActiveDataProvider([
-				'query' => $this->getSpeakers($type='relation', $publish),
+			return new \yii\data\ActiveDataProvider([
+				'query' => $this->getSpeakers('relation', $publish),
 			]);
 		}
 
@@ -270,8 +269,11 @@ class EventBatch extends \app\components\ActiveRecord
 		$this->templateColumns['speaker'] = [
 			'attribute' => 'speaker',
 			'value' => function($model, $key, $index, $column) {
-				return implode(', ', $model->getSpeakers('array'));
+				$speakers = $model->getSpeakers('array');
+				$speakers = !$speakers ? '' : Html::ul($speakers, ['encode'=>false, 'class'=>'list-boxed']).'<div class="ln_solid mt-3 mb-3"></div>';
+				return $speakers.Html::a('<i class="fa fa-plus-square"></i> '.Yii::t('app', 'Add Speaker'), ['o/speaker/create', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Add Speaker'), 'class'=>'btn btn-success btn-xs modal-btn']);
 			},
+			'format' => 'html',
 		];
 		$this->templateColumns['batch_price'] = [
 			'attribute' => 'batch_price',
@@ -299,9 +301,21 @@ class EventBatch extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['registered_limit'] = [
 			'attribute' => 'registered_limit',
+			'label' => Yii::t('app', 'Limit'),
 			'value' => function($model, $key, $index, $column) {
 				return $model->registered_limit;
 			},
+			'contentOptions' => ['class'=>'center'],
+		];
+		$this->templateColumns['registereds'] = [
+			'attribute' => 'registereds',
+			'value' => function($model, $key, $index, $column) {
+				$registereds = $model->getRegistereds(true);
+				return Html::a($registereds, ['registered/batch/manage', 'batch'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+			},
+			'filter' => false,
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'html',
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
@@ -341,16 +355,6 @@ class EventBatch extends \app\components\ActiveRecord
 				return Yii::$app->formatter->asDatetime($model->updated_date, 'medium');
 			},
 			'filter' => $this->filterDatepicker($this, 'updated_date'),
-		];
-		$this->templateColumns['registereds'] = [
-			'attribute' => 'registereds',
-			'value' => function($model, $key, $index, $column) {
-				$registereds = $model->getRegistereds(true);
-				return Html::a($registereds, ['registered/batch/manage', 'batch'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
-			},
-			'filter' => false,
-			'contentOptions' => ['class'=>'center'],
-			'format' => 'html',
 		];
 		if(!Yii::$app->request->get('trash')) {
 			$this->templateColumns['publish'] = [

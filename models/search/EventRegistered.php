@@ -8,6 +8,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:43 WIB
+ * @modified date 28 June 2019, 19:12 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -22,18 +23,18 @@ use ommu\event\models\EventRegistered as EventRegisteredModel;
 class EventRegistered extends EventRegisteredModel
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function rules()
 	{
 		return [
-			[['id', 'status', 'event_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
-			[['confirmation_date', 'creation_date', 'modified_date', 'eventTitle', 'userDisplayname', 'creationDisplayname', 'modifiedDisplayname'], 'safe'],
+			[['id', 'status', 'event_id', 'user_id', 'creation_id', 'modified_id', 'eventCategoryId'], 'integer'],
+			[['confirmation_date', 'creation_date', 'modified_date', 'eventTitle', 'userDisplayname', 'creationDisplayname', 'modifiedDisplayname', 'price', 'payment', 'reward', 'batch'], 'safe'],
 		];
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function scenarios()
 	{
@@ -64,7 +65,16 @@ class EventRegistered extends EventRegisteredModel
 			$query = EventRegisteredModel::find()->alias('t');
 		else
 			$query = EventRegisteredModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'user user', 'creation creation', 'modified modified']);
+		$query->joinWith([
+			'event event', 
+			'user user', 
+			'creation creation', 
+			'modified modified',
+			'event.category.title category',
+			'finance finance', 
+			'batches batches',
+			'batches.batch batchesRltn',
+		]);
 
 		// add conditions that should always apply here
 		$dataParams = [
@@ -92,14 +102,32 @@ class EventRegistered extends EventRegisteredModel
 			'asc' => ['modified.displayname' => SORT_ASC],
 			'desc' => ['modified.displayname' => SORT_DESC],
 		];
+		$attributes['eventCategoryId'] = [
+			'asc' => ['category.message' => SORT_ASC],
+			'desc' => ['category.message' => SORT_DESC],
+		];
+		$attributes['price'] = [
+			'asc' => ['finance.price' => SORT_ASC],
+			'desc' => ['finance.price' => SORT_DESC],
+		];
+		$attributes['payment'] = [
+			'asc' => ['finance.payment' => SORT_ASC],
+			'desc' => ['finance.payment' => SORT_DESC],
+		];
+		$attributes['reward'] = [
+			'asc' => ['finance.reward' => SORT_ASC],
+			'desc' => ['finance.reward' => SORT_DESC],
+		];
 		$dataProvider->setSort([
 			'attributes' => $attributes,
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
+		if(Yii::$app->request->get('id'))
+			unset($params['id']);
 		$this->load($params);
 
-		if (!$this->validate()) {
+		if(!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -107,7 +135,7 @@ class EventRegistered extends EventRegisteredModel
 
 		// grid filtering conditions
 		$query->andFilterWhere([
-			't.id' => isset($params['id']) ? $params['id'] : $this->id,
+			't.id' => $this->id,
 			't.status' => $this->status,
 			't.event_id' => isset($params['event']) ? $params['event'] : $this->event_id,
 			't.user_id' => isset($params['user']) ? $params['user'] : $this->user_id,
@@ -116,12 +144,20 @@ class EventRegistered extends EventRegisteredModel
 			't.creation_id' => isset($params['creation']) ? $params['creation'] : $this->creation_id,
 			'cast(t.modified_date as date)' => $this->modified_date,
 			't.modified_id' => isset($params['modified']) ? $params['modified'] : $this->modified_id,
+			'event.cat_id' => $this->eventCategoryId,
 		]);
+
+		if(isset($params['batchId']) && $params['batchId'])
+			$query->andFilterWhere(['batches.batch_id' => $params['batchId']]);
 
 		$query->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'user.displayname', $this->userDisplayname])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
-			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname]);
+			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname])
+			->andFilterWhere(['like', 'finance.price', $this->price])
+			->andFilterWhere(['like', 'finance.payment', $this->payment])
+			->andFilterWhere(['like', 'finance.reward', $this->reward])
+			->andFilterWhere(['like', 'batchesRltn.batch_name', $this->batch]);
 
 		return $dataProvider;
 	}

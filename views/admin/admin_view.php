@@ -34,7 +34,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'publish',
-		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
+		'value' => $model->quickAction(Url::to(['admin/publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
 		'visible' => !$small,
 	],
@@ -42,6 +42,10 @@ $attributes = [
 		'attribute' => 'published_date',
 		'value' => Yii::$app->formatter->asDate($model->published_date, 'medium'),
 		'visible' => !$small,
+	],
+	[
+		'attribute' => 'title',
+		'value' => $model->title ? $model->title : '-',
 	],
 	[
 		'attribute' => 'categoryName',
@@ -52,10 +56,6 @@ $attributes = [
 			return $categoryName;
 		},
 		'format' => 'html',
-	],
-	[
-		'attribute' => 'title',
-		'value' => $model->title ? $model->title : '-',
 	],
 	[
 		'attribute' => 'introduction',
@@ -98,19 +98,16 @@ $attributes = [
 	],
 	[
 		'attribute' => 'registered_enable',
-		'value' => $model->quickAction(Url::to(['registered', 'id'=>$model->primaryKey]), $model->registered_enable, 'Enable,Disable'),
+		'value' => $model->quickAction(Url::to(['admin/registered', 'id'=>$model->primaryKey]), $model->registered_enable, 'Enable,Disable'),
 		'format' => 'raw',
-		'visible' => !$small,
 	],
 	[
 		'attribute' => 'registered_type',
 		'value' => Events::getRegisteredType($model->registered_type),
-		'visible' => !$small,
 	],
 	[
 		'attribute' => 'package_reward',
-		'value' => Events::parseReward($model->package_reward),
-		'visible' => !$small,
+		'value' => $model->isFree == true ? Yii::t('app', 'Free') : Events::parseReward($model->package_reward),
 	],
 	[
 		'attribute' => 'registered_message',
@@ -146,7 +143,7 @@ $attributes = [
 	[
 		'attribute' => 'batches',
 		'value' => function ($model) {
-			$batches = $model->getBatches(true);
+			$batches = $model->getBatches('count');
 			return Html::a($batches, ['o/batch/manage', 'id'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
 		},
 		'format' => 'html',

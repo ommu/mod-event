@@ -40,7 +40,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'publish',
-		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
+		'value' => $model->quickAction(Url::to(['setting/category/publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
 		'visible' => !$small,
 	],

@@ -43,6 +43,11 @@ $form = ActiveForm::begin([
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
+	'fieldConfig' => [
+		'errorOptions' => [
+			'encode' => false,
+		],
+	],
 ]); ?>
 
 <?php //echo $form->errorSummary($model);?>
@@ -51,11 +56,6 @@ $form = ActiveForm::begin([
 // echo $form->field($model, 'event_id')
 // 	->textInput(['maxlength'=>true])
 // 	->label($model->getAttributeLabel('event_id')); 
-
-$event = Events::getEvent(1);
-echo $form->field($model, 'event_id')
-	->dropDownList($event, ['prompt'=>''])
-	->label($model->getAttributeLabel('event_id'));
 ?>
 
 <?php echo $form->field($model, 'user_id')

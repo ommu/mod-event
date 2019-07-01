@@ -33,6 +33,11 @@ $redactorOptions = [
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
+	'fieldConfig' => [
+		'errorOptions' => [
+			'encode' => false,
+		],
+	],
 ]); ?>
 
 <?php //echo $form->errorSummary($model);?>
@@ -43,30 +48,6 @@ if (($event = Yii::$app->request->get('event')) != null)
 	$event = $event;
 else if (($event_id = Yii::$app->request->get('event_id')) != null)
 	$event = $event_id;
-
-if ($event != null){
-	$model->event_id = $event;
-
-	echo $form->field($model, 'event_id')->hiddenInput()
-	->label(false);
-?>
-	<div class="form-group">
-		<label class="control-label col-md-3 col-sm-3 col-xs-12" for="eventblastings-event_id"><?php echo Yii::t('app', 'Event');?></label>
-		<div class="col-md-9 col-sm-9 col-xs-12">
-			<?php 
-			echo $model->event->title;
-			?>
-		</div>
-	</div>
-<?php
-}
-else {
-// bila tidak dari event maka pilih event melalui dropdown
-$get_event = Events::getEvent(1);
-echo $form->field($model, 'event_id')
-	->dropDownList($get_event, ['prompt'=>''])
-	->label($model->getAttributeLabel('event_id')); 
-}
 ?>
 
 <?php /* echo $form->field($model, 'filter_id')

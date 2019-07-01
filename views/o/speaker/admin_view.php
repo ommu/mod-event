@@ -40,17 +40,30 @@ $attributes = [
 	],
 	[
 		'attribute' => 'publish',
-		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
+		'value' => $model->quickAction(Url::to(['o/speaker/publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
 		'visible' => !$small,
 	],
 	[
-		'attribute' => 'eventCategoryId',
+		'attribute' => 'speaker_name',
+		'value' => $model->speaker_name ? $model->speaker_name : '-',
+	],
+	[
+		'attribute' => 'speaker_position',
+		'value' => $model->speaker_position ? $model->speaker_position : '-',
+		'visible' => !$small,
+	],
+	[
+		'attribute' => 'session_title',
+		'value' => $model->session_title ? $model->session_title : '-',
+	],
+	[
+		'attribute' => 'batchName',
 		'value' => function ($model) {
-			$eventCategoryName = isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
-			if($eventCategoryName != '-')
-				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->batch->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
-			return $eventCategoryName;
+			$batchName = isset($model->batch) ? $model->batch->batch_name : '-';
+			if($batchName != '-')
+				return Html::a($batchName, ['o/batch/view', 'id'=>$model->batch_id], ['title'=>$batchName, 'class'=>'modal-btn']);
+			return $batchName;
 		},
 		'format' => 'html',
 	],
@@ -65,27 +78,14 @@ $attributes = [
 		'format' => 'html',
 	],
 	[
-		'attribute' => 'batchName',
+		'attribute' => 'eventCategoryId',
 		'value' => function ($model) {
-			$batchName = isset($model->batch) ? $model->batch->batch_name : '-';
-			if($batchName != '-')
-				return Html::a($batchName, ['o/batch/view', 'id'=>$model->batch_id], ['title'=>$batchName, 'class'=>'modal-btn']);
-			return $batchName;
+			$eventCategoryName = isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
+			if($eventCategoryName != '-')
+				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->batch->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
+			return $eventCategoryName;
 		},
 		'format' => 'html',
-	],
-	[
-		'attribute' => 'speaker_name',
-		'value' => $model->speaker_name ? $model->speaker_name : '-',
-	],
-	[
-		'attribute' => 'speaker_position',
-		'value' => $model->speaker_position ? $model->speaker_position : '-',
-		'visible' => !$small,
-	],
-	[
-		'attribute' => 'session_title',
-		'value' => $model->session_title ? $model->session_title : '-',
 	],
 	[
 		'attribute' => 'userDisplayname',

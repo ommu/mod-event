@@ -1,6 +1,6 @@
 <?php
 /**
- * Event Registereds (event-registereds)
+ * Event Registereds (event-registered)
  * @var $this app\components\View
  * @var $this ommu\event\controllers\registered\AdminController
  * @var $model ommu\event\models\search\EventRegistered
@@ -10,6 +10,7 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:43 WIB
+ * @modified date 28 June 2019, 19:11 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -38,11 +39,9 @@ JS;
 <div class="grid-form">
 	<?php echo Html::beginForm(Url::to(['/'.$route]), 'get', ['name' => 'gridoption']);
 		$columns = [];
-
 		foreach($model->templateColumns as $key => $column) {
 			if($key == '_no')
 				continue;
-			
 			$columns[$key] = $key;
 		}
 	?>
@@ -54,6 +53,5 @@ JS;
 			</li>
 			<?php endforeach; ?>
 		</ul>
-		<div class="clear"></div>
 	<?php echo Html::endForm(); ?>
 </div>

@@ -1,44 +1,41 @@
 <?php
 /**
  * EventRegisteredFinance
-
+ * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:45 WIB
+ * @modified date 28 June 2019, 19:02 WIB
  * @link https://github.com/ommu/mod-event
  *
  * This is the model class for table "ommu_event_registered_finance".
  *
  * The followings are the available columns in table "ommu_event_registered_finance":
- * @property string $registered_id
+ * @property integer $registered_id
+ * @property integer $price
  * @property integer $payment
  * @property integer $reward
  * @property string $creation_date
- * @property string $creation_id
+ * @property integer $creation_id
  *
  * The followings are the available model relations:
  * @property EventRegistered $registered
+ * @property Users $creation
  *
  */
 
 namespace ommu\event\models;
 
 use Yii;
-use yii\helpers\Url;
 use ommu\users\models\Users;
 
 class EventRegisteredFinance extends \app\components\ActiveRecord
 {
-	use \ommu\traits\UtilityTrait;
-
 	public $gridForbiddenColumn = ['creation_date', 'creationDisplayname'];
 
-	// Search Variable
-	public $registered_search;
+	public $registeredEventId;
 	public $creationDisplayname;
-	public $eventTitle;
-	public $userDisplayname;
 
 	/**
 	 * @return string the associated database table name
@@ -54,10 +51,9 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['payment', 'reward'], 'required'],
-			[['payment', 'reward', 'creation_id'], 'integer'],
-			[['creation_date', 'creation_id'], 'safe'],
-			[['registered_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventRegistered::className(), 'targetAttribute' => ['registered_id' => 'registered_id']],
+			[['price', 'payment', 'reward'], 'required'],
+			[['price', 'payment', 'reward', 'creation_id'], 'integer'],
+			[['registered_id'], 'exist', 'skipOnError' => true, 'targetClass' => EventRegistered::className(), 'targetAttribute' => ['registered_id' => 'id']],
 		];
 	}
 
@@ -68,14 +64,13 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 	{
 		return [
 			'registered_id' => Yii::t('app', 'Registered'),
-			'payment' => Yii::t('app', 'payment'),
-			'reward' => Yii::t('app', 'reward'),
+			'price' => Yii::t('app', 'Price'),
+			'payment' => Yii::t('app', 'Payment'),
+			'reward' => Yii::t('app', 'Reward'),
 			'creation_date' => Yii::t('app', 'Creation Date'),
 			'creation_id' => Yii::t('app', 'Creation'),
-			'registered_search' => Yii::t('app', 'Registered'),
+			'registeredEventId' => Yii::t('app', 'Registered'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
-			'eventTitle' => Yii::t('app', 'Event'),
-			'userDisplayname' => Yii::t('app', 'User'),
 		];
 	}
 
@@ -96,6 +91,15 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * {@inheritdoc}
+	 * @return \ommu\event\models\query\EventRegisteredFinance the active query used by this AR class.
+	 */
+	public static function find()
+	{
+		return new \ommu\event\models\query\EventRegisteredFinance(get_called_class());
+	}
+
+	/**
 	 * Set default columns to display
 	 */
 	public function init()
@@ -110,20 +114,24 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		$this->templateColumns['eventTitle'] = [
-			'attribute' => 'eventTitle',
+		$this->templateColumns['price'] = [
+			'attribute' => 'price',
 			'value' => function($model, $key, $index, $column) {
-				return $model->registered->event->title;
+				return Yii::$app->formatter->asCurrency($model->price);
 			},
 		];
-		$this->templateColumns['userDisplayname'] = [
-			'attribute' => 'userDisplayname',
+		$this->templateColumns['payment'] = [
+			'attribute' => 'payment',
 			'value' => function($model, $key, $index, $column) {
-				return isset($model->registered->user->displayname) ? $model->registered->user->displayname : '-';
+				return Yii::$app->formatter->asCurrency($model->payment);
 			},
 		];
-		$this->templateColumns['payment'] = 'payment';
-		$this->templateColumns['reward'] = 'reward';
+		$this->templateColumns['reward'] = [
+			'attribute' => 'reward',
+			'value' => function($model, $key, $index, $column) {
+				return Yii::$app->formatter->asCurrency($model->reward);
+			},
+		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
 			'value' => function($model, $key, $index, $column) {
@@ -136,15 +144,60 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 				'attribute' => 'creationDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->creation) ? $model->creation->displayname : '-';
+					// return $model->creationDisplayname;
 				},
 			];
 		}
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::find()
+				->select([$column])
+				->where(['registered_id' => $id])
+				->one();
+			return $model->$column;
+			
+		} else {
+			$model = self::findOne($id);
+			return $model;
+		}
+	}
+
+	/**
+	 * function setReward
+	 */
+	public static function setReward($price, $packageReward)
+	{
+		if(!$packageReward)
+			return 0;
+		
+		if($packageReward['type'] == 1)
+			return $price * ($packageReward['reward']/100);
+		
+		if($packageReward['type'] == 0)
+			return ($packageReward['reward'] > $price) ? $price : $packageReward['reward'];
+	}
+
+	/**
+	 * after find attributes
+	 */
+	public function afterFind()
+	{
+		parent::afterFind();
+
+		// $this->registeredEventId = isset($this->registered) ? $this->registered->event->title : '-';
+		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
+	}
+
+	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
@@ -153,56 +206,5 @@ class EventRegisteredFinance extends \app\components\ActiveRecord
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * before save attributes
-	 */
-	public function beforeSave($insert) 
-	{
-		if(parent::beforeSave($insert)) {
-			// Create action
-		}
-		return true;	
-	}
-
-	/**
-	 * after validate attributes
-	 */
-	public function afterValidate()
-	{
-		parent::afterValidate();
-		// Create action
-		
-		return true;
-	}
-	
-	/**
-	 * After save attributes
-	 */
-	public function afterSave($insert, $changedAttributes) 
-	{
-		parent::afterSave($insert, $changedAttributes);
-		// Create action
-	}
-
-	/**
-	 * Before delete attributes
-	 */
-	public function beforeDelete() 
-	{
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	public function afterDelete() 
-	{
-		parent::afterDelete();
-		// Create action
 	}
 }

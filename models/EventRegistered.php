@@ -24,6 +24,11 @@
  *
  * The followings are the available model relations:
  * @property Events $event
+ * @property EventRegisteredBatch[] $batches
+ * @property EventRegisteredFinance $eventRegisteredFinance
+ * @property Users $user
+ * @property Users $creation
+ * @property Users $modified
  *
  */
 
@@ -31,19 +36,24 @@ namespace ommu\event\models;
 
 use Yii;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use ommu\users\models\Users;
+use yii\base\Event;
 
 class EventRegistered extends \app\components\ActiveRecord
 {
-	use \ommu\traits\UtilityTrait;
-
-	public $gridForbiddenColumn = [];
+	public $gridForbiddenColumn = ['creation_date', 'creationDisplayname', 'modified_date', 'modifiedDisplayname', 'price', 'payment', 'reward'];
 
 	public $eventTitle;
 	public $userDisplayname;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
+	public $eventCategoryId;
+	public $price;
+	public $payment;
+	public $reward;
+	public $batch;
+
+	const EVENT_BEFORE_SAVE_EVENT_REGISTERED = 'BeforeSaveEventRegistered';
 
 	/**
 	 * @return string the associated database table name
@@ -59,9 +69,8 @@ class EventRegistered extends \app\components\ActiveRecord
 	public function rules()
 	{
 		return [
-			[['event_id', 'user_id'], 'required'],
+			[['event_id', 'user_id', 'batch'], 'required'],
 			[['status', 'event_id', 'user_id', 'creation_id', 'modified_id'], 'integer'],
-			[['confirmation_date', 'creation_date', 'modified_id', 'modified_date'], 'safe'],
 			[['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Events::className(), 'targetAttribute' => ['event_id' => 'id']],
 		];
 	}
@@ -81,11 +90,12 @@ class EventRegistered extends \app\components\ActiveRecord
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
-			'batches' => Yii::t('app', 'Batches'),
 			'eventTitle' => Yii::t('app', 'Event'),
 			'userDisplayname' => Yii::t('app', 'User'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
+			'eventCategoryId' => Yii::t('app', 'Category'),
+			'batch' => Yii::t('app', 'Batches'),
 		];
 	}
 
@@ -98,11 +108,36 @@ class EventRegistered extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @param $type relation|array|dataProvider|count
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getBatches($type='relation', $val='id')
+	{
+		if($type == 'relation')
+			return $this->hasMany(EventRegisteredBatch::className(), ['registered_id' => 'id']);
+
+		if($type == 'array')
+			return \yii\helpers\ArrayHelper::map($this->batches, 'batch_id', $val=='id' ? 'id' : 'batch.batch_name');
+
+		if($type == 'dataProvider') {
+			return new \yii\data\ActiveDataProvider([
+				'query' => $this->getBatches('relation'),
+			]);
+		}
+
+		$model = EventRegisteredBatch::find()
+			->where(['registered_id' => $this->id]);
+		$batches = $model->count();
+
+		return $batches ? $batches : 0;
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getFinance()
 	{
-		return $this->hasOne(EventRegisteredFinance::className(), ['id' => 'id']);
+		return $this->hasOne(EventRegisteredFinance::className(), ['registered_id' => 'id']);
 	}
 
 	/**
@@ -153,7 +188,15 @@ class EventRegistered extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('event')) {
+		if(!Yii::$app->request->get('event') && !Yii::$app->request->get('id')) {
+			$this->templateColumns['eventCategoryId'] = [
+				'attribute' => 'eventCategoryId',
+				'value' => function($model, $key, $index, $column) {
+					return isset($model->event->category) ? $model->event->category->title->message : '-';
+					// return $model->eventCategoryId;
+				},
+				'filter' => EventCategory::getCategory(),
+			];
 			$this->templateColumns['eventTitle'] = [
 				'attribute' => 'eventTitle',
 				'value' => function($model, $key, $index, $column) {
@@ -171,12 +214,39 @@ class EventRegistered extends \app\components\ActiveRecord
 				},
 			];
 		}
+		$this->templateColumns['batch'] = [
+			'attribute' => 'batch',
+			'value' => function($model, $key, $index, $column) {
+				$batches = $model->getBatches('array', 'title');
+				return Html::ul($batches, ['encode'=>false, 'class'=>'list-boxed']);
+			},
+			// 'filter' => $this->event->getBatches('array'),
+			'format' => 'html',
+		];
 		$this->templateColumns['confirmation_date'] = [
 			'attribute' => 'confirmation_date',
 			'value' => function($model, $key, $index, $column) {
 				return Yii::$app->formatter->asDatetime($model->confirmation_date, 'medium');
 			},
 			'filter' => $this->filterDatepicker($this, 'confirmation_date'),
+		];
+		$this->templateColumns['price'] = [
+			'attribute' => 'price',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->finance) ? Yii::$app->formatter->asCurrency($model->finance->price) : '-';
+			},
+		];
+		$this->templateColumns['payment'] = [
+			'attribute' => 'payment',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->finance) ? Yii::$app->formatter->asCurrency($model->finance->payment) : '-';
+			},
+		];
+		$this->templateColumns['reward'] = [
+			'attribute' => 'reward',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->finance) ? Yii::$app->formatter->asCurrency($model->finance->reward) : '-';
+			},
 		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
@@ -213,9 +283,9 @@ class EventRegistered extends \app\components\ActiveRecord
 		$this->templateColumns['status'] = [
 			'attribute' => 'status',
 			'value' => function($model, $key, $index, $column) {
-				return $model->status ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
+				return self::getStatus($model->status);
 			},
-			'filter' => $this->filterYesNo(),
+			'filter' => self::getStatus(),
 			'contentOptions' => ['class'=>'center'],
 		];
 	}
@@ -239,6 +309,23 @@ class EventRegistered extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * function getStatus
+	 */
+	public static function getStatus($value=null)
+	{
+		$items = array(
+			'0' => Yii::t('app', 'Waiting'),
+			'1' => Yii::t('app', 'Paid'),
+			'2' => Yii::t('app', 'Cancel'),
+		);
+
+		if($value !== null)
+			return $items[$value];
+		else
+			return $items;
+	}
+
+	/**
 	 * after find attributes
 	 */
 	public function afterFind()
@@ -249,6 +336,8 @@ class EventRegistered extends \app\components\ActiveRecord
 		// $this->userDisplayname = isset($this->user) ? $this->user->displayname : '-';
 		// $this->creationDisplayname = isset($this->creation) ? $this->creation->displayname : '-';
 		// $this->modifiedDisplayname = isset($this->modified) ? $this->modified->displayname : '-';
+		// $this->eventCategoryId = isset($this->event->category) ? $this->event->category->title->message : '-';
+		$this->batch = array_flip($this->getBatches('array'));
 	}
 
 	/**
@@ -265,13 +354,42 @@ class EventRegistered extends \app\components\ActiveRecord
 					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
 			}
 
-			if ($this->isNewRecord) {
-				// cek apakah user sudah terdaftar
-				$registered = EventRegistered::find()->where(['event_id' => $this->event_id, 'user_id' => $this->user_id])->one();
-				if ($registered != null)
-					$this->addError('user_id', Yii::t('app', 'User sudah terdaftar'));
+			if($this->isNewRecord) {
+				if($this->event->isPackage)
+					$this->batch = array_values(array_flip($this->event->getBatches('array')));
+
+				if($this->user_id && !isset($this->user))
+					$this->addError('user_id', Yii::t('app', 'User not registered yet'));
+
+				// cek user registereds
+				$registered = self::find()
+					->andWhere(['<>', 'status', 1])
+					->andWhere(['event_id' => $this->event_id])
+					->andWhere(['user_id' => $this->user_id])
+					->one();
+
+				if($registered != null)
+					$this->addError('user_id', Yii::t('app', 'User <strong>{displayname}</strong> sudah terdaftar', ['displayname'=>$this->user->displayname]));
+			} else {
+				if($this->status == '')
+					$this->addError('status', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('status')]));
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * After save attributes
+	 */
+	public function afterSave($insert, $changedAttributes)
+	{
+		parent::afterSave($insert, $changedAttributes);
+
+		if($insert) {
+			// set batches
+			$this->isNewRecord = true;
+			$event = new Event(['sender' => $this]);
+			Event::trigger(self::className(), self::EVENT_BEFORE_SAVE_EVENT_REGISTERED, $event);
+		}
 	}
 }

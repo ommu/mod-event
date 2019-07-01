@@ -1,14 +1,16 @@
 <?php
 /**
- * Event Registereds (event-registereds)
+ * Event Registereds (event-registered)
  * @var $this app\components\View
  * @var $this ommu\event\controllers\registered\AdminController
  * @var $model ommu\event\models\EventRegistered
+ * @var $searchModel ommu\event\models\search\EventRegistered
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:43 WIB
+ * @modified date 28 June 2019, 19:11 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
@@ -20,17 +22,22 @@ use yii\widgets\Pjax;
 
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'Add Event Registereds'), 'url' => Url::to(['create']), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
-];
+if(($id = Yii::$app->request->get('id')) != null) {
+	$this->params['menu']['content'] = [
+		['label' => Yii::t('app', 'Add Registered'), 'url' => Url::to(['create', 'id'=>$id]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn btn-success']],
+	];
+}
 $this->params['menu']['option'] = [
 	//['label' => Yii::t('app', 'Search'), 'url' => 'javascript:void(0);'],
 	['label' => Yii::t('app', 'Grid Option'), 'url' => 'javascript:void(0);'],
 ];
 ?>
 
-<div class="event-xxx-manage">
+<div class="event-registered-manage">
 <?php Pjax::begin(); ?>
+
+<?php if($event != null)
+	echo $this->render('/admin/admin_view', ['model'=>$event, 'small'=>true]); ?>
 
 <?php //echo $this->render('_search', ['model'=>$searchModel]); ?>
 

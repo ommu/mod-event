@@ -26,6 +26,11 @@ use app\components\widgets\ActiveForm;
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
+	'fieldConfig' => [
+		'errorOptions' => [
+			'encode' => false,
+		],
+	],
 ]); ?>
 
 <?php //echo $form->errorSummary($model);?>
@@ -46,9 +51,11 @@ use app\components\widgets\ActiveForm;
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('session_title')); ?>
 
-<?php echo $form->field($model, 'publish')
+<?php if(!$model->isNewRecord) {
+echo $form->field($model, 'publish')
 	->checkbox()
-	->label($model->getAttributeLabel('publish')); ?>
+	->label($model->getAttributeLabel('publish'));
+} ?>
 
 <div class="ln_solid"></div>
 

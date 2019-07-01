@@ -22,6 +22,8 @@ use ommu\event\models\EventFilterGender;
 use ommu\event\models\EventFilterMajor;
 use ommu\event\models\EventFilterMajorGroup;
 use ommu\event\models\EventFilterUniversity;
+use ommu\event\models\EventRegisteredBatch;
+use ommu\event\models\EventRegisteredFinance;
 
 class Events extends \yii\base\BaseObject
 {
@@ -116,6 +118,66 @@ class Events extends \yii\base\BaseObject
 				->andWhere(['id'=>key($oldGender)])
 				->one()
 				->delete();
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function onBeforeSaveEventRegistered($event)
+	{
+		$registered = $event->sender;
+		
+		$oldBatch = array_values(array_flip($registered->event->getBatches('array')));
+		if(!$registered->isNewRecord)
+			$oldBatch = array_flip($registered->getBatches('array'));
+		$batch = $registered->batch;
+		if(!is_array($batch))
+			$batch = explode(',', $batch);
+
+		// insert difference batch
+		$price = 0;
+		foreach ($batch as $val) {
+			if($registered->isNewRecord && !in_array($val, $oldBatch))
+				continue;
+
+			if(!$registered->isNewRecord && in_array($val, $oldBatch)) {
+				unset($oldBatch[array_keys($oldBatch, $val)[0]]);
+				continue;
+			}
+
+			$model = new EventRegisteredBatch();
+			$model->registered_id = $registered->id;
+			$model->batch_id = $val;
+			if($model->save()) {
+				$price = $price + $model->batch->batch_price;
+				if($registered->isNewRecord)
+					unset($oldBatch[array_keys($oldBatch, $val)[0]]);
+			}
+		}
+
+		if($registered->isNewRecord) {
+			$finance = new EventRegisteredFinance();
+			$finance->registered_id = $registered->id;
+			$finance->price = $price;
+			$finance->reward = $registered->event->isFree ? 
+				$finance->price : 
+				(empty($oldBatch) ? 
+					EventRegisteredFinance::setReward($finance->price, $registered->event->package_reward) : 
+					0);
+			$finance->payment = $finance->price - $finance->reward;
+			$finance->save();
+		}
+
+		// drop difference batch
+		if(!$registered->isNewRecord && !empty($oldBatch)) {
+			foreach ($oldBatch as $key => $val) {
+				EventRegisteredBatch::find()
+					->select(['id'])
+					->andWhere(['id' => $key])
+					->one()
+					->delete();
+			}
 		}
 	}
 }

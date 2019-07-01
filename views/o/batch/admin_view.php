@@ -41,19 +41,13 @@ $attributes = [
 	],
 	[
 		'attribute' => 'publish',
-		'value' => $model->quickAction(Url::to(['publish', 'id'=>$model->primaryKey]), $model->publish),
+		'value' => $model->quickAction(Url::to(['o/batch/publish', 'id'=>$model->primaryKey]), $model->publish),
 		'format' => 'raw',
 		'visible' => !$small,
 	],
 	[
-		'attribute' => 'eventCategoryId',
-		'value' => function ($model) {
-			$eventCategoryName = isset($model->event->category) ? $model->event->category->title->message : '-';
-			if($eventCategoryName != '-')
-				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
-			return $eventCategoryName;
-		},
-		'format' => 'html',
+		'attribute' => 'batch_name',
+		'value' => $model->batch_name ? $model->batch_name : '-',
 	],
 	[
 		'attribute' => 'eventTitle',
@@ -66,8 +60,14 @@ $attributes = [
 		'format' => 'html',
 	],
 	[
-		'attribute' => 'batch_name',
-		'value' => $model->batch_name ? $model->batch_name : '-',
+		'attribute' => 'eventCategoryId',
+		'value' => function ($model) {
+			$eventCategoryName = isset($model->event->category) ? $model->event->category->title->message : '-';
+			if($eventCategoryName != '-')
+				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
+			return $eventCategoryName;
+		},
+		'format' => 'html',
 	],
 	[
 		'attribute' => 'batch_desc',
@@ -93,12 +93,10 @@ $attributes = [
 	[
 		'attribute' => 'batch_date',
 		'value' => Yii::$app->formatter->asDate($model->batch_date, 'medium'),
-		'visible' => !$small,
 	],
 	[
 		'attribute' => 'batch_time',
 		'value' => $model::parseBatchTime($model->batch_time),
-		'visible' => !$small,
 	],
 	[
 		'attribute' => 'speakers',
@@ -127,7 +125,7 @@ $attributes = [
 					'enableSorting' => false,
 				],
 			],
-			'layout' => '{items}'.Html::a(Yii::t('app', 'show speaker manage'), ['o/speaker/manage', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$model->getSpeakers('count')])]),
+			'layout' => '{items}'.Html::a(Yii::t('app', 'add speaker'), ['o/speaker/create', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'add speaker'), 'class'=>'modal-btn']).' | '.Html::a(Yii::t('app', 'show all speaker'), ['o/speaker/manage', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} speakers', ['count'=>$model->getSpeakers('count')])]),
 		]),
 		'format' => 'html',
 		'visible' => !$small,

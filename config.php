@@ -10,8 +10,9 @@
  *
  */
 
-use ommu\event\Events;
+use ommu\event\Events; 
 use ommu\event\models\Events as EventsModel;
+use ommu\event\models\EventRegistered;
 
 return [
 	'id' => 'event',
@@ -21,6 +22,11 @@ return [
 			'class'    => EventsModel::className(),
 			'event'    => EventsModel::EVENT_BEFORE_SAVE_EVENTS,
 			'callback' => [Events::className(), 'onBeforeSaveEvents']
+		],
+		[
+			'class'    => EventRegistered::className(),
+			'event'    => EventRegistered::EVENT_BEFORE_SAVE_EVENT_REGISTERED,
+			'callback' => [Events::className(), 'onBeforeSaveEventRegistered']
 		],
 	],
 ];

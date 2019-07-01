@@ -1,7 +1,7 @@
 <?php
 /**
  * AdminController
- * @var ommu\event\controllers\registered\AdminController
+ * @var $this ommu\event\controllers\registered\AdminController
  * @var $model ommu\event\models\EventRegistered
  *
  * AdminController implements the CRUD actions for EventRegistered model.
@@ -20,10 +20,11 @@
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:43 WIB
+ * @modified date 28 June 2019, 19:11 WIB
  * @link https://github.com/ommu/mod-event
  *
  */
- 
+
 namespace ommu\event\controllers\registered;
 
 use Yii;
@@ -37,7 +38,17 @@ use ommu\event\models\EventRegisteredFinance;
 class AdminController extends Controller
 {
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
+	 */
+	public function init()
+	{
+		parent::init();
+		if(Yii::$app->request->get('id'))
+			$this->subMenu = $this->module->params['event_submenu'];
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function behaviors()
 	{
@@ -69,6 +80,8 @@ class AdminController extends Controller
 	public function actionManage()
 	{
 		$searchModel = new EventRegisteredSearch();
+		if(($id = Yii::$app->request->get('id')) != null)
+			$searchModel = new EventRegisteredSearch(['event_id'=>$id]);
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		$gridColumn = Yii::$app->request->get('GridColumn', null);
@@ -81,13 +94,17 @@ class AdminController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
-		$this->view->title = Yii::t('app', 'Event Registereds');
+		if(($event = Yii::$app->request->get('event')) != null || ($event = Yii::$app->request->get('id')) != null)
+			$event = \ommu\event\models\Events::findOne($event);
+
+		$this->view->title = Yii::t('app', 'Registereds');
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->render('admin_manage', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 			'columns' => $columns,
+			'event' => $event,
 		]);
 	}
 
@@ -98,58 +115,92 @@ class AdminController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model = new EventRegistered();
+		if(($id = Yii::$app->request->get('id')) == null)
+			throw new \yii\web\NotAcceptableHttpException(Yii::t('app', 'The requested page does not exist.'));
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Registereds success created.'));
-			return $this->redirect(['index']);
+		$model = new EventRegistered(['event_id'=>$id]);
+		$this->subMenuParam = $model->event_id;
 
-		} else {
-			$this->view->title = Yii::t('app', 'Create Event Registereds');
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_create', [
-				'model' => $model,
-			]);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
+
+			if($model->save()) {
+				Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success created.'));
+				return $this->redirect(['manage', 'id'=>$model->event_id]);
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+			}
 		}
+
+		$this->view->title = Yii::t('app', 'Create Registered');
+		if($id)
+			$this->view->title = Yii::t('app', 'Create Registered: {title}', ['title' => $model->event->title]);
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_create', [
+			'model' => $model,
+		]);
 	}
 
 	/**
 	 * Updates an existing EventRegistered model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionUpdate($id)
 	{
 		$model = $this->findModel($id);
+		$finance = EventRegisteredFinance::findOne($model->id);
+		if($finance == null)
+			$finance = new EventRegisteredFinance(['registered_id'=>$model->id]);
+		$this->subMenuParam = $model->event_id;
 
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			//return $this->redirect(['view', 'id' => $model->id]);
-			Yii::$app->session->setFlash('success', Yii::t('app', 'Event Registereds success updated.'));
-			return $this->redirect(['index']);
+		if(Yii::$app->request->isPost) {
+			$model->load(Yii::$app->request->post());
+			$finance->load(Yii::$app->request->post());
+			// $postData = Yii::$app->request->post();
+			// $model->load($postData);
 
-		} else {
-			$this->view->title = Yii::t('app', 'Update Event Registereds: {id}', ['id' => $model->id]);
-			$this->view->description = '';
-			$this->view->keywords = '';
-			return $this->render('admin_update', [
-				'model' => $model,
-			]);
+			$isValid = $model->validate();
+			$isValid = $finance->validate() && $isValid;
+
+			if($isValid) {
+				if($model->save() && $finance->save()) {
+					Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success updated.'));
+					return $this->redirect(['manage', 'id'=>$model->event_id]);
+				}
+
+			} else {
+				if(Yii::$app->request->isAjax)
+					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+			}
 		}
+
+		$this->view->title = Yii::t('app', 'Update Registered: {event-id}', ['event-id' => $model->event->title]);
+		$this->view->description = '';
+		$this->view->keywords = '';
+		return $this->render('admin_update', [
+			'model' => $model,
+			'finance' => $finance,
+		]);
 	}
 
 	/**
 	 * Displays a single EventRegistered model.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionView($id)
 	{
 		$model = $this->findModel($id);
+		$this->subMenuParam = $model->event_id;
 
-		$this->view->title = Yii::t('app', 'View Event Registereds: {id}', ['id' => $model->id]);
+		$this->view->title = Yii::t('app', 'Detail Registered: {event-id}', ['event-id' => $model->event->title]);
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_view', [
@@ -160,28 +211,28 @@ class AdminController extends Controller
 	/**
 	 * Deletes an existing EventRegistered model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 * @param string $id
+	 * @param integer $id
 	 * @return mixed
 	 */
 	public function actionDelete($id)
 	{
 		$model = $this->findModel($id);
 		$model->delete();
-		
-		Yii::$app->session->setFlash('success', Yii::t('app', 'Event Registereds success deleted.'));
-		return $this->redirect(['index']);
+
+		Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success deleted.'));
+		return $this->redirect(['manage', 'id'=>$model->event_id]);
 	}
 
 	/**
 	 * Finds the EventRegistered model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
-	 * @param string $id
+	 * @param integer $id
 	 * @return EventRegistered the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id)
 	{
-		if (($model = EventRegistered::findOne($id)) !== null)
+		if(($model = EventRegistered::findOne($id)) !== null)
 			return $model;
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

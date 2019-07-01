@@ -159,14 +159,18 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * @param $type relation|array|count
 	 * @return \yii\db\ActiveQuery
 	 */
-	public function getBatches($count=false, $publish=1)
+	public function getBatches($type='relation', $publish=1)
 	{
-		if($count == false)
+		if($type == 'relation')
 			return $this->hasMany(EventBatch::className(), ['event_id' => 'id'])
-			->alias('batches')
-			->andOnCondition([sprintf('%s.publish', 'batches') => $publish]);
+				->alias('batches')
+				->andOnCondition([sprintf('%s.publish', 'batches') => $publish]);
+
+		if($type == 'array')
+			return \yii\helpers\ArrayHelper::map($this->batches, 'id', 'batch_name');
 
 		$model = EventBatch::find()
 			->where(['event_id' => $this->id]);
@@ -381,7 +385,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['package_reward'] = [
 			'attribute' => 'package_reward',
 			'value' => function($model, $key, $index, $column) {
-				return Events::parseReward($model->package_reward);
+				return $model->isFree == true ? Yii::t('app', 'Free') : Events::parseReward($model->package_reward);
 			},
 		];
 		$this->templateColumns['gender'] = [
@@ -451,7 +455,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['batches'] = [
 			'attribute' => 'batches',
 			'value' => function($model, $key, $index, $column) {
-				$batches = $model->getBatches(true);
+				$batches = $model->getBatches('count');
 				return Html::a($batches, ['o/batch/manage', 'event'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
 			},
 			'filter' => false,
@@ -521,6 +525,26 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
+	 * function getIsFree
+	 */
+	public function getIsFree()
+	{
+		if(!$this->package_reward)
+			return false;
+
+		return $this->package_reward['type'] == '1' && $this->package_reward['reward'] == '100' ? true : false;
+	}
+
+	/**
+	 * function getIsPackage
+	 */
+	public function getIsPackage()
+	{
+		$batches = $this->getBatches('count');
+		return $batches == 1 || ($batches > 1 && $this->registered_type == 'package') ? true : false;
+	}
+
+	/**
 	 * function getRegisteredEnable
 	 */
 	public static function getRegisteredEnable($value=null)
@@ -579,26 +603,6 @@ class Events extends \app\components\ActiveRecord
 	}
 
 	/**
-	 * function getEvent
-	 */
-	public static function getEvent($publish=null) 
-	{
-		$items = [];
-		$model = self::find();
-		if ($publish!=null)
-			$model = $model->andWhere(['publish'=>$publish]);
-		$model = $model->orderBy('title ASC')->all();
-
-		if($model !== null) {
-			foreach($model as $val) {
-				$items[$val->id] = $val->title;
-			}
-		}
-		
-		return $items;
-	}
-
-	/**
 	 * function parseGender
 	 */
 	public static function parseGender($gender, $sep='li')
@@ -630,7 +634,7 @@ class Events extends \app\components\ActiveRecord
 		if(!$reward)
 			return '-';
 		
-		return Yii::t('app', 'Reward {reward}', ['reward' => $reward['type'] == '1' ? $reward['reward'].'%' : Yii::$app->formatter->asCurrency($reward['reward'])]);
+		return Yii::t('app', 'Reward {reward}', ['reward' => $reward['type'] == 1 ? $reward['reward'].'%' : Yii::$app->formatter->asCurrency($reward['reward'])]);
 	}
 
 	/**
@@ -694,9 +698,9 @@ class Events extends \app\components\ActiveRecord
 			}
 
 			if($this->registered_enable) {
-				if ($this->registered_message == '')
+				if($this->registered_message == '')
 					$this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_message')]));
-				if ($this->registered_type == '')
+				if($this->registered_type == '')
 					$this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
 			}
 
@@ -704,8 +708,8 @@ class Events extends \app\components\ActiveRecord
 			if($this->scenario != self::SCENARIO_FILTER) {
 				if($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100)
 					$this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
-	
-				if($this->package_reward['type'] == '')
+
+				if($this->package_reward['type'] == '' || $this->package_reward['reward'] == '')
 					$this->package_reward = '';
 			}
 		}

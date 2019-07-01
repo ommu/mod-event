@@ -23,6 +23,12 @@ event_submenu:
       0: 'o/batch/manage'
       id: $_GET*id
     select: controller
+  registered:
+    label: Registereds
+    url:
+      0: 'registered/admin/manage'
+      id: $_GET*id
+    select: controller
   delete:
     label: Delete
     url:
