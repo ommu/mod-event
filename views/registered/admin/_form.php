@@ -113,6 +113,7 @@ echo $form->field($model, 'user_id')
 		'options' => [
 			'placeholder' => Yii::t('app', 'Pick some people...'),
 			'class' => 'form-control contacts',
+			'disabled' => !$model->isNewRecord ? true : false,
 		],
 		'url' => $userSuggestUrl,
 		'queryParam' => 'term',
@@ -131,6 +132,7 @@ if($model->event->registered_type == 'multiple') {
 	$batchSelectizeOptions = ArrayHelper::merge($batchSelectizeOptions, [
 		'options' => [
 			'multiple' => true,
+			'disabled' => !$model->isNewRecord ? true : false,
 		],
 		'pluginOptions' => [
 			'plugins' => ['remove_button'],
@@ -144,15 +146,15 @@ echo $form->field($model, 'batch')
 
 <?php if(!$model->isNewRecord) {
 echo $form->field($finance, 'price')
-	->textInput(['type' => 'number', 'min' => 0])
+	->textInput(['type' => 'number', 'min' => 0, 'disabled' => !$model->isNewRecord ? true : false,])
 	->label($finance->getAttributeLabel('price')); ?>
 
 <?php echo $form->field($finance, 'payment')
-	->textInput(['type' => 'number', 'min' => 0])
+	->textInput(['type' => 'number', 'min' => 0, 'disabled' => !$model->isNewRecord ? true : false,])
 	->label($finance->getAttributeLabel('payment')); ?>
 
 <?php echo $form->field($finance, 'reward')
-	->textInput(['type' => 'number', 'min' => 0])
+	->textInput(['type' => 'number', 'min' => 0, 'disabled' => !$model->isNewRecord ? true : false,])
 	->label($finance->getAttributeLabel('reward')); ?>
 
 <div class="ln_solid"></div>
