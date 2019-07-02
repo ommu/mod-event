@@ -141,7 +141,7 @@ class AdminController extends Controller
 			$this->view->title = Yii::t('app', 'Create Registered: {title}', ['title' => $model->event->title]);
 		$this->view->description = '';
 		$this->view->keywords = '';
-		return $this->render('admin_create', [
+		return $this->oRender('admin_create', [
 			'model' => $model,
 		]);
 	}
