@@ -23,6 +23,7 @@ use ommu\selectize\Selectize;
 use yii\web\JsExpression;
 
 $js = <<<JS
+	var options = '';
 	var REGEX_EMAIL = '([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@' +
 		'(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)';
 JS;
@@ -96,6 +97,16 @@ $pluginOptions = [
 		alert(\'Invalid email address.\');
 		return false;
 	}'),
+	'onChange' => new JsExpression('function(value) {
+		options = this.options;
+		var userSelected = this.options[value];
+		$(\'form\').find(\'#speaker_name\').val(userSelected.name);
+		console.log($(\'form\').find(\'#speaker_name\'));
+	}'),
+	'onDelete' => new JsExpression('function(value) {
+		user_id.clear();
+		user_id.clearOptions();
+	}'),
 ];
 if($model->user_id && isset($model->user)) {
 	$pluginOptions = ArrayHelper::merge($pluginOptions, [
@@ -109,6 +120,7 @@ if($model->user_id && isset($model->user)) {
 }
 echo $form->field($model, 'user_id')
 	->widget(Selectize::className(), [
+		'cascade' => true,
 		'options' => [
 			'placeholder' => Yii::t('app', 'Pick some people...'),
 			'class' => 'form-control contacts',
