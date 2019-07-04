@@ -220,7 +220,7 @@ class EventRegistered extends \app\components\ActiveRecord
 				$batches = $model->getBatches('array', 'title');
 				return Html::ul($batches, ['encode'=>false, 'class'=>'list-boxed']);
 			},
-			// 'filter' => $this->event->getBatches('array'),
+			'filter' => self::getBatchFilter(),
 			'format' => 'html',
 		];
 		$this->templateColumns['confirmation_date'] = [
@@ -323,6 +323,25 @@ class EventRegistered extends \app\components\ActiveRecord
 			return $items[$value];
 		else
 			return $items;
+	}
+
+	/**
+	 * function getBatchFilter
+	 */
+	public static function getBatchFilter()
+	{
+		if(($id = Yii::$app->request->get('id')) == null)
+			return;
+
+		$model = EventBatch::find()
+			->published()
+			->andWhere(['event_id' => $id])
+			->all();
+
+		if($model == null)
+			return;
+
+		return \yii\helpers\ArrayHelper::map($model, 'batch_name', 'batch_name');
 	}
 
 	/**
