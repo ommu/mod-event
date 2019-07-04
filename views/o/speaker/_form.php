@@ -101,7 +101,6 @@ $pluginOptions = [
 		options = this.options;
 		var userSelected = this.options[value];
 		$(\'form\').find(\'#speaker_name\').val(userSelected.name);
-		console.log($(\'form\').find(\'#speaker_name\'));
 	}'),
 	'onDelete' => new JsExpression('function(value) {
 		user_id.clear();
