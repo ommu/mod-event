@@ -69,7 +69,8 @@ class EventFilterUniversity extends EventFilterUniversityModel
 			'event event', 
 			'university.company university', 
 			'creation creation'
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

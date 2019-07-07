@@ -78,7 +78,8 @@ class Events extends EventsModel
 			'majors.major majorsRltn',
 			'majorGroups majorGroupsRltn',
 			'universities.university.company universitiesRltn',
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

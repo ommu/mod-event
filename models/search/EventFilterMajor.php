@@ -69,7 +69,8 @@ class EventFilterMajor extends EventFilterMajorModel
 			'event event', 
 			'major major', 
 			'creation creation'
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

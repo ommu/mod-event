@@ -65,7 +65,12 @@ class EventNotification extends EventNotificationModel
 			$query = EventNotificationModel::find()->alias('t');
 		else
 			$query = EventNotificationModel::find()->alias('t')->select($column);
-		$query->joinWith(['batch batch', 'batch.event event', 'notified notified']);
+		$query->joinWith([
+			'batch batch', 
+			'batch.event event', 
+			'notified notified'
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

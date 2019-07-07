@@ -64,7 +64,14 @@ class EventUserBanned extends EventUserBannedModel
 			$query = EventUserBannedModel::find()->alias('t');
 		else
 			$query = EventUserBannedModel::find()->alias('t')->select($column);
-		$query->joinWith(['user user', 'creation creation', 'modified modified', 'unbanned unbanned', 'event event']);
+		$query->joinWith([
+			'user user', 
+			'creation creation', 
+			'modified modified', 
+			'unbanned unbanned', 
+			'event event'
+		])
+		->groupBy(['banned_id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

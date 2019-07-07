@@ -65,7 +65,10 @@ class EventBlastingHistory extends EventBlastingHistoryModel
 			$query = EventBlastingHistoryModel::find()->alias('t');
 		else
 			$query = EventBlastingHistoryModel::find()->alias('t')->select($column);
-		$query->joinWith(['item item']);
+		$query->joinWith([
+			'item item',
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

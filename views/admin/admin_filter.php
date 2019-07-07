@@ -55,7 +55,7 @@ echo $form->field($model, 'enable_filter')
 <?php echo $form->field($model, 'gender')
 	->widget(Selectize::className(), [
 		'options' => [
-			'placeholder' => Yii::t('app', 'Select a person in gender..'),
+			'placeholder' => Yii::t('app', 'Select a gender..'),
 		],
 		'items' => ArrayHelper::merge([''=>Yii::t('app', 'Select a gender..')], EventFilterGender::getGender()),
 	])
@@ -64,7 +64,7 @@ echo $form->field($model, 'enable_filter')
 <?php echo $form->field($model, 'major')
 	->widget(Selectize::className(), [
 		'options' => [
-			'placeholder' => Yii::t('app', 'Select a person in major..'),
+			'placeholder' => Yii::t('app', 'Select a major..'),
 		],
 		'url' => 'major-url',
 		'queryParam' => 'term',
@@ -80,7 +80,7 @@ echo $form->field($model, 'enable_filter')
 <?php echo $form->field($model, 'majorGroup')
 	->widget(Selectize::className(), [
 		'options' => [
-			'placeholder' => Yii::t('app', 'Select a person in major group..'),
+			'placeholder' => Yii::t('app', 'Select a major group..'),
 		],
 		'url' => 'majorGroup-url',
 		'queryParam' => 'term',
@@ -96,7 +96,7 @@ echo $form->field($model, 'enable_filter')
 <?php echo $form->field($model, 'university')
 	->widget(Selectize::className(), [
 		'options' => [
-			'placeholder' => Yii::t('app', 'Select a person in university..'),
+			'placeholder' => Yii::t('app', 'Select a university..'),
 		],
 		'url' => 'university-url',
 		'queryParam' => 'term',

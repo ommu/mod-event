@@ -68,7 +68,8 @@ class EventFilterGender extends EventFilterGenderModel
 		$query->joinWith([
 			'event event', 
 			'creation creation'
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

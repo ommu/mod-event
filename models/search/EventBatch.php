@@ -71,7 +71,8 @@ class EventBatch extends EventBatchModel
 			'modified modified',
 			'event.category.title category',
 			'speakers speakers',
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

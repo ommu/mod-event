@@ -65,7 +65,12 @@ class EventBlastingItem extends EventBlastingItemModel
 			$query = EventBlastingItemModel::find()->alias('t');
 		else
 			$query = EventBlastingItemModel::find()->alias('t')->select($column);
-		$query->joinWith(['blasting blasting', 'user user', 'creation creation']);
+		$query->joinWith([
+			'blasting blasting', 
+			'user user', 
+			'creation creation',
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

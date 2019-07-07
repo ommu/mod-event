@@ -72,7 +72,8 @@ class EventSpeaker extends EventSpeakerModel
 			'modified modified', 
 			'batch.event event',
 			'batch.event.category.title category',
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

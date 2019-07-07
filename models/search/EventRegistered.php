@@ -74,7 +74,8 @@ class EventRegistered extends EventRegisteredModel
 			'finance finance', 
 			'batches batches',
 			'batches.batch batchesRltn',
-		]);
+		])
+		->groupBy(['id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

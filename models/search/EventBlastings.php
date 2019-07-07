@@ -66,7 +66,13 @@ class EventBlastings extends EventBlastingsModel
 			$query = EventBlastingsModel::find()->alias('t');
 		else
 			$query = EventBlastingsModel::find()->alias('t')->select($column);
-		$query->joinWith(['event event', 'filter filter', 'creation creation', 'modified modified']);
+		$query->joinWith([
+			'event event', 
+			'filter filter', 
+			'creation creation', 
+			'modified modified'
+		])
+		->groupBy(['blast_id']);
 
 		// add conditions that should always apply here
 		$dataParams = [

@@ -70,7 +70,7 @@ class AdminController extends Controller
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event setting success updated.'));
-				return $this->redirect(['manage']);
+				return $this->redirect(['update']);
 
 			} else {
 				if(Yii::$app->request->isAjax)
