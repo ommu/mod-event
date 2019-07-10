@@ -72,7 +72,7 @@ $attributes = [
 		'attribute' => 'cover_filename',
 		'value' => function ($model) {
 			$uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
-			return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['class'=>'mb-3']).$model->cover_filename : '-';
+			return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt'=>$model->cover_filename, 'class'=>'mb-3']).'<br/>'.$model->cover_filename : '-';
 		},
 		'format' => 'html',
 		'visible' => !$small,
@@ -81,7 +81,7 @@ $attributes = [
 		'attribute' => 'banner_filename',
 		'value' => function ($model) {
 			$uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
-			return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['class'=>'mb-3']).$model->banner_filename : '-';
+			return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt'=>$model->banner_filename, 'class'=>'mb-3']).'<br/>'.$model->banner_filename : '-';
 		},
 		'format' => 'html',
 		'visible' => !$small,

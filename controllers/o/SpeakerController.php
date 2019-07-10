@@ -131,14 +131,8 @@ class SpeakerController extends Controller
 			// $model->load($postData);
 
 			if($model->save()) {
-				if(Yii::$app->request->isAjax) {
-					return \yii\helpers\Json::encode([
-						'reload' => 1,
-					]);
-				}
-
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success created.'));
-				return $this->redirect(['manage', 'id'=>$model->batch_id]);
+				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)
@@ -173,14 +167,8 @@ class SpeakerController extends Controller
 			// $model->load($postData);
 
 			if($model->save()) {
-				if(Yii::$app->request->isAjax) {
-					return \yii\helpers\Json::encode([
-						'reload' => 1,
-					]);
-				}
-
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
-				return $this->redirect(['manage', 'id'=>$model->batch_id]);
+				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
 			} else {
 				if(Yii::$app->request->isAjax)

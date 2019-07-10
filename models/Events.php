@@ -337,7 +337,7 @@ class Events extends \app\components\ActiveRecord
 			'attribute' => 'cover_filename',
 			'value' => function($model, $key, $index, $column) {
 				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
-				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt' => $model->cover_filename]) : '-';
+				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt'=>$model->cover_filename]) : '-';
 			},
 			'format' => 'html',
 		];
@@ -345,7 +345,7 @@ class Events extends \app\components\ActiveRecord
 			'attribute' => 'banner_filename',
 			'value' => function($model, $key, $index, $column) {
 				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
-				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt' => $model->banner_filename]) : '-';
+				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt'=>$model->banner_filename]) : '-';
 			},
 			'format' => 'html',
 		];
