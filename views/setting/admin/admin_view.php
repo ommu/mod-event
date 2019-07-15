@@ -16,7 +16,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
-use ommu\event\models\EventSetting;
 
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -38,7 +37,7 @@ $attributes = [
 	'license',
 	[
 		'attribute' => 'permission',
-		'value' => EventSetting::getPermission($model->permission),
+		'value' => $model::getPermission($model->permission),
 	],
 	[
 		'attribute' => 'meta_keyword',
@@ -59,11 +58,11 @@ $attributes = [
 	],
 	[
 		'attribute' => 'event_notify_difference',
-		'value' => $model->event_notify_difference.' '.EventSetting::getEventNotifyDiffType($model->event_notify_diff_type),
+		'value' => $model->event_notify_difference.' '.$model::getEventNotifyDiffType($model->event_notify_diff_type),
 	],
 	[
 		'attribute' => 'event_banned_difference',
-		'value' => $model->event_banned_difference.' '.EventSetting::getEventNotifyDiffType($model->event_banned_diff_type),
+		'value' => $model->event_banned_difference.' '.$model::getEventNotifyDiffType($model->event_banned_diff_type),
 	],
 	[
 		'attribute' => 'modified_date',
@@ -75,7 +74,7 @@ $attributes = [
 	],
 	[
 		'attribute' => '',
-		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
+		'value' => Html::a(Yii::t('app', 'Update'), ['update'], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-primary']),
 		'format' => 'html',
 	],
 ];

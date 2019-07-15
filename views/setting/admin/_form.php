@@ -17,7 +17,6 @@
 
 use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
-use ommu\event\models\EventSetting;
 ?>
 
 <div class="event-setting-form">
@@ -43,7 +42,7 @@ echo $form->field($model, 'license')
 	->label($model->getAttributeLabel('license'))
 	->hint(Yii::t('app', 'Enter the your license key that is provided to you when you purchased this plugin. If you do not know your license key, please contact support team.').'<br/>'.Yii::t('app', 'Format: XXXX-XXXX-XXXX-XXXX')); ?>
 
-<?php $permission = EventSetting::getPermission();
+<?php $permission = $model::getPermission();
 echo $form->field($model, 'permission', ['template' => '{label}{beginWrapper}{hint}{input}{error}{endWrapper}'])
 	->radioList($permission)
 	->label($model->getAttributeLabel('permission'))
@@ -69,7 +68,7 @@ echo $form->field($model, 'permission', ['template' => '{label}{beginWrapper}{hi
 	->textarea(['rows'=>6, 'cols'=>50])
 	->label($model->getAttributeLabel('event_warning_message')); ?>
 
-<?php $eventNotifyDiffType = EventSetting::getEventNotifyDiffType();
+<?php $eventNotifyDiffType = $model::getEventNotifyDiffType();
 $event_notify_diff_type = $form->field($model, 'event_notify_diff_type', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6'], 'options' => ['tag' => null]])
 	->dropDownList($eventNotifyDiffType, ['prompt'=>''])
 	->label($model->getAttributeLabel('event_notify_diff_type')); ?>
