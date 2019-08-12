@@ -5,7 +5,7 @@
  * @var $this ommu\event\controllers\o\NotificationController
  * @var $model ommu\event\models\EventNotification
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Putra Sudaryanto <putra@ommu.co>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 29 November 2017, 15:41 WIB

@@ -6,7 +6,7 @@
  * @var $model ommu\event\models\EventCategory
  * @var $searchModel ommu\event\models\search\EventCategory
  *
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Putra Sudaryanto <putra@ommu.co>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
  * @created date 23 November 2017, 09:46 WIB

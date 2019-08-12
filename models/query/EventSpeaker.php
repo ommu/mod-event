@@ -5,7 +5,7 @@
  * This is the ActiveQuery class for [[\ommu\event\models\EventSpeaker]].
  * @see \ommu\event\models\EventSpeaker
  * 
- * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @author Putra Sudaryanto <putra@ommu.co>
  * @contact (+62)856-299-4114
  * @copyright Copyright (c) 2019 OMMU (www.ommu.co)
  * @created date 26 June 2019, 21:46 WIB
