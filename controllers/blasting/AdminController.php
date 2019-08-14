@@ -269,6 +269,7 @@ class AdminController extends Controller
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
+			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
 			if($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);

@@ -117,6 +117,7 @@ class AdminController extends Controller
 			$model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
+			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success created.'));
@@ -152,6 +153,7 @@ class AdminController extends Controller
 			$model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
+			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success updated.'));
@@ -187,6 +189,7 @@ class AdminController extends Controller
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
+			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
 			if($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter success updated.'));

@@ -158,8 +158,8 @@ class EventBatch extends \app\components\ActiveRecord
 	{
 		if($type == 'relation')
 			return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id'])
-			->alias('speakers')
-			->andOnCondition([sprintf('%s.publish', 'speakers') => $publish]);
+				->alias('speakers')
+				->andOnCondition([sprintf('%s.publish', 'speakers') => $publish]);
 
 		if($type == 'array')
 			return \yii\helpers\ArrayHelper::map($this->speakers, 'speaker_name', 'speaker_name');
