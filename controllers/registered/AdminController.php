@@ -222,7 +222,7 @@ class AdminController extends Controller
 		$model->delete();
 
 		Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success deleted.'));
-		return $this->redirect(['manage', 'id'=>$model->event_id]);
+		return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->event_id]);
 	}
 
 	/**

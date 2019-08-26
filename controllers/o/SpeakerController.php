@@ -217,7 +217,7 @@ class SpeakerController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success deleted.'));
-			return $this->redirect(['manage', 'id'=>$model->batch_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 		}
 	}
 
@@ -235,7 +235,7 @@ class SpeakerController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
-			return $this->redirect(['manage', 'id'=>$model->batch_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 		}
 	}
 

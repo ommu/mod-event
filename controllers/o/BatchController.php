@@ -215,7 +215,7 @@ class BatchController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success deleted.'));
-			return $this->redirect(['manage', 'id'=>$model->event_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->event_id]);
 		}
 	}
 
@@ -233,7 +233,7 @@ class BatchController extends Controller
 
 		if($model->save(false, ['publish','modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
-			return $this->redirect(['manage', 'id'=>$model->event_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->event_id]);
 		}
 	}
 

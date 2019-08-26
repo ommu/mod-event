@@ -180,7 +180,7 @@ class ItemController extends Controller
 		$model->delete();
 		
 		Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blasting Item success deleted.'));
-		return $this->redirect(['index']);
+		return $this->redirect(Yii::$app->request->referrer ?: ['manage']);
 	}
 
 	/**
