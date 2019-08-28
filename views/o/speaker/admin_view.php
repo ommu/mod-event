@@ -90,7 +90,6 @@ $attributes = [
 	[
 		'attribute' => 'userDisplayname',
 		'value' => isset($model->user) ? $model->user->displayname : '-',
-		'visible' => !$small,
 	],
 	[
 		'attribute' => 'creation_date',
