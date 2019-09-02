@@ -158,11 +158,11 @@ array_push($columnData, [
 				$url = Url::to(['index', 'event_id' => $event_id, 'filter_id' => $model->filter_id]);
 			else
 				$url = Url::to(['index', 'filter_id' => $model->filter_id]);
-			return Html::a('<span class="glyphicon glyphicon-send"></span>', $url, ['title' => Yii::t('app', 'Use Blasting Filter')]);
+			return Html::a('<span class="glyphicon glyphicon-send"></span>', $url, ['title'=>Yii::t('app', 'Use Blasting Filter')]);
 		},
 		'view' => function ($url, $model, $key) {
 			$url = Url::to(['view', 'id'=>$model->primaryKey]);
-			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title' => Yii::t('app', 'View Event Blastings')]);
+			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title'=>Yii::t('app', 'View Event Blastings')]);
 		},
 		'delete' => function ($url, $model, $key) {
 			$url = Url::to(['delete', 'id'=>$model->primaryKey]);
