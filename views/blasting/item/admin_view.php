@@ -41,15 +41,23 @@ $attributes = [
 		'value' => $model->blasting->blast_id,
 	],
 	[
-		'attribute' => 'user_search',
+		'attribute' => 'userDisplayname',
 		'value' => isset($model->user) ? $model->user->displayname : '-',
 	],
-	'views',
+	[
+		'attribute' => 'views',
+		'value' => $model->views,
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'view_date',
 		'value' => !in_array($model->view_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->view_date, 'datetime') : '-',
 	],
-	'view_ip',
+	[
+		'attribute' => 'view_ip',
+		'value' => $model->view_ip,
+		'visible' => !$small,
+	],
 	[
 		'attribute' => 'creation_date',
 		'value' => Yii::$app->formatter->asDatetime($model->creation_date, 'medium'),

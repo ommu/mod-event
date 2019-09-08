@@ -44,7 +44,11 @@ $attributes = [
 		'attribute' => 'view_date',
 		'value' => !in_array($model->view_date, ['0000-00-00 00:00:00','1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->view_date, 'datetime') : '-',
 	],
-	'view_ip',
+	[
+		'attribute' => 'view_ip',
+		'value' => $model->view_ip,
+		'visible' => !$small,
+	],
 ];
 
 echo DetailView::widget([

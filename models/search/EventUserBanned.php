@@ -28,7 +28,7 @@ class EventUserBanned extends EventUserBannedModel
 	{
 		return [
 			[['banned_id', 'status', 'event_id', 'user_id', 'unbanned_id', 'creation_id', 'modified_id'], 'integer'],
-			[['banned_start', 'banned_end', 'banned_desc', 'unbanned_agreement', 'unbanned_date', 'modified_date', 'user_search', 'creationDisplayname', 'modifiedDisplayname', 'unbanned_search', 'eventTitle'], 'safe'],
+			[['banned_start', 'banned_end', 'banned_desc', 'unbanned_agreement', 'unbanned_date', 'modified_date', 'userDisplayname', 'creationDisplayname', 'modifiedDisplayname', 'unbanned_search', 'eventTitle'], 'safe'],
 		];
 	}
 
@@ -83,7 +83,7 @@ class EventUserBanned extends EventUserBannedModel
 		$dataProvider = new ActiveDataProvider($dataParams);
 
 		$attributes = array_keys($this->getTableSchema()->columns);
-		$attributes['user_search'] = [
+		$attributes['userDisplayname'] = [
 			'asc' => ['user.displayname' => SORT_ASC],
 			'desc' => ['user.displayname' => SORT_DESC],
 		];
@@ -133,7 +133,7 @@ class EventUserBanned extends EventUserBannedModel
 
 		$query->andFilterWhere(['like', 't.banned_desc', $this->banned_desc])
 			->andFilterWhere(['like', 't.unbanned_agreement', $this->unbanned_agreement])
-			->andFilterWhere(['like', 'user.displayname', $this->user_search])
+			->andFilterWhere(['like', 'user.displayname', $this->userDisplayname])
 			->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname])
 			->andFilterWhere(['like', 'modified.displayname', $this->modifiedDisplayname])

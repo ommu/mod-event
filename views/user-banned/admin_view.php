@@ -41,7 +41,7 @@ $attributes = [
 		'value' => $model->event->title,
 	],
 	[
-		'attribute' => 'user_search',
+		'attribute' => 'userDisplayname',
 		'value' => isset($model->user) ? $model->user->displayname : '-',
 	],
 	[

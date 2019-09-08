@@ -108,7 +108,8 @@ class EventCategory extends \app\components\ActiveRecord
 			->andOnCondition([sprintf('%s.publish', 'events') => $publish]);
 
 		$model = Events::find()
-			->where(['cat_id' => $this->id]);
+			->alias('t')
+			->where(['t.cat_id' => $this->id]);
 		if($publish == 0)
 			$model->unpublish();
 		elseif($publish == 1)

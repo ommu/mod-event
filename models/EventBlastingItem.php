@@ -40,7 +40,7 @@ class EventBlastingItem extends \app\components\ActiveRecord
 
 	// Search Variable
 	public $blasting_search;
-	public $user_search;
+	public $userDisplayname;
 	public $creationDisplayname;
 
 	/**
@@ -81,7 +81,7 @@ class EventBlastingItem extends \app\components\ActiveRecord
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'blasting_search' => Yii::t('app', 'Blasting'),
-			'user_search' => Yii::t('app', 'User'),
+			'userDisplayname' => Yii::t('app', 'User'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 		];
 	}
@@ -142,8 +142,8 @@ class EventBlastingItem extends \app\components\ActiveRecord
 			];
 		}
 		if(!Yii::$app->request->get('user')) {
-			$this->templateColumns['user_search'] = [
-				'attribute' => 'user_search',
+			$this->templateColumns['userDisplayname'] = [
+				'attribute' => 'userDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->user->displayname) ? $model->user->displayname : '-';
 				},

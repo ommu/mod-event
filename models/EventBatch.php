@@ -144,7 +144,8 @@ class EventBatch extends \app\components\ActiveRecord
 			return $this->hasMany(EventRegisteredBatch::className(), ['batch_id' => 'id']);
 
 		$model = EventRegisteredBatch::find()
-			->where(['batch_id' => $this->id]);
+			->alias('t')
+			->where(['t.batch_id' => $this->id]);
 		$batches = $model->count();
 
 		return $batches ? $batches : 0;
@@ -171,7 +172,8 @@ class EventBatch extends \app\components\ActiveRecord
 		}
 
 		$model = EventSpeaker::find()
-			->where(['batch_id' => $this->id]);
+			->alias('t')
+			->where(['t.batch_id' => $this->id]);
 		if($publish == 0)
 			$model->unpublish();
 		elseif($publish == 1)

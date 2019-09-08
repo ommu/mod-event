@@ -126,7 +126,8 @@ class EventRegistered extends \app\components\ActiveRecord
 		}
 
 		$model = EventRegisteredBatch::find()
-			->where(['registered_id' => $this->id]);
+			->alias('t')
+			->where(['t.registered_id' => $this->id]);
 		$batches = $model->count();
 
 		return $batches ? $batches : 0;

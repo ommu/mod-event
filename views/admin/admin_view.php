@@ -100,6 +100,7 @@ $attributes = [
 		'attribute' => 'registered_enable',
 		'value' => $model->quickAction(Url::to(['admin/registered', 'id'=>$model->primaryKey]), $model->registered_enable, 'Enable,Disable'),
 		'format' => 'raw',
+		'visible' => !$small,
 	],
 	[
 		'attribute' => 'registered_type',

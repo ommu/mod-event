@@ -39,7 +39,7 @@ class EventUserBanned extends \app\components\ActiveRecord
 	public $gridForbiddenColumn = ['creationDisplayname', 'modifiedDisplayname', 'modified_date'];
 
 	// Search Variable
-	public $user_search;
+	public $userDisplayname;
 	public $creationDisplayname;
 	public $modifiedDisplayname;
 	public $unbanned_search;
@@ -87,7 +87,7 @@ class EventUserBanned extends \app\components\ActiveRecord
 			'creation_id' => Yii::t('app', 'Creation'),
 			'modified_date' => Yii::t('app', 'Modified Date'),
 			'modified_id' => Yii::t('app', 'Modified'),
-			'user_search' => Yii::t('app', 'User'),
+			'userDisplayname' => Yii::t('app', 'User'),
 			'creationDisplayname' => Yii::t('app', 'Creation'),
 			'modifiedDisplayname' => Yii::t('app', 'Modified'),
 			'unbanned_search' => Yii::t('app', 'Unbanned'),
@@ -161,8 +161,8 @@ class EventUserBanned extends \app\components\ActiveRecord
 			];
 		}
 		if(!Yii::$app->request->get('user')) {
-			$this->templateColumns['user_search'] = [
-				'attribute' => 'user_search',
+			$this->templateColumns['userDisplayname'] = [
+				'attribute' => 'userDisplayname',
 				'value' => function($model, $key, $index, $column) {
 					return isset($model->user->displayname) ? $model->user->displayname : '-';
 				},

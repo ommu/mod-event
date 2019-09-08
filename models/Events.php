@@ -173,7 +173,8 @@ class Events extends \app\components\ActiveRecord
 			return \yii\helpers\ArrayHelper::map($this->batches, 'id', 'batch_name');
 
 		$model = EventBatch::find()
-			->where(['event_id' => $this->id]);
+			->alias('t')
+			->where(['t.event_id' => $this->id]);
 		if($publish == 0)
 			$model->unpublish();
 		elseif($publish == 1)
@@ -238,7 +239,8 @@ class Events extends \app\components\ActiveRecord
 			return $this->hasMany(EventRegistered::className(), ['event_id' => 'id']);
 
 		$model = EventRegistered::find()
-			->where(['event_id' => $this->id]);
+			->alias('t')
+			->where(['t.event_id' => $this->id]);
 		$registereds = $model->count();
 
 		return $registereds ? $registereds : 0;

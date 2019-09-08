@@ -29,7 +29,7 @@ class EventBlastingItem extends EventBlastingItemModel
 	{
 		return [
 			[['id', 'blast_id', 'user_id', 'views', 'creation_id'], 'integer'],
-			[['view_date', 'view_ip', 'creation_date', 'modified_date', 'blasting_search', 'user_search', 'creationDisplayname'], 'safe'],
+			[['view_date', 'view_ip', 'creation_date', 'modified_date', 'blasting_search', 'userDisplayname', 'creationDisplayname'], 'safe'],
 		];
 	}
 
@@ -86,7 +86,7 @@ class EventBlastingItem extends EventBlastingItemModel
 			'asc' => ['blasting.blast_id' => SORT_ASC],
 			'desc' => ['blasting.blast_id' => SORT_DESC],
 		];
-		$attributes['user_search'] = [
+		$attributes['userDisplayname'] = [
 			'asc' => ['user.displayname' => SORT_ASC],
 			'desc' => ['user.displayname' => SORT_DESC],
 		];
@@ -123,7 +123,7 @@ class EventBlastingItem extends EventBlastingItemModel
 
 		$query->andFilterWhere(['like', 't.view_ip', $this->view_ip])
 			->andFilterWhere(['like', 'blasting.blast_id', $this->blasting_search])
-			->andFilterWhere(['like', 'user.displayname', $this->user_search])
+			->andFilterWhere(['like', 'user.displayname', $this->userDisplayname])
 			->andFilterWhere(['like', 'creation.displayname', $this->creationDisplayname]);
 
 		return $dataProvider;
