@@ -15,8 +15,6 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\DetailView;
-use ommu\event\models\EventSetting;
 
 $this->params['breadcrumbs'][] = Yii::t('app', 'Settings');
 ?>
@@ -30,5 +28,5 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Settings');
 
 <?php echo $this->renderWidget(!$model->isNewRecord ? 'admin_view' : 'admin_update', [
 	'contentMenu' => true,
-	'model'=>$model,
+	'model' => $model,
 ]); ?>
