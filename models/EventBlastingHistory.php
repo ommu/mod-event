@@ -95,14 +95,13 @@ class EventBlastingHistory extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('item')) {
-			$this->templateColumns['item_search'] = [
-				'attribute' => 'item_search',
-				'value' => function($model, $key, $index, $column) {
-					return $model->item->id;
-				},
-			];
-		}
+		$this->templateColumns['item_search'] = [
+			'attribute' => 'item_search',
+			'value' => function($model, $key, $index, $column) {
+				return $model->item->id;
+			},
+			'visible' => !Yii::$app->request->get('item') ? true : false,
+		];
 		$this->templateColumns['view_date'] = [
 			'attribute' => 'view_date',
 			'value' => function($model, $key, $index, $column) {

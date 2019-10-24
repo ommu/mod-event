@@ -116,15 +116,14 @@ class EventFilterGender extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('event')) {
-			$this->templateColumns['eventTitle'] = [
-				'attribute' => 'eventTitle',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->event) ? $model->event->title : '-';
-					// return $model->eventTitle;
-				},
-			];
-		}
+		$this->templateColumns['eventTitle'] = [
+			'attribute' => 'eventTitle',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->event) ? $model->event->title : '-';
+				// return $model->eventTitle;
+			},
+			'visible' => !Yii::$app->request->get('event') ? true : false,
+		];
 		$this->templateColumns['gender'] = [
 			'attribute' => 'gender',
 			'value' => function($model, $key, $index, $column) {
@@ -139,15 +138,14 @@ class EventFilterGender extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
-		if(!Yii::$app->request->get('creation')) {
-			$this->templateColumns['creationDisplayname'] = [
-				'attribute' => 'creationDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation) ? $model->creation->displayname : '-';
-					// return $model->creationDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['creationDisplayname'] = [
+			'attribute' => 'creationDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->creation) ? $model->creation->displayname : '-';
+				// return $model->creationDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('creation') ? true : false,
+		];
 	}
 
 	/**

@@ -153,26 +153,24 @@ class EventBlastings extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('event')) {
-			$this->templateColumns['eventTitle'] = [
-				'attribute' => 'eventTitle',
-				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
-				},
-			];
-		}
-		if(!Yii::$app->request->get('filter')) {
-			$this->templateColumns['filter_search'] = [
-				'attribute' => 'filter_search',
-				'value' => function($model, $key, $index, $column) {
-					$blasting_filter = new BlastingFilter();
-					$blasting_filter_array = $blasting_filter->getFilter($model->filter_id)['gender'];
-					$value = 'gender : '.implode(', ', $blasting_filter_array);
+		$this->templateColumns['eventTitle'] = [
+			'attribute' => 'eventTitle',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event->title;
+			},
+			'visible' => !Yii::$app->request->get('event') ? true : false,
+		];
+		$this->templateColumns['filter_search'] = [
+			'attribute' => 'filter_search',
+			'value' => function($model, $key, $index, $column) {
+				$blasting_filter = new BlastingFilter();
+				$blasting_filter_array = $blasting_filter->getFilter($model->filter_id)['gender'];
+				$value = 'gender : '.implode(', ', $blasting_filter_array);
 
-					return isset($model->filter_id) ? $value : '-';
-				},
-			];
-		}
+				return isset($model->filter_id) ? $value : '-';
+			},
+			'visible' => !Yii::$app->request->get('filter') ? true : false,
+		];
 		// $this->templateColumns['users'] = 'users';
 		$this->templateColumns['users'] = [
 			'attribute' => 'users',
@@ -191,14 +189,13 @@ class EventBlastings extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
-		if(!Yii::$app->request->get('creation')) {
-			$this->templateColumns['creationDisplayname'] = [
-				'attribute' => 'creationDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation) ? $model->creation->displayname : '-';
-				},
-			];
-		}
+		$this->templateColumns['creationDisplayname'] = [
+			'attribute' => 'creationDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->creation) ? $model->creation->displayname : '-';
+			},
+			'visible' => !Yii::$app->request->get('creation') ? true : false,
+		];
 		$this->templateColumns['modified_date'] = [
 			'attribute' => 'modified_date',
 			'value' => function($model, $key, $index, $column) {
@@ -206,15 +203,14 @@ class EventBlastings extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'modified_date'),
 		];
-		if(!Yii::$app->request->get('modified')) {
-			$this->templateColumns['modifiedDisplayname'] = [
-				'attribute' => 'modifiedDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->modified) ? $model->modified->displayname : '-';
-					// return $model->modifiedDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['modifiedDisplayname'] = [
+			'attribute' => 'modifiedDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->modified) ? $model->modified->displayname : '-';
+				// return $model->modifiedDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('modified') ? true : false,
+		];
 	}
 
 	/**

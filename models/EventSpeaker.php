@@ -161,39 +161,39 @@ class EventSpeaker extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('batch') && !Yii::$app->request->get('id')) {
-			$this->templateColumns['eventCategoryId'] = [
-				'attribute' => 'eventCategoryId',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
-					// return $model->eventCategoryId;
-				},
-				'filter' => EventCategory::getCategory(),
-			];
-			$this->templateColumns['eventTitle'] = [
-				'attribute' => 'eventTitle',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->batch->event) ? $model->batch->event->title : '-';
-					// return $model->eventTitle;
-				},
-			];
-			$this->templateColumns['batchName'] = [
-				'attribute' => 'batchName',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->batch) ? $model->batch->batch_name : '-';
-					// return $model->batchName;
-				},
-			];
-		}
-		if(!Yii::$app->request->get('user')) {
-			$this->templateColumns['userDisplayname'] = [
-				'attribute' => 'userDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->user) ? $model->user->displayname : '-';
-					// return $model->userDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['eventCategoryId'] = [
+			'attribute' => 'eventCategoryId',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
+				// return $model->eventCategoryId;
+			},
+			'filter' => EventCategory::getCategory(),
+			'visible' => !Yii::$app->request->get('batch') && !Yii::$app->request->get('id') ? true : false,
+		];
+		$this->templateColumns['eventTitle'] = [
+			'attribute' => 'eventTitle',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->batch->event) ? $model->batch->event->title : '-';
+				// return $model->eventTitle;
+			},
+			'visible' => !Yii::$app->request->get('batch') && !Yii::$app->request->get('id') ? true : false,
+		];
+		$this->templateColumns['batchName'] = [
+			'attribute' => 'batchName',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->batch) ? $model->batch->batch_name : '-';
+				// return $model->batchName;
+			},
+			'visible' => !Yii::$app->request->get('batch') && !Yii::$app->request->get('id') ? true : false,
+		];
+		$this->templateColumns['userDisplayname'] = [
+			'attribute' => 'userDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->user) ? $model->user->displayname : '-';
+				// return $model->userDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('user') ? true : false,
+		];
 		$this->templateColumns['speaker_name'] = [
 			'attribute' => 'speaker_name',
 			'value' => function($model, $key, $index, $column) {
@@ -219,15 +219,14 @@ class EventSpeaker extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
-		if(!Yii::$app->request->get('creation')) {
-			$this->templateColumns['creationDisplayname'] = [
-				'attribute' => 'creationDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation) ? $model->creation->displayname : '-';
-					// return $model->creationDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['creationDisplayname'] = [
+			'attribute' => 'creationDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->creation) ? $model->creation->displayname : '-';
+				// return $model->creationDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('creation') ? true : false,
+		];
 		$this->templateColumns['modified_date'] = [
 			'attribute' => 'modified_date',
 			'value' => function($model, $key, $index, $column) {
@@ -235,15 +234,14 @@ class EventSpeaker extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'modified_date'),
 		];
-		if(!Yii::$app->request->get('modified')) {
-			$this->templateColumns['modifiedDisplayname'] = [
-				'attribute' => 'modifiedDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->modified) ? $model->modified->displayname : '-';
-					// return $model->modifiedDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['modifiedDisplayname'] = [
+			'attribute' => 'modifiedDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->modified) ? $model->modified->displayname : '-';
+				// return $model->modifiedDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('modified') ? true : false,
+		];
 		$this->templateColumns['updated_date'] = [
 			'attribute' => 'updated_date',
 			'value' => function($model, $key, $index, $column) {
@@ -251,18 +249,17 @@ class EventSpeaker extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'updated_date'),
 		];
-		if(!Yii::$app->request->get('trash')) {
-			$this->templateColumns['publish'] = [
-				'attribute' => 'publish',
-				'value' => function($model, $key, $index, $column) {
-					$url = Url::to(['publish', 'id'=>$model->primaryKey]);
-					return $this->quickAction($url, $model->publish);
-				},
-				'filter' => $this->filterYesNo(),
-				'contentOptions' => ['class'=>'center'],
-				'format' => 'raw',
-			];
-		}
+		$this->templateColumns['publish'] = [
+			'attribute' => 'publish',
+			'value' => function($model, $key, $index, $column) {
+				$url = Url::to(['publish', 'id'=>$model->primaryKey]);
+				return $this->quickAction($url, $model->publish);
+			},
+			'filter' => $this->filterYesNo(),
+			'contentOptions' => ['class'=>'center'],
+			'format' => 'raw',
+			'visible' => !Yii::$app->request->get('trash') ? true : false,
+		];
 	}
 
 	/**

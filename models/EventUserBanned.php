@@ -155,22 +155,20 @@ class EventUserBanned extends \app\components\ActiveRecord
 			'contentOptions' => ['class'=>'center'],
 		];
 		// $this->templateColumns['event_id'] = 'event_id';
-		if(!Yii::$app->request->get('event')) {
-			$this->templateColumns['eventTitle'] = [
-				'attribute' => 'eventTitle',
-				'value' => function($model, $key, $index, $column) {
-					return $model->event->title;
-				},
-			];
-		}
-		if(!Yii::$app->request->get('user')) {
-			$this->templateColumns['userDisplayname'] = [
-				'attribute' => 'userDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->user->displayname) ? $model->user->displayname : '-';
-				},
-			];
-		}
+		$this->templateColumns['eventTitle'] = [
+			'attribute' => 'eventTitle',
+			'value' => function($model, $key, $index, $column) {
+				return $model->event->title;
+			},
+			'visible' => !Yii::$app->request->get('event') ? true : false,
+		];
+		$this->templateColumns['userDisplayname'] = [
+			'attribute' => 'userDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->user->displayname) ? $model->user->displayname : '-';
+			},
+			'visible' => !Yii::$app->request->get('user') ? true : false,
+		];
 		$this->templateColumns['banned_start'] = [
 			'attribute' => 'banned_start',
 			'value' => function($model, $key, $index, $column) {
@@ -195,22 +193,20 @@ class EventUserBanned extends \app\components\ActiveRecord
 			'filter' => $this->filterDatepicker($this, 'unbanned_date'),
 		];
 		// $this->templateColumns['unbanned_id'] = 'unbanned_id';
-		if(!Yii::$app->request->get('unbanned')) {
-			$this->templateColumns['unbanned_search'] = [
-				'attribute' => 'unbanned_search',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->unbanned->displayname) ? $model->unbanned->displayname : '-';
-				},
-			];
-		}	
-		if(!Yii::$app->request->get('creation')) {
-			$this->templateColumns['creationDisplayname'] = [
-				'attribute' => 'creationDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation) ? $model->creation->displayname : '-';
-				},
-			];
-		}
+		$this->templateColumns['unbanned_search'] = [
+			'attribute' => 'unbanned_search',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->unbanned->displayname) ? $model->unbanned->displayname : '-';
+			},
+			'visible' => !Yii::$app->request->get('unbanned') ? true : false,
+		];
+		$this->templateColumns['creationDisplayname'] = [
+			'attribute' => 'creationDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->creation) ? $model->creation->displayname : '-';
+			},
+			'visible' => !Yii::$app->request->get('creation') ? true : false,
+		];
 		$this->templateColumns['modified_date'] = [
 			'attribute' => 'modified_date',
 			'value' => function($model, $key, $index, $column) {
@@ -218,15 +214,14 @@ class EventUserBanned extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'modified_date'),
 		];
-		if(!Yii::$app->request->get('modified')) {
-			$this->templateColumns['modifiedDisplayname'] = [
-				'attribute' => 'modifiedDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->modified) ? $model->modified->displayname : '-';
-					// return $model->modifiedDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['modifiedDisplayname'] = [
+			'attribute' => 'modifiedDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->modified) ? $model->modified->displayname : '-';
+				// return $model->modifiedDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('modified') ? true : false,
+		];
 		$this->templateColumns['status'] = [
 			'attribute' => 'status',
 			'filter'=> array(1=>'Banned',0=>'Unbanned'),

@@ -126,24 +126,22 @@ class EventRegisteredBatch extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('registered')) {
-			$this->templateColumns['registeredEventId'] = [
-				'attribute' => 'registeredEventId',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->registered) ? $model->registered->event->title : '-';
-					// return $model->registeredEventId;
-				},
-			];
-		}
-		if(!Yii::$app->request->get('batch')) {
-			$this->templateColumns['batchName'] = [
-				'attribute' => 'batchName',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->batch) ? $model->batch->batch_name : '-';
-					// return $model->batchName;
-				},
-			];
-		}
+		$this->templateColumns['registeredEventId'] = [
+			'attribute' => 'registeredEventId',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->registered) ? $model->registered->event->title : '-';
+				// return $model->registeredEventId;
+			},
+			'visible' => !Yii::$app->request->get('registered') ? true : false,
+		];
+		$this->templateColumns['batchName'] = [
+			'attribute' => 'batchName',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->batch) ? $model->batch->batch_name : '-';
+				// return $model->batchName;
+			},
+			'visible' => !Yii::$app->request->get('batch') ? true : false,
+		];
 		$this->templateColumns['creation_date'] = [
 			'attribute' => 'creation_date',
 			'value' => function($model, $key, $index, $column) {
@@ -151,15 +149,14 @@ class EventRegisteredBatch extends \app\components\ActiveRecord
 			},
 			'filter' => $this->filterDatepicker($this, 'creation_date'),
 		];
-		if(!Yii::$app->request->get('creation')) {
-			$this->templateColumns['creationDisplayname'] = [
-				'attribute' => 'creationDisplayname',
-				'value' => function($model, $key, $index, $column) {
-					return isset($model->creation) ? $model->creation->displayname : '-';
-					// return $model->creationDisplayname;
-				},
-			];
-		}
+		$this->templateColumns['creationDisplayname'] = [
+			'attribute' => 'creationDisplayname',
+			'value' => function($model, $key, $index, $column) {
+				return isset($model->creation) ? $model->creation->displayname : '-';
+				// return $model->creationDisplayname;
+			},
+			'visible' => !Yii::$app->request->get('creation') ? true : false,
+		];
 	}
 
 	/**

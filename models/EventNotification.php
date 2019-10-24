@@ -115,20 +115,20 @@ class EventNotification extends \app\components\ActiveRecord
 			'class' => 'yii\grid\SerialColumn',
 			'contentOptions' => ['class'=>'center'],
 		];
-		if(!Yii::$app->request->get('batch')) {
-			$this->templateColumns['eventTitle'] = [
-				'attribute' => 'eventTitle',
-				'value' => function($model, $key, $index, $column) {
-					return $model->batch->event->title;
-				},
-			];
-			$this->templateColumns['batchName'] = [
-				'attribute' => 'batchName',
-				'value' => function($model, $key, $index, $column) {
-					return $model->batch->batch_name;
-				},
-			];
-		}
+		$this->templateColumns['eventTitle'] = [
+			'attribute' => 'eventTitle',
+			'value' => function($model, $key, $index, $column) {
+				return $model->batch->event->title;
+			},
+			'visible' => !Yii::$app->request->get('batch') ? true : false,
+		];
+		$this->templateColumns['batchName'] = [
+			'attribute' => 'batchName',
+			'value' => function($model, $key, $index, $column) {
+				return $model->batch->batch_name;
+			},
+			'visible' => !Yii::$app->request->get('batch') ? true : false,
+		];
 		$this->templateColumns['notified_date'] = [
 			'attribute' => 'notified_date',
 			'value' => function($model, $key, $index, $column) {
