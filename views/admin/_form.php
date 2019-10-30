@@ -141,7 +141,9 @@ echo $form->field($model, 'published_date')
 	->textInput(['type'=>'date'])
 	->label($model->getAttributeLabel('published_date')); ?>
 
-<?php echo $form->field($model, 'publish')
+<?php if($model->isNewRecord && !$model->getErrors())
+	$model->publish = 1;
+echo $form->field($model, 'publish')
 	->checkbox()
 	->label($model->getAttributeLabel('publish')); ?>
 
