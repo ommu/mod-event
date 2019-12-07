@@ -45,7 +45,7 @@ use yii\jui\DatePicker;
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('view_ip')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

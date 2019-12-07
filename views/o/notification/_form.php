@@ -58,7 +58,7 @@ echo $form->field($model, 'status')
 	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['class' => 'form-control']])
 	->label($model->getAttributeLabel('creation_date')); ?> -->
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

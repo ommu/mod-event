@@ -109,7 +109,7 @@ echo $form->field($model, 'enable_filter')
 	])
 	->label($model->getAttributeLabel('university')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

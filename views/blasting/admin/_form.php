@@ -102,7 +102,7 @@ else if (($event_id = Yii::$app->request->get('event_id')) != null)
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('blast_with')); */?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php // cek apakah sedang memilih filter atau akan mengirim blasting
 if (!Yii::$app->request->get('blast_id')) {

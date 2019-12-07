@@ -53,7 +53,7 @@ $redactorOptions = [
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('batch_desc')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'batch_location')
 	->textInput(['maxlength'=>true])
@@ -79,7 +79,7 @@ $redactorOptions = [
 	->textInput(['type'=>'time'])
 	->label($model->getAttributeLabel('batch_time')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'batch_price')
 	->textInput(['type'=>'number', 'min'=>'0'])
@@ -95,7 +95,7 @@ echo $form->field($model, 'publish')
 	->checkbox()
 	->label($model->getAttributeLabel('publish')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

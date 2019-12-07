@@ -85,7 +85,7 @@ $event_notify_diff_type = $form->field($model, 'event_notify_diff_type', ['templ
 	->textInput(['type'=>'number', 'min'=>'1'])
 	->label($model->getAttributeLabel('event_banned_difference')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

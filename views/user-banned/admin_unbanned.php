@@ -58,7 +58,7 @@ echo $form->field($model, 'unbanned_agreement')
 	->label($model->getAttributeLabel('unbanned_agreement')); 
 ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

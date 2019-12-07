@@ -148,7 +148,7 @@ echo $form->field($model, 'publish')
 	->label($model->getAttributeLabel('publish'));
 } ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

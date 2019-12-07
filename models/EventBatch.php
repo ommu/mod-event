@@ -275,7 +275,7 @@ class EventBatch extends \app\components\ActiveRecord
 			'attribute' => 'speaker',
 			'value' => function($model, $key, $index, $column) {
 				$speakers = $model->getSpeakers('array');
-				$speakers = !$speakers ? '' : Html::ul($speakers, ['encode'=>false, 'class'=>'list-boxed']).'<div class="ln_solid mt-3 mb-3"></div>';
+				$speakers = !$speakers ? '' : Html::ul($speakers, ['encode'=>false, 'class'=>'list-boxed']).'<hr class="mt-3 mb-3"/>';
 				return $speakers.Html::a('<i class="fa fa-plus-square"></i> '.Yii::t('app', 'Add Speaker'), ['o/speaker/create', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Add Speaker'), 'class'=>'btn btn-success btn-xs modal-btn']);
 			},
 			'format' => 'html',

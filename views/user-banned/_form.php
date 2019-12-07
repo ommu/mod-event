@@ -72,7 +72,7 @@ echo $form->field($model, 'unbanned_id')
 	->label($model->getAttributeLabel('unbanned_id')); 
 ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>

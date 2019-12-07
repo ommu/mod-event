@@ -157,7 +157,7 @@ echo $form->field($finance, 'price')
 	->textInput(['type' => 'number', 'min' => 0, 'disabled' => !$model->isNewRecord ? true : false,])
 	->label($finance->getAttributeLabel('reward')); ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php $status = EventRegistered::getStatus();
 echo $form->field($model, 'status')
@@ -165,7 +165,7 @@ echo $form->field($model, 'status')
 	->label($model->getAttributeLabel('status'));
 } ?>
 
-<div class="ln_solid"></div>
+<hr/>
 
 <?php echo $form->field($model, 'submitButton')
 	->submitButton(); ?>
