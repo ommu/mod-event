@@ -26,9 +26,9 @@
 namespace ommu\event\controllers\filter;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\EventFilterUniversity;
 use ommu\event\models\search\EventFilterUniversity as EventFilterUniversitySearch;
 

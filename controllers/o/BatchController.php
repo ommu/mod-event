@@ -30,9 +30,9 @@
 namespace ommu\event\controllers\o;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\EventBatch;
 use ommu\event\models\search\EventBatch as EventBatchSearch;
 

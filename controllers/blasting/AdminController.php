@@ -27,9 +27,9 @@
 namespace ommu\event\controllers\blasting;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\EventBlastings;
 use ommu\event\models\search\EventBlastings as EventBlastingsSearch;
 use ommu\event\models\EventBlastingItem;

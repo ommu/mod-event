@@ -89,7 +89,7 @@ $this->params['menu']['option'] = [
 				//'enableClientScript' => true,
 			]); 
 			
-			$dataProviderUser = new yii\data\ActiveDataProvider([
+			$dataProviderUser = new \yii\data\ActiveDataProvider([
 				'query' => Users::find()->select('ommu_users.user_id, ommu_users.displayname')
 						->leftJoin('ommu_cv_bio', '`ommu_users`.`user_id` = `ommu_cv_bio`.`user_id`')
 						->where(['in', 'ommu_cv_bio.gender', $filter_gender['gender']]),

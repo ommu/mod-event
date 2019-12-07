@@ -27,9 +27,9 @@
 namespace ommu\event\controllers;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\EventUserBanned;
 use ommu\event\models\search\EventUserBanned as EventUserBannedSearch;
 

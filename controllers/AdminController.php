@@ -32,9 +32,9 @@
 namespace ommu\event\controllers;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\Events;
 use ommu\event\models\search\Events as EventsSearch;
 use yii\web\UploadedFile;

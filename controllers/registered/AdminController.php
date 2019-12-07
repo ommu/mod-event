@@ -28,9 +28,9 @@
 namespace ommu\event\controllers\registered;
 
 use Yii;
-use yii\filters\VerbFilter;
 use app\components\Controller;
 use mdm\admin\components\AccessControl;
+use yii\filters\VerbFilter;
 use ommu\event\models\EventRegistered;
 use ommu\event\models\search\EventRegistered as EventRegisteredSearch;
 use ommu\event\models\EventRegisteredFinance;
