@@ -57,8 +57,6 @@ class AdminController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$this->layout = 'admin_default';
-
 		$model = EventSetting::findOne(1);
 		if ($model === null) 
 			$model = new EventSetting(['id'=>1]);
@@ -92,6 +90,7 @@ class AdminController extends Controller
 		}
 		$columns = $searchModel->getGridColumn($cols);
 
+		$this->view->cards = false;
 		$this->view->title = Yii::t('app', 'Event Setting');
 		$this->view->description = '';
 		$this->view->keywords = '';

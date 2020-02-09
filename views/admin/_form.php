@@ -77,13 +77,13 @@ echo $form->field($model, 'cat_id')
 	->label($model->getAttributeLabel('description')); ?>
 
 <?php $uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
-$coverFilename = !$model->isNewRecord && $model->old_cover_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_cover_filename])), ['alt'=>$model->old_cover_filename, 'class'=>'mb-3']) : '';
+$coverFilename = !$model->isNewRecord && $model->old_cover_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_cover_filename])), ['alt'=>$model->old_cover_filename, 'class'=>'d-block border border-width-3 mb-3']).$model->old_cover_filename.'<hr/>' : '';
 echo $form->field($model, 'cover_filename', ['template' => '{label}{beginWrapper}<div>'.$coverFilename.'</div>{input}{error}{hint}{endWrapper}'])
 	->fileInput()
 	->label($model->getAttributeLabel('cover_filename')); ?>
 
 <?php $uploadPath = join('/', [Events::getUploadPath(false), $model->id]);
-$bannerFilename = !$model->isNewRecord && $model->old_banner_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_banner_filename])), ['alt'=>$model->old_banner_filename, 'class'=>'mb-3']) : '';
+$bannerFilename = !$model->isNewRecord && $model->old_banner_filename != '' ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->old_banner_filename])), ['alt'=>$model->old_banner_filename, 'class'=>'d-block border border-width-3 mb-3']).$model->old_banner_filename.'<hr/>' : '';
 echo $form->field($model, 'banner_filename', ['template' => '{label}{beginWrapper}<div>'.$bannerFilename.'</div>{input}{error}{hint}{endWrapper}'])
 	->fileInput()
 	->label($model->getAttributeLabel('banner_filename')); ?>
