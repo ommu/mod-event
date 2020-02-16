@@ -134,7 +134,7 @@ class EventBlastingItem extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'yii\grid\SerialColumn',
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 		];
 		$this->templateColumns['blasting_search'] = [
 			'attribute' => 'blasting_search',
@@ -157,7 +157,7 @@ class EventBlastingItem extends \app\components\ActiveRecord
 				$url = Url::to(['blasting-history/index', 'item'=>$model->primaryKey]);
 				return Html::a($model->views ? $model->views : 0, $url);
 			},
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['view_date'] = [

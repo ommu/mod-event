@@ -152,7 +152,7 @@ class EventUserBanned extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'yii\grid\SerialColumn',
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 		];
 		// $this->templateColumns['event_id'] = 'event_id';
 		$this->templateColumns['eventTitle'] = [
@@ -229,7 +229,7 @@ class EventUserBanned extends \app\components\ActiveRecord
 				$url = Url::to(['unbanned', 'id'=>$model->primaryKey]);
 				return $model->status ? Html::a(Yii::t('app', 'Banned'), $url) :  Yii::t('app', 'Unbanned');
 			},
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'html',
 		];
 	}

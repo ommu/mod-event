@@ -306,7 +306,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'yii\grid\SerialColumn',
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 		];
 		$this->templateColumns['cat_id'] = [
 			'attribute' => 'cat_id',
@@ -461,7 +461,7 @@ class Events extends \app\components\ActiveRecord
 				return Html::a($batches, ['o/batch/manage', 'event'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
 			},
 			'filter' => false,
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['registereds'] = [
@@ -471,7 +471,7 @@ class Events extends \app\components\ActiveRecord
 				return Html::a($registereds, ['registered/admin/manage', 'event'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
 			},
 			'filter' => false,
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['enable_filter'] = [
@@ -481,7 +481,7 @@ class Events extends \app\components\ActiveRecord
 				return $this->getRegisteredEnable($model->enable_filter);
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 		];
 		$this->templateColumns['registered_enable'] = [
 			'attribute' => 'registered_enable',
@@ -491,7 +491,7 @@ class Events extends \app\components\ActiveRecord
 				return $this->quickAction($url, $model->registered_enable, 'Enable,Disable');
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'raw',
 		];
 		$this->templateColumns['publish'] = [
@@ -501,7 +501,7 @@ class Events extends \app\components\ActiveRecord
 				return $this->quickAction($url, $model->publish);
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'raw',
 			'visible' => !Yii::$app->request->get('trash') ? true : false,
 		];

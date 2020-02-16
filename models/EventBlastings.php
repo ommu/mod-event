@@ -151,7 +151,7 @@ class EventBlastings extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'yii\grid\SerialColumn',
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 		];
 		$this->templateColumns['eventTitle'] = [
 			'attribute' => 'eventTitle',
@@ -178,7 +178,7 @@ class EventBlastings extends \app\components\ActiveRecord
 				$url = Url::to(['blasting-item/index', 'blasting'=>$model->primaryKey]);
 				return Html::a($model->users ? $model->users : 0, $url);
 			},
-			'contentOptions' => ['class'=>'center'],
+			'contentOptions' => ['class'=>'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['blast_with'] = 'blast_with';
