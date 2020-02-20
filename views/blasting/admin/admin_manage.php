@@ -103,7 +103,7 @@ $this->params['menu']['option'] = [
 				'dataProvider' => $dataProviderUser,
 				'columns' => [
 					[
-						'class' => 'yii\grid\SerialColumn',
+						'class' => 'app\components\grid\SerialColumn',
 						'header' => 'No'
 					],
 					[
