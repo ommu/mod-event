@@ -2,9 +2,9 @@
 /**
  * Events
  * 
- * @author Putra Sudaryanto <putra@ommu.co>
+ * @author Putra Sudaryanto <putra@ommu.id>
  * @contact (+62)856-299-4114
- * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
+ * @copyright Copyright (c) 2017 OMMU (www.ommu.id)
  * @created date 23 November 2017, 13:19 WIB
  * @modified date 24 June 2019, 08:55 WIB
  * @link https://github.com/ommu/mod-event

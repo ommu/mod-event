@@ -5,9 +5,9 @@
  * This is the ActiveQuery class for [[\ommu\event\models\EventFilterMajor]].
  * @see \ommu\event\models\EventFilterMajor
  * 
- * @author Putra Sudaryanto <putra@ommu.co>
+ * @author Putra Sudaryanto <putra@ommu.id>
  * @contact (+62)856-299-4114
- * @copyright Copyright (c) 2019 OMMU (www.ommu.co)
+ * @copyright Copyright (c) 2019 OMMU (www.ommu.id)
  * @created date 24 June 2019, 13:20 WIB
  * @link https://github.com/ommu/mod-event
  *

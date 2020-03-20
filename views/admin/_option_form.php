@@ -6,9 +6,9 @@
  * @var $model ommu\event\models\search\Events
  * @var $form yii\widgets\ActiveForm
  *
- * @author Putra Sudaryanto <putra@ommu.co>
+ * @author Putra Sudaryanto <putra@ommu.id>
  * @contact (+62)856-299-4114
- * @copyright Copyright (c) 2017 OMMU (www.ommu.co)
+ * @copyright Copyright (c) 2017 OMMU (www.ommu.id)
  * @created date 23 November 2017, 13:22 WIB
  * @modified date 24 June 2019, 10:28 WIB
  * @link https://github.com/ommu/mod-event
