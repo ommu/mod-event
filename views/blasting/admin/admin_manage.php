@@ -17,7 +17,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use app\components\grid\GridView;
 use yii\widgets\Pjax;
-use ommu\users\models\Users;
+use app\models\Users;
 use app\components\widgets\ActiveForm;
 
 // form

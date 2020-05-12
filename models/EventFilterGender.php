@@ -27,7 +27,7 @@
 namespace ommu\event\models;
 
 use Yii;
-use ommu\users\models\Users;
+use app\models\Users;
 
 class EventFilterGender extends \app\components\ActiveRecord
 {

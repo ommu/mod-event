@@ -33,7 +33,7 @@ use yii\filters\VerbFilter;
 use ommu\event\models\EventBlastings;
 use ommu\event\models\search\EventBlastings as EventBlastingsSearch;
 use ommu\event\models\EventBlastingItem;
-use ommu\users\models\Users;
+use app\models\Users;
 use app\modules\blasting\models\BlastingFilter;
 use yii\helpers\Url;
 

@@ -33,7 +33,7 @@ namespace ommu\event\models;
 use Yii;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use ommu\users\models\Users;
+use app\models\Users;
 use app\modules\blasting\models\BlastingFilter;
 
 class EventBlastings extends \app\components\ActiveRecord

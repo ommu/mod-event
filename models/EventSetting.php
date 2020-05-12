@@ -35,7 +35,7 @@
 namespace ommu\event\models;
 
 use Yii;
-use ommu\users\models\Users;
+use app\models\Users;
 
 class EventSetting extends \app\components\ActiveRecord
 {

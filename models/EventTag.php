@@ -29,7 +29,7 @@ namespace ommu\event\models;
 
 use Yii;
 use app\models\CoreTags;
-use ommu\users\models\Users;
+use app\models\Users;
 
 class EventTag extends \app\components\ActiveRecord
 {

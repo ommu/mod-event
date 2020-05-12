@@ -36,7 +36,7 @@ namespace ommu\event\models;
 
 use Yii;
 use yii\helpers\Html;
-use ommu\users\models\Users;
+use app\models\Users;
 use yii\base\Event;
 
 class EventRegistered extends \app\components\ActiveRecord

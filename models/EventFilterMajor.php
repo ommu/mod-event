@@ -28,7 +28,7 @@
 namespace ommu\event\models;
 
 use Yii;
-use ommu\users\models\Users;
+use app\models\Users;
 use ommu\ipedia\models\IpediaMajors;
 
 class EventFilterMajor extends \app\components\ActiveRecord

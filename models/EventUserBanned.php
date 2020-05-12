@@ -32,7 +32,7 @@ namespace ommu\event\models;
 use Yii;
 use yii\helpers\Url;
 use yii\helpers\Html;
-use ommu\users\models\Users;
+use app\models\Users;
 
 class EventUserBanned extends \app\components\ActiveRecord
 {
