@@ -51,8 +51,9 @@ $attributes = [
 		'attribute' => 'categoryName',
 		'value' => function ($model) {
 			$categoryName = isset($model->category) ? $model->category->title->message : '-';
-			if($categoryName != '-')
-				return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+            if ($categoryName != '-') {
+                return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+            }
 			return $categoryName;
 		},
 		'format' => 'html',

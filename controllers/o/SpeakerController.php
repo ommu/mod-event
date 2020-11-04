@@ -43,9 +43,11 @@ class SpeakerController extends Controller
 	 */
 	public function init()
 	{
-		parent::init();
-		if(Yii::$app->request->get('id'))
-			$this->subMenu = $this->module->params['event_submenu'];
+        parent::init();
+
+        if (Yii::$app->request->get('id')) {
+            $this->subMenu = $this->module->params['event_submenu'];
+        }
 	}
 
 	/**
@@ -81,22 +83,24 @@ class SpeakerController extends Controller
 	 */
 	public function actionManage()
 	{
-		$searchModel = new EventSpeakerSearch();
-		if(($id = Yii::$app->request->get('id')) != null)
-			$searchModel = new EventSpeakerSearch(['batch_id'=>$id]);
+        $searchModel = new EventSpeakerSearch();
+        if (($id = Yii::$app->request->get('id')) != null) {
+            $searchModel = new EventSpeakerSearch(['batch_id'=>$id]);
+        }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		$gridColumn = Yii::$app->request->get('GridColumn', null);
-		$cols = [];
-		if($gridColumn != null && count($gridColumn) > 0) {
-			foreach($gridColumn as $key => $val) {
-				if($gridColumn[$key] == 1)
-					$cols[] = $key;
-			}
-		}
-		$columns = $searchModel->getGridColumn($cols);
+        $gridColumn = Yii::$app->request->get('GridColumn', null);
+        $cols = [];
+        if ($gridColumn != null && count($gridColumn) > 0) {
+            foreach ($gridColumn as $key => $val) {
+                if ($gridColumn[$key] == 1) {
+                    $cols[] = $key;
+                }
+            }
+        }
+        $columns = $searchModel->getGridColumn($cols);
 
-		if(($batch = Yii::$app->request->get('batch')) != null || ($batch = Yii::$app->request->get('id')) != null) {
+        if (($batch = Yii::$app->request->get('batch')) != null || ($batch = Yii::$app->request->get('id')) != null) {
 			$batch = \ommu\event\models\EventBatch::findOne($batch);
 			$this->subMenuParam = $batch->event_id;
 		}
@@ -119,31 +123,34 @@ class SpeakerController extends Controller
 	 */
 	public function actionCreate()
 	{
-		if(($id = Yii::$app->request->get('id')) == null)
-			throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'The requested page does not exist.'));
+        if (($id = Yii::$app->request->get('id')) == null) {
+            throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
 
 		$model = new EventSpeaker(['batch_id'=>$id]);
 		$this->subMenuParam = $model->batch->event_id;
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
 			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
-			if($model->save()) {
+            if ($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success created.'));
 				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
-			} else {
-				if(Yii::$app->request->isAjax)
-					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+            } else {
+                if (Yii::$app->request->isAjax) {
+                    return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+                }
 			}
 		}
 
 		$this->view->title = Yii::t('app', 'Create Speaker');
-		if($id)
-			$this->view->title = Yii::t('app', 'Create Speaker: {batch-name}', ['batch-name' => $model->batch->batch_name]);
+        if ($id) {
+            $this->view->title = Yii::t('app', 'Create Speaker: {batch-name}', ['batch-name' => $model->batch->batch_name]);
+        }
 		$this->view->description = '';
 		$this->view->keywords = '';
 		return $this->oRender('admin_create', [
@@ -162,19 +169,20 @@ class SpeakerController extends Controller
 		$model = $this->findModel($id);
 		$this->subMenuParam = $model->batch->event_id;
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
 			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
-			if($model->save()) {
+            if ($model->save()) {
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
 				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
-			} else {
-				if(Yii::$app->request->isAjax)
-					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+            } else {
+                if (Yii::$app->request->isAjax) {
+                    return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+                }
 			}
 		}
 
@@ -215,7 +223,7 @@ class SpeakerController extends Controller
 		$model = $this->findModel($id);
 		$model->publish = 2;
 
-		if($model->save(false, ['publish','modified_id'])) {
+        if ($model->save(false, ['publish', 'modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success deleted.'));
 			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 		}
@@ -233,7 +241,7 @@ class SpeakerController extends Controller
 		$replace = $model->publish == 1 ? 0 : 1;
 		$model->publish = $replace;
 
-		if($model->save(false, ['publish','modified_id'])) {
+        if ($model->save(false, ['publish', 'modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
 			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 		}
@@ -248,8 +256,9 @@ class SpeakerController extends Controller
 	 */
 	protected function findModel($id)
 	{
-		if(($model = EventSpeaker::findOne($id)) !== null)
-			return $model;
+        if (($model = EventSpeaker::findOne($id)) !== null) {
+            return $model;
+        }
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
 	}

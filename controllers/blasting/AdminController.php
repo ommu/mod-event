@@ -74,29 +74,30 @@ class AdminController extends Controller
 		// Create Blasting
 		$model = new EventBlastings();
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
-			if($model->save()) {
+            if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success created.'));
 				return $this->redirect(['index', 'event_id' => $model->event_id, 'filter_id' => $model->filter_id, 'blast_id' => $model->blast_id]);
-			} 
+			}
 		}
 		// --------------------------
 
 		// Index Blasting
 		$searchModel = new EventBlastingsSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		$gridColumn = Yii::$app->request->get('GridColumn', null);
-		$cols = [];
-		if($gridColumn != null && count($gridColumn) > 0) {
-			foreach($gridColumn as $key => $val) {
-				if($gridColumn[$key] == 1)
-					$cols[] = $key;
-			}
-		}
-		$columns = $searchModel->getGridColumn($cols);
+        $gridColumn = Yii::$app->request->get('GridColumn', null);
+        $cols = [];
+        if ($gridColumn != null && count($gridColumn) > 0) {
+            foreach ($gridColumn as $key => $val) {
+                if ($gridColumn[$key] == 1) {
+                    $cols[] = $key;
+                }
+            }
+        }
+        $columns = $searchModel->getGridColumn($cols);
 
 		$this->view->title = Yii::t('app', 'Event Blastings');
 		$this->view->description = '';
@@ -118,13 +119,13 @@ class AdminController extends Controller
 	{
 		$model = new EventBlastings();
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
-			if($model->save()) {
+            if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success created.'));
 				return $this->redirect(['index']);
-			} 
+			}
 		}
 
 		$this->view->title = Yii::t('app', 'Create Event Blastings');
@@ -137,15 +138,14 @@ class AdminController extends Controller
 
 	public function actionBlast($blast_id)
 	{
-
 		$blast = EventBlastings::findOne($blast_id);
 		
 		// menyimpan blasting item berdasarkan user yang dipilih
-		if (Yii::$app->request->post('user_list') != null) {
+        if (Yii::$app->request->post('user_list') != null) {
 			foreach (Yii::$app->request->post('user_list') as $item) {
 
 				$blasting_item = EventBlastingItem::find()->where(['blast_id' => $blast_id, 'user_id' => $item])->one();
-				if ($blasting_item == null) {
+                if ($blasting_item == null) {
 					$blasting_item = new EventBlastingItem();
 					$new = 1;
 				} else {
@@ -155,15 +155,15 @@ class AdminController extends Controller
 				$blasting_item->user_id = $item;
 
 				// price
-				if ($blast->event->price == 0){
+                if ($blast->event->price == 0) {
 					$price = 'Free';
 				} else {
 					$price = $blast->event->price;
 				}
 
 				// jika new kirim email
-				if ($new == 1) {
-					if (Yii::$app->mailer->compose()
+                if ($new == 1) {
+                    if (Yii::$app->mailer->compose()
 						->setFrom('emailasale@gmail.com')
 						->setTo('emailtujuan@gmail.com')
 						->setSubject('Informasi Pendaftaran Training Online')
@@ -217,20 +217,20 @@ class AdminController extends Controller
 		// menyimpan blasting item semua user yang sesuai kondisi
 		foreach ($user_list as $user) {
 			$blasting_item = EventBlastingItem::find()->where(['blast_id' => $blast_id, 'user_id' => $user])->one();
-			if ($blasting_item == null)
+            if ($blasting_item == null)
 				$blasting_item = new EventBlastingItem();
 			$blasting_item->blast_id = $blast_id;
 			$blasting_item->user_id = $user;
 
 			// price
-			if ($blast->event->price == 0){
+            if ($blast->event->price == 0) {
 				$price = 'Free';
 			} else {
 				$price = $blast->event->price;
 			}
 
 			// send email to notify that registrations success
-			if (Yii::$app->mailer->compose()
+            if (Yii::$app->mailer->compose()
 					->setFrom('emailasale@gmail.com')
 					->setTo('emailtujuan@gmail.com')
 					->setSubject('Informasi Pendaftaran Training Online')
@@ -265,20 +265,21 @@ class AdminController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
 			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
-			if($model->save()) {
+            if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success updated.'));
 				return $this->redirect(['index']);
 
-			} else {
-				if(Yii::$app->request->isAjax)
-					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+            } else {
+                if (Yii::$app->request->isAjax) {
+                    return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+                }
 			}
 		}
 
@@ -331,8 +332,9 @@ class AdminController extends Controller
 	 */
 	protected function findModel($id)
 	{
-		if(($model = EventBlastings::findOne($id)) !== null)
-			return $model;
+        if (($model = EventBlastings::findOne($id)) !== null) {
+            return $model;
+        }
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
 	}

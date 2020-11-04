@@ -75,20 +75,20 @@ $pluginOptions = [
 
 		regex = new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\');
 		match = input.match(regex);
-		if (match) return !this.options.hasOwnProperty(match[0]);
+        if (match) return !this.options.hasOwnProperty(match[0]);
 
 		regex = new RegExp(\'^([^<]*)\<\' + REGEX_EMAIL + \'\>$\', \'i\');
 		match = input.match(regex);
-		if (match) return !this.options.hasOwnProperty(match[2]);
+        if (match) return !this.options.hasOwnProperty(match[2]);
 
 		return false;
 	}'),
 	'create' => new JsExpression('function(input) {
-		if ((new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\')).test(input)) {
+        if ((new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\')).test(input)) {
 			return {email: input};
 		}
 		var match = input.match(new RegExp(\'^([^<]*)\<\' + REGEX_EMAIL + \'\>$\', \'i\'));
-		if (match) {
+        if (match) {
 			return {
 				email : match[2],
 				name  : $.trim(match[1])
@@ -107,7 +107,7 @@ $pluginOptions = [
 		user_id.clearOptions();
 	}'),
 ];
-if($model->user_id && isset($model->user)) {
+if ($model->user_id && isset($model->user)) {
 	$pluginOptions = ArrayHelper::merge($pluginOptions, [
 		'options' => [[
 			'id'=>$model->user->user_id,
@@ -142,10 +142,11 @@ echo $form->field($model, 'user_id')
 	->textInput(['maxlength'=>true])
 	->label($model->getAttributeLabel('session_title')); ?>
 
-<?php if(!$model->isNewRecord) {
-echo $form->field($model, 'publish')
-	->checkbox()
-	->label($model->getAttributeLabel('publish'));
+<?php 
+if (!$model->isNewRecord) {
+    echo $form->field($model, 'publish')
+        ->checkbox()
+        ->label($model->getAttributeLabel('publish'));
 } ?>
 
 <hr/>

@@ -34,13 +34,12 @@ use ommu\event\models\EventBatch;
 
 <?php //echo $form->errorSummary($model);?>
 
-<?php 
+<?php
 if (Yii::$app->request->get('id')) {
 echo $form->field($model, 'status')
 	->checkbox()
-	->label($model->getAttributeLabel('status')); 
-}
-?>
+	->label($model->getAttributeLabel('status'));
+} ?>
 
 <?php echo $form->field($model, 'notified_date')
 	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['class' => 'form-control']])

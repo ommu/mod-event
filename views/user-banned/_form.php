@@ -43,7 +43,7 @@ $redactorOptions = [
 <?php 
 echo $form->field($model, 'status')
 	->checkbox()
-	->label($model->getAttributeLabel('status')); 
+	->label($model->getAttributeLabel('status'));
 ?>
 
 <?php echo $form->field($model, 'event_id')
@@ -63,13 +63,13 @@ echo $form->field($model, 'status')
 echo $form->field($model, 'unbanned_agreement')
 	->textarea(['rows'=>6, 'cols'=>50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
-	->label($model->getAttributeLabel('unbanned_agreement')); 
+	->label($model->getAttributeLabel('unbanned_agreement'));
 ?>
 
 <?php 
 echo $form->field($model, 'unbanned_id')
 	->textInput(['maxlength'=>true])
-	->label($model->getAttributeLabel('unbanned_id')); 
+	->label($model->getAttributeLabel('unbanned_id'));
 ?>
 
 <hr/>

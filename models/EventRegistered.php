@@ -113,21 +113,23 @@ class EventRegistered extends \app\components\ActiveRecord
 	 */
 	public function getBatches($type='relation', $val='id')
 	{
-		if($type == 'relation')
-			return $this->hasMany(EventRegisteredBatch::className(), ['registered_id' => 'id']);
+        if ($type == 'relation') {
+            return $this->hasMany(EventRegisteredBatch::className(), ['registered_id' => 'id']);
+        }
 
-		if($type == 'array')
-			return \yii\helpers\ArrayHelper::map($this->batches, 'batch_id', $val=='id' ? 'id' : 'batch.batch_name');
+        if ($type == 'array') {
+            return \yii\helpers\ArrayHelper::map($this->batches, 'batch_id', $val=='id' ? 'id' : 'batch.batch_name');
+        }
 
-		if($type == 'dataProvider') {
+        if ($type == 'dataProvider') {
 			return new \yii\data\ActiveDataProvider([
 				'query' => $this->getBatches('relation'),
 			]);
 		}
 
 		$model = EventRegisteredBatch::find()
-			->alias('t')
-			->where(['t.registered_id' => $this->id]);
+            ->alias('t')
+            ->where(['t.registered_id' => $this->id]);
 		$batches = $model->count();
 
 		return $batches ? $batches : 0;
@@ -181,11 +183,13 @@ class EventRegistered extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -296,19 +300,20 @@ class EventRegistered extends \app\components\ActiveRecord
 	 */
 	public static function getInfo($id, $column=null)
 	{
-		if($column != null) {
-			$model = self::find();
-			if(is_array($column))
-				$model->select($column);
-			else
-				$model->select([$column]);
-			$model = $model->where(['id' => $id])->one();
-			return is_array($column) ? $model : $model->$column;
-			
-		} else {
-			$model = self::findOne($id);
-			return $model;
-		}
+        if ($column != null) {
+            $model = self::find();
+            if (is_array($column)) {
+                $model->select($column);
+            } else {
+                $model->select([$column]);
+            }
+            $model = $model->where(['id' => $id])->one();
+            return is_array($column) ? $model : $model->$column;
+
+        } else {
+            $model = self::findOne($id);
+            return $model;
+        }
 	}
 
 	/**
@@ -322,10 +327,11 @@ class EventRegistered extends \app\components\ActiveRecord
 			'2' => Yii::t('app', 'Cancel'),
 		);
 
-		if($value !== null)
-			return $items[$value];
-		else
-			return $items;
+        if ($value !== null) {
+            return $items[$value];
+        } else {
+            return $items;
+        }
 	}
 
 	/**
@@ -333,16 +339,18 @@ class EventRegistered extends \app\components\ActiveRecord
 	 */
 	public static function getBatchFilter()
 	{
-		if(($id = Yii::$app->request->get('id')) == null)
-			return;
+        if (($id = Yii::$app->request->get('id')) == null) {
+            return;
+        }
 
 		$model = EventBatch::find()
 			->published()
 			->andWhere(['event_id' => $id])
 			->all();
 
-		if($model == null)
-			return;
+        if ($model == null) {
+            return;
+        }
 
 		return \yii\helpers\ArrayHelper::map($model, 'batch_name', 'batch_name');
 	}
@@ -367,21 +375,25 @@ class EventRegistered extends \app\components\ActiveRecord
 	 */
 	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
+        if (parent::beforeValidate()) {
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
 
-			if($this->isNewRecord) {
-				if($this->event->isPackage)
-					$this->batch = array_values(array_flip($this->event->getBatches('array')));
+            if ($this->isNewRecord) {
+                if ($this->event->isPackage) {
+                    $this->batch = array_values(array_flip($this->event->getBatches('array')));
+                }
 
-				if($this->user_id && !isset($this->user))
-					$this->addError('user_id', Yii::t('app', 'User not registered yet'));
+                if ($this->user_id && !isset($this->user)) {
+                    $this->addError('user_id', Yii::t('app', 'User not registered yet'));
+                }
 
 				// cek user registereds
 				$registered = self::find()
@@ -390,14 +402,16 @@ class EventRegistered extends \app\components\ActiveRecord
 					->andWhere(['user_id' => $this->user_id])
 					->one();
 
-				if($registered != null)
-					$this->addError('user_id', Yii::t('app', 'User <strong>{displayname}</strong> sudah terdaftar', ['displayname'=>$this->user->displayname]));
+                if ($registered != null) {
+                    $this->addError('user_id', Yii::t('app', 'User <strong>{displayname}</strong> sudah terdaftar', ['displayname'=>$this->user->displayname]));
+                }
 			} else {
-				if($this->status == '')
-					$this->addError('status', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('status')]));
-			}
-		}
-		return true;
+                if ($this->status == '') {
+                    $this->addError('status', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('status')]));
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
@@ -405,9 +419,9 @@ class EventRegistered extends \app\components\ActiveRecord
 	 */
 	public function afterSave($insert, $changedAttributes)
 	{
-		parent::afterSave($insert, $changedAttributes);
+        parent::afterSave($insert, $changedAttributes);
 
-		if($insert) {
+        if ($insert) {
 			// set batches
 			$this->isNewRecord = true;
 			$event = new Event(['sender' => $this]);

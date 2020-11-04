@@ -66,23 +66,26 @@ class MajorController extends Controller
 	 */
 	public function actionManage()
 	{
-		$searchModel = new EventFilterMajorSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new EventFilterMajorSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		$gridColumn = Yii::$app->request->get('GridColumn', null);
-		$cols = [];
-		if($gridColumn != null && count($gridColumn) > 0) {
-			foreach($gridColumn as $key => $val) {
-				if($gridColumn[$key] == 1)
-					$cols[] = $key;
-			}
-		}
-		$columns = $searchModel->getGridColumn($cols);
+        $gridColumn = Yii::$app->request->get('GridColumn', null);
+        $cols = [];
+        if ($gridColumn != null && count($gridColumn) > 0) {
+            foreach ($gridColumn as $key => $val) {
+                if ($gridColumn[$key] == 1) {
+                    $cols[] = $key;
+                }
+            }
+        }
+        $columns = $searchModel->getGridColumn($cols);
 
-		if(($event = Yii::$app->request->get('event')) != null)
-			$event = \ommu\event\models\Events::findOne($event);
-		if(($major = Yii::$app->request->get('major')) != null)
-			$major = \ommu\ipedia\models\IpediaMajors::findOne($major);
+        if (($event = Yii::$app->request->get('event')) != null) {
+            $event = \ommu\event\models\Events::findOne($event);
+        }
+        if (($major = Yii::$app->request->get('major')) != null) {
+            $major = \ommu\ipedia\models\IpediaMajors::findOne($major);
+        }
 
 		$this->view->title = Yii::t('app', 'Filter Majors');
 		$this->view->description = '';
@@ -137,8 +140,9 @@ class MajorController extends Controller
 	 */
 	protected function findModel($id)
 	{
-		if(($model = EventFilterMajor::findOne($id)) !== null)
-			return $model;
+        if (($model = EventFilterMajor::findOne($id)) !== null) {
+            return $model;
+        }
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
 	}

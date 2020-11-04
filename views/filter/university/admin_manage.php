@@ -34,7 +34,7 @@ $this->params['menu']['option'] = [
 <div class="event-filter-university-manage">
 <?php Pjax::begin(); ?>
 
-<?php if($event != null) {
+<?php if ($event != null) {
 $model = $event;
 echo DetailView::widget([
 	'model' => $model,
@@ -46,8 +46,9 @@ echo DetailView::widget([
 			'attribute' => 'categoryName',
 			'value' => function ($model) {
 				$categoryName = isset($model->category) ? $model->category->title->message : '-';
-				if($categoryName != '-')
-					return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+                if ($categoryName != '-') {
+                    return Html::a($categoryName, ['setting/category/view', 'id'=>$model->cat_id], ['title'=>$categoryName, 'class'=>'modal-btn']);
+                }
 				return $categoryName;
 			},
 			'format' => 'html',
@@ -55,8 +56,9 @@ echo DetailView::widget([
 		[
 			'attribute' => 'title',
 			'value' => function ($model) {
-				if($model->title != '')
-					return Html::a($model->title, ['admin/view', 'id'=>$model->id], ['title'=>$model->title, 'class'=>'modal-btn']);
+                if ($model->title != '') {
+                    return Html::a($model->title, ['admin/view', 'id'=>$model->id], ['title'=>$model->title, 'class'=>'modal-btn']);
+                }
 				return $model->title;
 			},
 			'format' => 'html',
@@ -70,7 +72,7 @@ echo DetailView::widget([
 ]);
 }?>
 
-<?php if($university != null) {
+<?php if ($university != null) {
 $model = $university;
 echo DetailView::widget([
 	'model' => $model,
@@ -82,8 +84,9 @@ echo DetailView::widget([
 			'attribute' => 'companyName',
 			'value' => function ($model) {
 				$companyName = isset($model->company) ? $model->company->company_name : '-';
-				if($companyName != '-')
-					return Html::a($companyName, ['company/view', 'id'=>$model->company_id], ['title'=>$companyName, 'class'=>'modal-btn']);
+                if ($companyName != '-') {
+                    return Html::a($companyName, ['company/view', 'id'=>$model->company_id], ['title'=>$companyName, 'class'=>'modal-btn']);
+                }
 				return $companyName;
 			},
 			'format' => 'html',
@@ -106,12 +109,15 @@ array_push($columnData, [
 	'class' => 'app\components\grid\ActionColumn',
 	'header' => Yii::t('app', 'Option'),
 	'urlCreator' => function($action, $model, $key, $index) {
-		if($action == 'view')
-			return Url::to(['view', 'id'=>$key]);
-		if($action == 'update')
-			return Url::to(['update', 'id'=>$key]);
-		if($action == 'delete')
-			return Url::to(['delete', 'id'=>$key]);
+        if ($action == 'view') {
+            return Url::to(['view', 'id'=>$key]);
+        }
+        if ($action == 'update') {
+            return Url::to(['update', 'id'=>$key]);
+        }
+        if ($action == 'delete') {
+            return Url::to(['delete', 'id'=>$key]);
+        }
 	},
 	'buttons' => [
 		'view' => function ($url, $model, $key) {

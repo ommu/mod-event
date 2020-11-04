@@ -164,23 +164,26 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getBatches($type='relation', $publish=1)
 	{
-		if($type == 'relation')
-			return $this->hasMany(EventBatch::className(), ['event_id' => 'id'])
-				->alias('batches')
-				->andOnCondition([sprintf('%s.publish', 'batches') => $publish]);
+        if ($type == 'relation') {
+            return $this->hasMany(EventBatch::className(), ['event_id' => 'id'])
+                ->alias('batches')
+                ->andOnCondition([sprintf('%s.publish', 'batches') => $publish]);
+        }
 
-		if($type == 'array')
-			return \yii\helpers\ArrayHelper::map($this->batches, 'id', 'batch_name');
+        if ($type == 'array') {
+            return \yii\helpers\ArrayHelper::map($this->batches, 'id', 'batch_name');
+        }
 
 		$model = EventBatch::find()
-			->alias('t')
-			->where(['t.event_id' => $this->id]);
-		if($publish == 0)
-			$model->unpublish();
-		elseif($publish == 1)
-			$model->published();
-		elseif($publish == 2)
-			$model->deleted();
+            ->alias('t')
+            ->where(['t.event_id' => $this->id]);
+        if ($publish == 0) {
+            $model->unpublish();
+        } else if ($publish == 1) {
+            $model->published();
+        } else if ($publish == 2) {
+            $model->deleted();
+        }
 		$batches = $model->count();
 
 		return $batches ? $batches : 0;
@@ -191,8 +194,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getGenders($result=false)
 	{
-		if($result == true)
-			return \yii\helpers\ArrayHelper::map($this->genders, 'gender', 'id');
+        if ($result == true) {
+            return \yii\helpers\ArrayHelper::map($this->genders, 'gender', 'id');
+        }
 
 		return $this->hasMany(EventFilterGender::className(), ['event_id' => 'id']);
 	}
@@ -202,8 +206,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getMajors($result=false, $val='id')
 	{
-		if($result == true)
-			return \yii\helpers\ArrayHelper::map($this->majors, 'major_id', $val=='id' ? 'id' : 'major.major_name');
+        if ($result == true) {
+            return \yii\helpers\ArrayHelper::map($this->majors, 'major_id', $val=='id' ? 'id' : 'major.major_name');
+        }
 
 		return $this->hasMany(EventFilterMajor::className(), ['event_id' => 'id']);
 	}
@@ -213,8 +218,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getMajorGroups($result=false, $val='id')
 	{
-		if($result == true)
-			return \yii\helpers\ArrayHelper::map($this->majorGroups, 'major_group_id', $val=='id' ? 'id' : 'group.group_name');
+        if ($result == true) {
+            return \yii\helpers\ArrayHelper::map($this->majorGroups, 'major_group_id', $val=='id' ? 'id' : 'group.group_name');
+        }
 
 		return $this->hasMany(EventFilterMajorGroup::className(), ['event_id' => 'id']);
 	}
@@ -224,8 +230,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getUniversities($result=false, $val='id')
 	{
-		if($result == true)
-			return \yii\helpers\ArrayHelper::map($this->universities, 'university_id', $val=='id' ? 'id' : 'university.company.company_name');
+        if ($result == true) {
+            return \yii\helpers\ArrayHelper::map($this->universities, 'university_id', $val=='id' ? 'id' : 'university.company.company_name');
+        }
 
 		return $this->hasMany(EventFilterUniversity::className(), ['event_id' => 'id']);
 	}
@@ -235,12 +242,13 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getRegistereds($count=false)
 	{
-		if($count == false)
-			return $this->hasMany(EventRegistered::className(), ['event_id' => 'id']);
+        if ($count == false) {
+            return $this->hasMany(EventRegistered::className(), ['event_id' => 'id']);
+        }
 
 		$model = EventRegistered::find()
-			->alias('t')
-			->where(['t.event_id' => $this->id]);
+            ->alias('t')
+            ->where(['t.event_id' => $this->id]);
 		$registereds = $model->count();
 
 		return $registereds ? $registereds : 0;
@@ -251,8 +259,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getTags($result=false, $val='id')
 	{
-		if($result == true)
-			return \yii\helpers\ArrayHelper::map($this->tags, 'tag_id', $val=='id' ? 'id' : 'tag.body');
+        if ($result == true) {
+            return \yii\helpers\ArrayHelper::map($this->tags, 'tag_id', $val=='id' ? 'id' : 'tag.body');
+        }
 
 		return $this->hasMany(EventTag::className(), ['event_id' => 'id']);
 	}
@@ -297,11 +306,13 @@ class Events extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -512,19 +523,20 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public static function getInfo($id, $column=null)
 	{
-		if($column != null) {
-			$model = self::find();
-			if(is_array($column))
-				$model->select($column);
-			else
-				$model->select([$column]);
-			$model = $model->where(['id' => $id])->one();
-			return is_array($column) ? $model : $model->$column;
-			
-		} else {
-			$model = self::findOne($id);
-			return $model;
-		}
+        if ($column != null) {
+            $model = self::find();
+            if (is_array($column)) {
+                $model->select($column);
+            } else {
+                $model->select([$column]);
+            }
+            $model = $model->where(['id' => $id])->one();
+            return is_array($column) ? $model : $model->$column;
+
+        } else {
+            $model = self::findOne($id);
+            return $model;
+        }
 	}
 
 	/**
@@ -532,8 +544,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function getIsFree()
 	{
-		if(!$this->package_reward)
-			return false;
+        if (!$this->package_reward) {
+            return false;
+        }
 
 		return $this->package_reward['type'] == '1' && $this->package_reward['reward'] == '100' ? true : false;
 	}
@@ -557,10 +570,11 @@ class Events extends \app\components\ActiveRecord
 			0 => Yii::t('app', 'Disable'),
 		);
 
-		if($value !== null)
-			return $items[$value];
-		else
-			return $items;
+        if ($value !== null) {
+            return $items[$value];
+        } else {
+            return $items;
+        }
 	}
 
 	/**
@@ -573,10 +587,11 @@ class Events extends \app\components\ActiveRecord
 			0 => Yii::t('app', 'Reward (Price)'),
 		);
 
-		if($value !== null)
-			return $items[$value];
-		else
-			return $items;
+        if ($value !== null) {
+            return $items[$value];
+        } else {
+            return $items;
+        }
 	}
 
 	/**
@@ -590,17 +605,18 @@ class Events extends \app\components\ActiveRecord
 			'package' => Yii::t('app', 'Package'),
 		);
 
-		if($value !== null)
-			return $items[$value];
-		else
-			return $items;
+        if ($value !== null) {
+            return $items[$value];
+        } else {
+            return $items;
+        }
 	}
 
 	/**
 	 * @param returnAlias set true jika ingin kembaliannya path alias atau false jika ingin string
 	 * relative path. default true.
 	 */
-	public static function getUploadPath($returnAlias=true) 
+	public static function getUploadPath($returnAlias=true)
 	{
 		return ($returnAlias ? Yii::getAlias('@public/event') : 'event');
 	}
@@ -610,17 +626,19 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public static function parseGender($gender, $sep='li')
 	{
-		if(!is_array($gender) || (is_array($gender) && empty($gender)))
-			return '-';
+        if (!is_array($gender) || (is_array($gender) && empty($gender))) {
+            return '-';
+        }
 
 		$genders = EventFilterGender::getGender();
 		$items = [];
 		foreach ($gender as $val) {
-			if(array_key_exists($val, $genders))
-				$items[] = $genders[$val];
+            if (array_key_exists($val, $genders)) {
+                $items[] = $genders[$val];
+            }
 		}
 
-		if($sep == 'li') {
+        if ($sep == 'li') {
 			return Html::ul($items, ['item' => function($item, $index) {
 				return Html::tag('li', $item);
 			}, 'class'=>'list-boxed']);
@@ -634,8 +652,9 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public static function parseReward($reward)
 	{
-		if(!$reward)
-			return '-';
+        if (!$reward) {
+            return '-';
+        }
 		
 		return Yii::t('app', 'Reward {reward}', ['reward' => $reward['type'] == 1 ? $reward['reward'].'%' : Yii::$app->formatter->asCurrency($reward['reward'])]);
 	}
@@ -666,25 +685,26 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
+        if (parent::beforeValidate()) {
 			// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
-			if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+            if ($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
 				$coverFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
-				if(!in_array(strtolower($this->cover_filename->getExtension()), $coverFilenameFileType)) {
+                if (!in_array(strtolower($this->cover_filename->getExtension()), $coverFilenameFileType)) {
 					$this->addError('cover_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
 						'name'=>$this->cover_filename->name,
 						'extensions'=>$this->formatFileType($coverFilenameFileType, false),
 					]));
-				}
-			} else {
-				if($this->isNewRecord || (!$this->isNewRecord && $this->old_cover_filename == ''))
-					$this->addError('cover_filename', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('cover_filename')]));
+                }
+            } else {
+                if ($this->isNewRecord || (!$this->isNewRecord && $this->old_cover_filename == '')) {
+                    $this->addError('cover_filename', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('cover_filename')]));
+                }
 			}
 
 			// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
-			if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+            if ($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
 				$bannerFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
-				if(!in_array(strtolower($this->banner_filename->getExtension()), $bannerFilenameFileType)) {
+                if (!in_array(strtolower($this->banner_filename->getExtension()), $bannerFilenameFileType)) {
 					$this->addError('banner_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
 						'name'=>$this->banner_filename->name,
 						'extensions'=>$this->formatFileType($bannerFilenameFileType, false),
@@ -692,31 +712,37 @@ class Events extends \app\components\ActiveRecord
 				}
 			}
 
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
 
-			if($this->registered_enable) {
-				if($this->registered_message == '')
-					$this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_message')]));
-				if($this->registered_type == '')
-					$this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
+            if ($this->registered_enable) {
+                if ($this->registered_message == '') {
+                    $this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_message')]));
+                }
+                if ($this->registered_type == '') {
+                    $this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
+                }
 			}
 
 			// validate and set package reward
-			if($this->scenario != self::SCENARIO_FILTER) {
-				if($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100)
-					$this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
+            if ($this->scenario != self::SCENARIO_FILTER) {
+                if ($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100) {
+                    $this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
+                }
 
-				if($this->package_reward['type'] == '' || $this->package_reward['reward'] == '')
-					$this->package_reward = '';
-			}
-		}
-		return true;
+                if ($this->package_reward['type'] == '' || $this->package_reward['reward'] == '') {
+                    $this->package_reward = '';
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
@@ -724,36 +750,40 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function beforeSave($insert)
 	{
-		if(parent::beforeSave($insert)) {
-			if(!$insert) {
-				$uploadPath = join('/', [self::getUploadPath(), $this->id]);
-				$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
-				$this->createUploadDirectory(self::getUploadPath(), $this->id);
+        if (parent::beforeSave($insert)) {
+            if (!$insert) {
+                $uploadPath = join('/', [self::getUploadPath(), $this->id]);
+                $verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
+                $this->createUploadDirectory(self::getUploadPath(), $this->id);
 
 				// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
-				if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
-					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
-					if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
-						if($this->old_cover_filename != '' && file_exists(join('/', [$uploadPath, $this->old_cover_filename])))
-							rename(join('/', [$uploadPath, $this->old_cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_cover_filename]));
+                if ($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension());
+                    if ($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+                        if ($this->old_cover_filename != '' && file_exists(join('/', [$uploadPath, $this->old_cover_filename]))) {
+                            rename(join('/', [$uploadPath, $this->old_cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_cover_filename]));
+                        }
 						$this->cover_filename = $fileName;
 					}
 				} else {
-					if($this->cover_filename == '')
-						$this->cover_filename = $this->old_cover_filename;
+                    if ($this->cover_filename == '') {
+                        $this->cover_filename = $this->old_cover_filename;
+                    }
 				}
 
 				// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
-				if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
-					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
-					if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
-						if($this->old_banner_filename != '' && file_exists(join('/', [$uploadPath, $this->old_banner_filename])))
-							rename(join('/', [$uploadPath, $this->old_banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_banner_filename]));
+                if ($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+					$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension());
+                    if ($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+                        if ($this->old_banner_filename != '' && file_exists(join('/', [$uploadPath, $this->old_banner_filename]))) {
+                            rename(join('/', [$uploadPath, $this->old_banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_change_'.$this->old_banner_filename]));
+                        }
 						$this->banner_filename = $fileName;
 					}
 				} else {
-					if($this->banner_filename == '')
-						$this->banner_filename = $this->old_banner_filename;
+                    if ($this->banner_filename == '') {
+                        $this->banner_filename = $this->old_banner_filename;
+                    }
 				}
 
 				// set filters
@@ -764,8 +794,8 @@ class Events extends \app\components\ActiveRecord
 			$this->registered_message = serialize($this->registered_message);
 			$this->package_reward = serialize($this->package_reward);
 			$this->published_date = Yii::$app->formatter->asDate($this->published_date, 'php:Y-m-d');
-		}
-		return true;
+        }
+        return true;
 	}
 
 	/**
@@ -773,25 +803,27 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function afterSave($insert, $changedAttributes)
 	{
-		parent::afterSave($insert, $changedAttributes);
+        parent::afterSave($insert, $changedAttributes);
 
-		$uploadPath = join('/', [self::getUploadPath(), $this->id]);
-		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
-		$this->createUploadDirectory(self::getUploadPath(), $this->id);
+        $uploadPath = join('/', [self::getUploadPath(), $this->id]);
+        $verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
+        $this->createUploadDirectory(self::getUploadPath(), $this->id);
 
-		if($insert) {
+        if ($insert) {
 			// $this->cover_filename = UploadedFile::getInstance($this, 'cover_filename');
-			if($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
-				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension()); 
-				if($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName])))
-					self::updateAll(['cover_filename' => $fileName], ['id' => $this->id]);
+            if ($this->cover_filename instanceof UploadedFile && !$this->cover_filename->getHasError()) {
+				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->cover_filename->getExtension());
+                if ($this->cover_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+                    self::updateAll(['cover_filename' => $fileName], ['id' => $this->id]);
+                }
 			}
 
 			// $this->banner_filename = UploadedFile::getInstance($this, 'banner_filename');
-			if($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
-				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension()); 
-				if($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName])))
-					self::updateAll(['banner_filename' => $fileName], ['id' => $this->id]);
+            if ($this->banner_filename instanceof UploadedFile && !$this->banner_filename->getHasError()) {
+				$fileName = join('-', [time(), UuidHelper::uuid()]).'.'.strtolower($this->banner_filename->getExtension());
+                if ($this->banner_filename->saveAs(join('/', [$uploadPath, $fileName]))) {
+                    self::updateAll(['banner_filename' => $fileName], ['id' => $this->id]);
+                }
 			}
 
 			// set filters
@@ -805,16 +837,18 @@ class Events extends \app\components\ActiveRecord
 	 */
 	public function afterDelete()
 	{
-		parent::afterDelete();
+        parent::afterDelete();
 
-		$uploadPath = join('/', [self::getUploadPath(), $this->id]);
-		$verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
+        $uploadPath = join('/', [self::getUploadPath(), $this->id]);
+        $verwijderenPath = join('/', [self::getUploadPath(), 'verwijderen']);
 
-		if($this->cover_filename != '' && file_exists(join('/', [$uploadPath, $this->cover_filename])))
-			rename(join('/', [$uploadPath, $this->cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->cover_filename]));
+        if ($this->cover_filename != '' && file_exists(join('/', [$uploadPath, $this->cover_filename]))) {
+            rename(join('/', [$uploadPath, $this->cover_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->cover_filename]));
+        }
 
-		if($this->banner_filename != '' && file_exists(join('/', [$uploadPath, $this->banner_filename])))
-			rename(join('/', [$uploadPath, $this->banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->banner_filename]));
+        if ($this->banner_filename != '' && file_exists(join('/', [$uploadPath, $this->banner_filename]))) {
+            rename(join('/', [$uploadPath, $this->banner_filename]), join('/', [$verwijderenPath, $this->id.'-'.time().'_deleted_'.$this->banner_filename]));
+        }
 
 	}
 }

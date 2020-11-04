@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Event Blastings'), '
 </div>
 
 <!-- User List -->
-<?php 
+<?php
 if (($filter_id = Yii::$app->request->get('filter_id')) != null && ($blast_id = Yii::$app->request->get('blast_id')) != null) {
 
 $this->params['menu']['option'] = [
@@ -54,22 +54,23 @@ $this->params['menu']['option'] = [
 ];
 ?>
 <div class="col-md-12 col-sm-12 col-xs-12">
-	<?php if(Yii::$app->session->hasFlash('blast_success'))
-		echo $this->flashMessage(Yii::$app->session->getFlash('blast_success'));
-	else if(Yii::$app->session->hasFlash('blast_error'))
-		echo $this->flashMessage(Yii::$app->session->getFlash('blast_error'), 'danger');?>
+	<?php if (Yii::$app->session->hasFlash('blast_success')) {
+        echo $this->flashMessage(Yii::$app->session->getFlash('blast_success'));
+    } else if (Yii::$app->session->hasFlash('blast_error')) {
+        echo $this->flashMessage(Yii::$app->session->getFlash('blast_error'), 'danger');
+    } ?>
 
 	<div class="x_panel">
 		<div class="x_title">
 			<h2><?php echo Html::encode('User List'); ?></h2>
 			<ul class="nav navbar-right panel_toolbox">
 				<li><a href="#" title="<?php echo Yii::t('app', 'Toggle');?>" class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-				<?php if($this->params['menu']['option']):?>
+				<?php if ($this->params['menu']['option']) {?>
 				<li class="dropdown">
 					<a href="#" title="<?php echo Yii::t('app', 'Options');?>" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
 					<?php echo MenuOption::widget(['items' => $this->params['menu']['option']]);?>
 				</li>
-				<?php endif;?>
+                <?php } ?>
 				<li><a href="#" title="<?php echo Yii::t('app', 'Close');?>" class="close-link"><i class="fa fa-close"></i></a></li>
 			</ul>
 			<div class="clearfix"></div>
@@ -87,7 +88,7 @@ $this->params['menu']['option'] = [
 				'enableClientValidation' => true,
 				'enableAjaxValidation' => false,
 				//'enableClientScript' => true,
-			]); 
+			]);
 			
 			$dataProviderUser = new \yii\data\ActiveDataProvider([
 				'query' => Users::find()->select('ommu_users.user_id, ommu_users.displayname')
@@ -125,9 +126,7 @@ $this->params['menu']['option'] = [
 		</div>
 	</div>
 </div>
-<?php
-}
-?>
+<?php } ?>
 
 <!-- index -->
 <?php
@@ -154,7 +153,7 @@ array_push($columnData, [
 	'buttons' => [
 		'filter' => function ($url, $model, $key) {
 			// cek apakah ada event atau tidak
-			if (($event_id = Yii::$app->request->get('event_id')) != null)
+            if (($event_id = Yii::$app->request->get('event_id')) != null)
 				$url = Url::to(['index', 'event_id' => $event_id, 'filter_id' => $model->filter_id]);
 			else
 				$url = Url::to(['index', 'filter_id' => $model->filter_id]);

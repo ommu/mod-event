@@ -67,18 +67,19 @@ class HistoryController extends Controller
 	 */
 	public function actionManage()
 	{
-		$searchModel = new EventBlastingHistorySearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new EventBlastingHistorySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		$gridColumn = Yii::$app->request->get('GridColumn', null);
-		$cols = [];
-		if($gridColumn != null && count($gridColumn) > 0) {
-			foreach($gridColumn as $key => $val) {
-				if($gridColumn[$key] == 1)
-					$cols[] = $key;
-			}
-		}
-		$columns = $searchModel->getGridColumn($cols);
+        $gridColumn = Yii::$app->request->get('GridColumn', null);
+        $cols = [];
+        if ($gridColumn != null && count($gridColumn) > 0) {
+            foreach ($gridColumn as $key => $val) {
+                if ($gridColumn[$key] == 1) {
+                    $cols[] = $key;
+                }
+            }
+        }
+        $columns = $searchModel->getGridColumn($cols);
 
 		$this->view->title = Yii::t('app', 'Event Blasting Histories');
 		$this->view->description = '';
@@ -99,13 +100,13 @@ class HistoryController extends Controller
 	{
 		$model = new EventBlastingHistory();
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
-			if($model->save()) {
+            if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blasting History success created.'));
 				return $this->redirect(['index']);
-			} 
+			}
 		}
 
 		$this->view->title = Yii::t('app', 'Create Event Blasting History');
@@ -126,20 +127,21 @@ class HistoryController extends Controller
 	{
 		$model = $this->findModel($id);
 
-		if(Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost) {
 			$model->load(Yii::$app->request->post());
 			// $postData = Yii::$app->request->post();
 			// $model->load($postData);
 			// $model->order = $postData['order'] ? $postData['order'] : 0;
 
-			if($model->save()) {
+            if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blasting History success updated.'));
 				return $this->redirect(['index']);
 
-			} else {
-				if(Yii::$app->request->isAjax)
-					return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+            } else {
+                if (Yii::$app->request->isAjax) {
+                    return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
+                }
 			}
 		}
 
@@ -192,8 +194,9 @@ class HistoryController extends Controller
 	 */
 	protected function findModel($id)
 	{
-		if(($model = EventBlastingHistory::findOne($id)) !== null)
-			return $model;
+        if (($model = EventBlastingHistory::findOne($id)) !== null) {
+            return $model;
+        }
 
 		throw new \yii\web\NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
 	}

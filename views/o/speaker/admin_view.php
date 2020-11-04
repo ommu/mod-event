@@ -21,12 +21,12 @@ use yii\widgets\DetailView;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Speakers'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $model->speaker_name;
 
-if(!$small) {
-$this->params['menu']['content'] = [
-	['label' => Yii::t('app', 'Detail'), 'url' => Url::to(['view', 'id'=>$model->id]), 'icon' => 'eye', 'htmlOptions' => ['class'=>'btn btn-success']],
-	['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id'=>$model->id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
-	['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
-];
+if (!$small) {
+    $this->params['menu']['content'] = [
+        ['label' => Yii::t('app', 'Detail'), 'url' => Url::to(['view', 'id'=>$model->id]), 'icon' => 'eye', 'htmlOptions' => ['class'=>'btn btn-success']],
+        ['label' => Yii::t('app', 'Update'), 'url' => Url::to(['update', 'id'=>$model->id]), 'icon' => 'pencil', 'htmlOptions' => ['class'=>'btn btn-primary']],
+        ['label' => Yii::t('app', 'Delete'), 'url' => Url::to(['delete', 'id'=>$model->id]), 'htmlOptions' => ['data-confirm'=>Yii::t('app', 'Are you sure you want to delete this item?'), 'data-method'=>'post', 'class'=>'btn btn-danger'], 'icon' => 'trash'],
+    ];
 } ?>
 
 <div class="event-speaker-view">
@@ -61,8 +61,9 @@ $attributes = [
 		'attribute' => 'batchName',
 		'value' => function ($model) {
 			$batchName = isset($model->batch) ? $model->batch->batch_name : '-';
-			if($batchName != '-')
-				return Html::a($batchName, ['o/batch/view', 'id'=>$model->batch_id], ['title'=>$batchName, 'class'=>'modal-btn']);
+            if ($batchName != '-') {
+                return Html::a($batchName, ['o/batch/view', 'id'=>$model->batch_id], ['title'=>$batchName, 'class'=>'modal-btn']);
+            }
 			return $batchName;
 		},
 		'format' => 'html',
@@ -71,8 +72,9 @@ $attributes = [
 		'attribute' => 'eventTitle',
 		'value' => function ($model) {
 			$eventTitle = isset($model->batch->event) ? $model->batch->event->title : '-';
-			if($eventTitle != '-')
-				return Html::a($eventTitle, ['admin/view', 'id'=>$model->batch->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            if ($eventTitle != '-') {
+                return Html::a($eventTitle, ['admin/view', 'id'=>$model->batch->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            }
 			return $eventTitle;
 		},
 		'format' => 'html',
@@ -81,8 +83,9 @@ $attributes = [
 		'attribute' => 'eventCategoryId',
 		'value' => function ($model) {
 			$eventCategoryName = isset($model->batch->event->category) ? $model->batch->event->category->title->message : '-';
-			if($eventCategoryName != '-')
-				return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->batch->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
+            if ($eventCategoryName != '-') {
+                return Html::a($eventCategoryName, ['setting/category/view', 'id'=>$model->batch->event->cat_id], ['title'=>$eventCategoryName, 'class'=>'modal-btn']);
+            }
 			return $eventCategoryName;
 		},
 		'format' => 'html',

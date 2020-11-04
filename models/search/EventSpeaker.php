@@ -61,10 +61,11 @@ class EventSpeaker extends EventSpeakerModel
 	 */
 	public function search($params, $column=null)
 	{
-		if(!($column && is_array($column)))
-			$query = EventSpeakerModel::find()->alias('t');
-		else
-			$query = EventSpeakerModel::find()->alias('t')->select($column);
+        if (!($column && is_array($column))) {
+            $query = EventSpeakerModel::find()->alias('t');
+        } else {
+            $query = EventSpeakerModel::find()->alias('t')->select($column);
+        }
 		$query->joinWith([
 			'batch batch', 
 			'user user', 
@@ -80,8 +81,9 @@ class EventSpeaker extends EventSpeakerModel
 			'query' => $query,
 		];
 		// disable pagination agar data pada api tampil semua
-		if(isset($params['pagination']) && $params['pagination'] == 0)
-			$dataParams['pagination'] = false;
+        if (isset($params['pagination']) && $params['pagination'] == 0) {
+            $dataParams['pagination'] = false;
+        }
 		$dataProvider = new ActiveDataProvider($dataParams);
 
 		$attributes = array_keys($this->getTableSchema()->columns);
@@ -114,11 +116,12 @@ class EventSpeaker extends EventSpeakerModel
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
-		if(Yii::$app->request->get('id'))
-			unset($params['id']);
+        if (Yii::$app->request->get('id')) {
+            unset($params['id']);
+        }
 		$this->load($params);
 
-		if(!$this->validate()) {
+        if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -137,17 +140,19 @@ class EventSpeaker extends EventSpeakerModel
 			'event.cat_id' => $this->eventCategoryId,
 		]);
 
-		if(isset($params['trash']))
-			$query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
-		else {
-			if(!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == ''))
-				$query->andFilterWhere(['IN', 't.publish', [0,1]]);
-			else
-				$query->andFilterWhere(['t.publish' => $this->publish]);
+        if (isset($params['trash'])) {
+            $query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
+        } else {
+            if (!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == '')) {
+                $query->andFilterWhere(['IN', 't.publish', [0,1]]);
+            } else {
+                $query->andFilterWhere(['t.publish' => $this->publish]);
+            }
 		}
 
-		if(isset($params['eventId']) && $params['eventId'])
-			$query->andFilterWhere(['batch.event_id' => $params['eventId']]);
+        if (isset($params['eventId']) && $params['eventId']) {
+            $query->andFilterWhere(['batch.event_id' => $params['eventId']]);
+        }
 
 		$query->andFilterWhere(['like', 't.speaker_name', $this->speaker_name])
 			->andFilterWhere(['like', 't.speaker_position', $this->speaker_position])

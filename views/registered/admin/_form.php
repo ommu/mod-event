@@ -75,20 +75,20 @@ $pluginOptions = [
 
 		regex = new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\');
 		match = input.match(regex);
-		if (match) return !this.options.hasOwnProperty(match[0]);
+        if (match) return !this.options.hasOwnProperty(match[0]);
 
 		regex = new RegExp(\'^([^<]*)\<\' + REGEX_EMAIL + \'\>$\', \'i\');
 		match = input.match(regex);
-		if (match) return !this.options.hasOwnProperty(match[2]);
+        if (match) return !this.options.hasOwnProperty(match[2]);
 
 		return false;
 	}'),
 	'create' => new JsExpression('function(input) {
-		if ((new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\')).test(input)) {
+        if ((new RegExp(\'^\' + REGEX_EMAIL + \'$\', \'i\')).test(input)) {
 			return {email: input};
 		}
 		var match = input.match(new RegExp(\'^([^<]*)\<\' + REGEX_EMAIL + \'\>$\', \'i\'));
-		if (match) {
+        if (match) {
 			return {
 				email : match[2],
 				name  : $.trim(match[1])
@@ -98,7 +98,7 @@ $pluginOptions = [
 		return false;
 	}'),
 ];
-if($model->user_id && isset($model->user)) {
+if ($model->user_id && isset($model->user)) {
 	$pluginOptions = ArrayHelper::merge($pluginOptions, [
 		'options' => [[
 			'id'=>$model->user->user_id,
@@ -121,30 +121,32 @@ echo $form->field($model, 'user_id')
 	])
 	->label($model->getAttributeLabel('user_id')); ?>
 
-<?php if(!$model->event->isPackage) {
-$batchSelectizeOptions = [
-	'options' => [
-		'placeholder' => Yii::t('app', 'Select a batch...'),
-	],
-	'items' => ArrayHelper::merge([''=>Yii::t('app', 'Select a batch..')], $model->event->getBatches('array', 'title')),
-];
-if($model->event->registered_type == 'multiple') {
-	$batchSelectizeOptions = ArrayHelper::merge($batchSelectizeOptions, [
-		'options' => [
-			'multiple' => true,
-			'disabled' => !$model->isNewRecord ? true : false,
-		],
-		'pluginOptions' => [
-			'plugins' => ['remove_button'],
-		],
-	]);
-}
-echo $form->field($model, 'batch')
-	->widget(Selectize::className(), $batchSelectizeOptions)
-	->label($model->getAttributeLabel('batch'));
+<?php 
+if (!$model->event->isPackage) {
+    $batchSelectizeOptions = [
+        'options' => [
+            'placeholder' => Yii::t('app', 'Select a batch...'),
+        ],
+        'items' => ArrayHelper::merge([''=>Yii::t('app', 'Select a batch..')], $model->event->getBatches('array', 'title')),
+    ];
+    if ($model->event->registered_type == 'multiple') {
+        $batchSelectizeOptions = ArrayHelper::merge($batchSelectizeOptions, [
+            'options' => [
+                'multiple' => true,
+                'disabled' => !$model->isNewRecord ? true : false,
+            ],
+            'pluginOptions' => [
+                'plugins' => ['remove_button'],
+            ],
+        ]);
+    }
+    echo $form->field($model, 'batch')
+        ->widget(Selectize::className(), $batchSelectizeOptions)
+        ->label($model->getAttributeLabel('batch'));
 }?>
 
-<?php if(!$model->isNewRecord) {
+<?php 
+if (!$model->isNewRecord) {
 echo $form->field($finance, 'price')
 	->textInput(['type' => 'number', 'min' => 0, 'disabled' => !$model->isNewRecord ? true : false,])
 	->label($finance->getAttributeLabel('price')); ?>

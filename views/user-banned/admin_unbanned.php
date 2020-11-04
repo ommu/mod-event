@@ -55,7 +55,7 @@ $form = ActiveForm::begin([
 echo $form->field($model, 'unbanned_agreement')
 	->textarea(['rows'=>6, 'cols'=>50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
-	->label($model->getAttributeLabel('unbanned_agreement')); 
+	->label($model->getAttributeLabel('unbanned_agreement'));
 ?>
 
 <hr/>

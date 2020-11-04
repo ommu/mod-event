@@ -22,7 +22,7 @@ use yii\widgets\Pjax;
 
 $this->params['breadcrumbs'][] = $this->title;
 
-if(($id = Yii::$app->request->get('id')) != null) {
+if (($id = Yii::$app->request->get('id')) != null) {
 	$this->params['menu']['content'] = [
 		['label' => Yii::t('app', 'Add Registered'), 'url' => Url::to(['create', 'id'=>$id]), 'icon' => 'plus-square', 'htmlOptions' => ['class'=>'btn modal-btn btn-success']],
 	];
@@ -36,8 +36,9 @@ $this->params['menu']['option'] = [
 <div class="event-registered-manage">
 <?php Pjax::begin(); ?>
 
-<?php if($event != null)
-	echo $this->render('/admin/admin_view', ['model'=>$event, 'small'=>true]); ?>
+<?php if ($event != null) {
+    echo $this->render('/admin/admin_view', ['model'=>$event, 'small'=>true]);
+} ?>
 
 <?php //echo $this->render('_search', ['model'=>$searchModel]); ?>
 
@@ -49,12 +50,15 @@ array_push($columnData, [
 	'class' => 'app\components\grid\ActionColumn',
 	'header' => Yii::t('app', 'Option'),
 	'urlCreator' => function($action, $model, $key, $index) {
-		if($action == 'view')
-			return Url::to(['view', 'id'=>$key]);
-		if($action == 'update')
-			return Url::to(['update', 'id'=>$key]);
-		if($action == 'delete')
-			return Url::to(['delete', 'id'=>$key]);
+        if ($action == 'view') {
+            return Url::to(['view', 'id'=>$key]);
+        }
+        if ($action == 'update') {
+            return Url::to(['update', 'id'=>$key]);
+        }
+        if ($action == 'delete') {
+            return Url::to(['delete', 'id'=>$key]);
+        }
 	},
 	'buttons' => [
 		'view' => function ($url, $model, $key) {

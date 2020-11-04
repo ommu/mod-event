@@ -142,11 +142,13 @@ class EventBlastings extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -216,40 +218,42 @@ class EventBlastings extends \app\components\ActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
-		}
-		return true;
+        if (parent::beforeValidate()) {
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
-		if(parent::beforeSave($insert)) {
-			if(!Yii::$app->request->get('blast_id')) {
+        if (parent::beforeSave($insert)) {
+            if (!Yii::$app->request->get('blast_id')) {
 				$value = serialize($this->filter_i);
 
 				$blasting_filter = BlastingFilter::find()->where(['filter_value' => $value])->one();
-				if ($blasting_filter == null) {
+                if ($blasting_filter == null) {
 					$blasting_filter = new BlastingFilter();
 					$blasting_filter->filter_value = $value;
 					$blasting_filter->save(false);
 				}
 
 				$this->filter_id = $blasting_filter->filter_id;
-			}
-		}
-		return true;	
+            }
+        }
+        return true;
 	}
 
 

@@ -61,10 +61,11 @@ class Events extends EventsModel
 	 */
 	public function search($params, $column=null)
 	{
-		if(!($column && is_array($column)))
-			$query = EventsModel::find()->alias('t');
-		else
-			$query = EventsModel::find()->alias('t')->select($column);
+        if (!($column && is_array($column))) {
+            $query = EventsModel::find()->alias('t');
+        } else {
+            $query = EventsModel::find()->alias('t')->select($column);
+        }
 		$query->joinWith([
 			'category.title category',
 			'creation creation',
@@ -86,8 +87,9 @@ class Events extends EventsModel
 			'query' => $query,
 		];
 		// disable pagination agar data pada api tampil semua
-		if(isset($params['pagination']) && $params['pagination'] == 0)
-			$dataParams['pagination'] = false;
+        if (isset($params['pagination']) && $params['pagination'] == 0) {
+            $dataParams['pagination'] = false;
+        }
 		$dataProvider = new ActiveDataProvider($dataParams);
 
 		$attributes = array_keys($this->getTableSchema()->columns);
@@ -112,11 +114,12 @@ class Events extends EventsModel
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
-		if(Yii::$app->request->get('id'))
-			unset($params['id']);
+        if (Yii::$app->request->get('id')) {
+            unset($params['id']);
+        }
 		$this->load($params);
 
-		if(!$this->validate()) {
+        if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -138,26 +141,31 @@ class Events extends EventsModel
 			'genders.gender' => $this->gender,
 		]);
 
-		if(isset($params['trash']))
-			$query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
-		else {
-			if(!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == ''))
-				$query->andFilterWhere(['IN', 't.publish', [0,1]]);
-			else
-				$query->andFilterWhere(['t.publish' => $this->publish]);
+        if (isset($params['trash'])) {
+            $query->andFilterWhere(['NOT IN', 't.publish', [0,1]]);
+        } else {
+            if (!isset($params['publish']) || (isset($params['publish']) && $params['publish'] == '')) {
+                $query->andFilterWhere(['IN', 't.publish', [0,1]]);
+            } else {
+                $query->andFilterWhere(['t.publish' => $this->publish]);
+            }
 		}
 
-		if(isset($params['tagId']) && $params['tagId'])
-			$query->andFilterWhere(['tags.tag_id' => $params['tagId']]);
+        if (isset($params['tagId']) && $params['tagId']) {
+            $query->andFilterWhere(['tags.tag_id' => $params['tagId']]);
+        }
 
-		if(isset($params['majorId']) && $params['majorId'])
-			$query->andFilterWhere(['majors.major_id' => $params['majorId']]);
+        if (isset($params['majorId']) && $params['majorId']) {
+            $query->andFilterWhere(['majors.major_id' => $params['majorId']]);
+        }
 
-		if(isset($params['majorGroupId']) && $params['majorGroupId'])
-			$query->andFilterWhere(['majorGroups.major_group_id' => $params['majorGroupId']]);
+        if (isset($params['majorGroupId']) && $params['majorGroupId']) {
+            $query->andFilterWhere(['majorGroups.major_group_id' => $params['majorGroupId']]);
+        }
 
-		if(isset($params['universityId']) && $params['universityId'])
-			$query->andFilterWhere(['universities.university_id' => $params['universityId']]);
+        if (isset($params['universityId']) && $params['universityId']) {
+            $query->andFilterWhere(['universities.university_id' => $params['universityId']]);
+        }
 
 		$query->andFilterWhere(['like', 't.title', $this->title])
 			->andFilterWhere(['like', 't.theme', $this->theme])

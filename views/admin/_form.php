@@ -135,14 +135,18 @@ $package_reward_type = $form->field($model, 'package_reward[type]', ['template' 
 
 <hr/>
 
-<?php if($model->isNewRecord && !$model->getErrors())
+<?php 
+if ($model->isNewRecord && !$model->getErrors()) {
 	$model->published_date = Yii::$app->formatter->asDate('now', 'php:Y-m-d');
+}
 echo $form->field($model, 'published_date')
 	->textInput(['type'=>'date'])
 	->label($model->getAttributeLabel('published_date')); ?>
 
-<?php if($model->isNewRecord && !$model->getErrors())
-	$model->publish = 1;
+<?php 
+if ($model->isNewRecord && !$model->getErrors()) {
+    $model->publish = 1;
+}
 echo $form->field($model, 'publish')
 	->checkbox()
 	->label($model->getAttributeLabel('publish')); ?>

@@ -143,11 +143,13 @@ class EventUserBanned extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -237,36 +239,39 @@ class EventUserBanned extends \app\components\ActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
-		}
-		return true;
+        if (parent::beforeValidate()) {
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
 		$action = strtolower(Yii::$app->controller->action->id);
 
-		if(parent::beforeSave($insert)) {
+        if (parent::beforeSave($insert)) {
 			// Create action
-			if ($action == 'unbanned') {
+            if ($action == 'unbanned') {
 				$this->status = 0;
-				if($this->unbanned_id == null)
-					$this->unbanned_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
-		}
-		return true;	
+                if ($this->unbanned_id == null) {
+                    $this->unbanned_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
@@ -283,29 +288,29 @@ class EventUserBanned extends \app\components\ActiveRecord
 	/**
 	 * After save attributes
 	 */
-	public function afterSave($insert, $changedAttributes) 
+	public function afterSave($insert, $changedAttributes)
 	{
-		parent::afterSave($insert, $changedAttributes);
+        parent::afterSave($insert, $changedAttributes);
 		// Create action
 	}
 
 	/**
 	 * Before delete attributes
 	 */
-	public function beforeDelete() 
+	public function beforeDelete()
 	{
-		if(parent::beforeDelete()) {
+        if (parent::beforeDelete()) {
 			// Create action
-		}
-		return true;
+        }
+        return true;
 	}
 
 	/**
 	 * After delete attributes
 	 */
-	public function afterDelete() 
+	public function afterDelete()
 	{
-		parent::afterDelete();
+        parent::afterDelete();
 		// Create action
 	}
 }

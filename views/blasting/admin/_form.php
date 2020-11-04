@@ -44,11 +44,11 @@ $redactorOptions = [
 
 <?php 
 // cek apakah dari event atau tidak
-if (($event = Yii::$app->request->get('event')) != null)
-	$event = $event;
-else if (($event_id = Yii::$app->request->get('event_id')) != null)
-	$event = $event_id;
-?>
+if (($event = Yii::$app->request->get('event')) != null) {
+    $event = $event;
+} else if (($event_id = Yii::$app->request->get('event_id')) != null) {
+    $event = $event_id;
+} ?>
 
 <?php /* echo $form->field($model, 'filter_id')
 	->textInput(['maxlength'=>true])
@@ -57,37 +57,39 @@ else if (($event_id = Yii::$app->request->get('event_id')) != null)
 <div class="form-group field-eventblastings-filter_i required">
 	<?php 
 	echo $form->field($model, 'filter_i', ['template' => '{label}', 'options' => ['tag' => null]])
-		->label($model->getAttributeLabel('filter_i')); 
+		->label($model->getAttributeLabel('filter_i'));
 		?>
 	<div class="col-md-9 col-sm-9 col-xs-12">
 		<?php 
 		// cek apakah memilih filter yang sudah ada atau membuat baru
-		if (($filter_id = Yii::$app->request->get('filter_id')) != null) {
+        if (($filter_id = Yii::$app->request->get('filter_id')) != null) {
 			$blasting_filter = new BlastingFilter();
 			$model->filter_i['gender'] = $blasting_filter->getFilter($filter_id)['gender'];
 		} else {
-			if(!$model->getErrors())
-				$model->filter_i = unserialize($model->filter_i);
-			if(empty($model->filter_i))
-				$model->filter_i = [];
+            if (!$model->getErrors()) {
+                $model->filter_i = unserialize($model->filter_i);
+            }
+            if (empty($model->filter_i)) {
+                $model->filter_i = [];
+            }
 		}
 		echo Html::label($model->getAttributeLabel('filter_i[gender]'), null); ?>
 		<?php 
 		// cek apakah sedang memilih filter atau akan mengirim blasting
-		if (Yii::$app->request->get('blast_id')) {
+        if (Yii::$app->request->get('blast_id')) {
 			echo $form->field($model, 'filter_i[gender]', ['template' => '<div class="col-md-4 col-sm-4 col-xs-12 ">{input}{error}</div>', 'options' => ['tag' => null]])
 				->checkboxList([
 					'male' => 'Male', 
 					'female' => 'Female'
 				], ['class'=>'desc pt-10', 'separator' => '<br />', 'onclick' => "return false;"])
-				->label($model->getAttributeLabel('filter_i')); 
+				->label($model->getAttributeLabel('filter_i'));
 		} else {
 			echo $form->field($model, 'filter_i[gender]', ['template' => '<div class="col-md-4 col-sm-4 col-xs-12 ">{input}{error}</div>', 'options' => ['tag' => null]])
 				->checkboxList([
 					'male' => 'Male', 
 					'female' => 'Female'
 				], ['class'=>'desc pt-10', 'separator' => '<br />'])
-				->label($model->getAttributeLabel('filter_i')); 
+				->label($model->getAttributeLabel('filter_i'));
 		}
 		?>
 	</div>
@@ -108,7 +110,6 @@ else if (($event_id = Yii::$app->request->get('event_id')) != null)
 if (!Yii::$app->request->get('blast_id')) {
 	echo $form->field($model, 'submitButton')
 		->submitButton();
-}
-?>
+} ?>
 
 <?php ActiveForm::end(); ?>

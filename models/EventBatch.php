@@ -140,12 +140,13 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getRegistereds($count=false)
 	{
-		if($count == false)
-			return $this->hasMany(EventRegisteredBatch::className(), ['batch_id' => 'id']);
+        if ($count == false) {
+            return $this->hasMany(EventRegisteredBatch::className(), ['batch_id' => 'id']);
+        }
 
 		$model = EventRegisteredBatch::find()
-			->alias('t')
-			->where(['t.batch_id' => $this->id]);
+            ->alias('t')
+            ->where(['t.batch_id' => $this->id]);
 		$batches = $model->count();
 
 		return $batches ? $batches : 0;
@@ -157,29 +158,32 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function getSpeakers($type='relation', $publish=1)
 	{
-		if($type == 'relation')
-			return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id'])
-				->alias('speakers')
-				->andOnCondition([sprintf('%s.publish', 'speakers') => $publish]);
+        if ($type == 'relation') {
+            return $this->hasMany(EventSpeaker::className(), ['batch_id' => 'id'])
+                ->alias('speakers')
+                ->andOnCondition([sprintf('%s.publish', 'speakers') => $publish]);
+        }
 
-		if($type == 'array')
-			return \yii\helpers\ArrayHelper::map($this->speakers, 'speaker_name', 'speaker_name');
+        if ($type == 'array') {
+            return \yii\helpers\ArrayHelper::map($this->speakers, 'speaker_name', 'speaker_name');
+        }
 
-		if($type == 'dataProvider') {
+        if ($type == 'dataProvider') {
 			return new \yii\data\ActiveDataProvider([
 				'query' => $this->getSpeakers('relation', $publish),
 			]);
 		}
 
 		$model = EventSpeaker::find()
-			->alias('t')
-			->where(['t.batch_id' => $this->id]);
-		if($publish == 0)
-			$model->unpublish();
-		elseif($publish == 1)
-			$model->published();
-		elseif($publish == 2)
-			$model->deleted();
+            ->alias('t')
+            ->where(['t.batch_id' => $this->id]);
+        if ($publish == 0) {
+            $model->unpublish();
+        } else if ($publish == 1) {
+            $model->published();
+        } else if ($publish == 2) {
+            $model->deleted();
+        }
 		$speakers = $model->count();
 
 		return $speakers ? $speakers : 0;
@@ -217,11 +221,13 @@ class EventBatch extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -377,19 +383,20 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public static function getInfo($id, $column=null)
 	{
-		if($column != null) {
-			$model = self::find();
-			if(is_array($column))
-				$model->select($column);
-			else
-				$model->select([$column]);
-			$model = $model->where(['id' => $id])->one();
-			return is_array($column) ? $model : $model->$column;
-			
-		} else {
-			$model = self::findOne($id);
-			return $model;
-		}
+        if ($column != null) {
+            $model = self::find();
+            if (is_array($column)) {
+                $model->select($column);
+            } else {
+                $model->select([$column]);
+            }
+            $model = $model->where(['id' => $id])->one();
+            return is_array($column) ? $model : $model->$column;
+
+        } else {
+            $model = self::findOne($id);
+            return $model;
+        }
 	}
 
 	/**
@@ -397,11 +404,13 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public static function parseBatchTime($batchTime)
 	{
-		if(!is_array($batchTime) || (is_array($batchTime) && empty($batchTime)))
-			return '-';
+        if (!is_array($batchTime) || (is_array($batchTime) && empty($batchTime))) {
+            return '-';
+        }
 
-		if($batchTime['start'] == '' && $batchTime['end'] == '')
-			return '-';
+        if ($batchTime['start'] == '' && $batchTime['end'] == '') {
+            return '-';
+        }
 
 		return $batchTime['start'].' - '.($batchTime['end'] ? $batchTime['end'] : Yii::t('app', 'Finish'));
 	}
@@ -425,19 +434,22 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
+        if (parent::beforeValidate()) {
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
 
-			if($this->batch_time['start'] == '')
-				$this->addError('batch_time', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('batch_time')]));
-		}
-		return true;
+            if ($this->batch_time['start'] == '') {
+                $this->addError('batch_time', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('batch_time')]));
+            }
+        }
+        return true;
 	}
 
 	/**
@@ -445,10 +457,10 @@ class EventBatch extends \app\components\ActiveRecord
 	 */
 	public function beforeSave($insert)
 	{
-		if(parent::beforeSave($insert)) {
+        if (parent::beforeSave($insert)) {
 			$this->batch_date = Yii::$app->formatter->asDate($this->batch_date, 'php:Y-m-d');
 			$this->batch_time = serialize($this->batch_time);
-		}
-		return true;
+        }
+        return true;
 	}
 }

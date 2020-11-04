@@ -35,8 +35,9 @@ $attributes = [
 		'attribute' => 'eventTitle',
 		'value' => function ($model) {
 			$eventTitle = isset($model->event) ? $model->event->title : '-';
-			if($eventTitle != '-')
-				return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            if ($eventTitle != '-') {
+                return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            }
 			return $eventTitle;
 		},
 		'format' => 'html',
@@ -45,8 +46,9 @@ $attributes = [
 		'attribute' => 'majorName',
 		'value' => function ($model) {
 			$majorName = isset($model->major) ? $model->major->major_name : '-';
-			if($majorName != '-')
-				return Html::a($majorName, ['major/view', 'id'=>$model->major_id], ['title'=>$majorName, 'class'=>'modal-btn']);
+            if ($majorName != '-') {
+                return Html::a($majorName, ['major/view', 'id'=>$model->major_id], ['title'=>$majorName, 'class'=>'modal-btn']);
+            }
 			return $majorName;
 		},
 		'format' => 'html',

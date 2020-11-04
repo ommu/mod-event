@@ -10,7 +10,7 @@
  *
  */
 
-use ommu\event\Events; 
+use ommu\event\Events;
 use ommu\event\models\Events as EventsModel;
 use ommu\event\models\EventRegistered;
 

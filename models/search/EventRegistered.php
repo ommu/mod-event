@@ -61,10 +61,11 @@ class EventRegistered extends EventRegisteredModel
 	 */
 	public function search($params, $column=null)
 	{
-		if(!($column && is_array($column)))
-			$query = EventRegisteredModel::find()->alias('t');
-		else
-			$query = EventRegisteredModel::find()->alias('t')->select($column);
+        if (!($column && is_array($column))) {
+            $query = EventRegisteredModel::find()->alias('t');
+        } else {
+            $query = EventRegisteredModel::find()->alias('t')->select($column);
+        }
 		$query->joinWith([
 			'event event', 
 			'user user', 
@@ -82,8 +83,9 @@ class EventRegistered extends EventRegisteredModel
 			'query' => $query,
 		];
 		// disable pagination agar data pada api tampil semua
-		if(isset($params['pagination']) && $params['pagination'] == 0)
-			$dataParams['pagination'] = false;
+        if (isset($params['pagination']) && $params['pagination'] == 0) {
+            $dataParams['pagination'] = false;
+        }
 		$dataProvider = new ActiveDataProvider($dataParams);
 
 		$attributes = array_keys($this->getTableSchema()->columns);
@@ -124,11 +126,12 @@ class EventRegistered extends EventRegisteredModel
 			'defaultOrder' => ['id' => SORT_DESC],
 		]);
 
-		if(Yii::$app->request->get('id'))
-			unset($params['id']);
+        if (Yii::$app->request->get('id')) {
+            unset($params['id']);
+        }
 		$this->load($params);
 
-		if(!$this->validate()) {
+        if (!$this->validate()) {
 			// uncomment the following line if you do not want to return any records when validation fails
 			// $query->where('0=1');
 			return $dataProvider;
@@ -148,8 +151,9 @@ class EventRegistered extends EventRegisteredModel
 			'event.cat_id' => $this->eventCategoryId,
 		]);
 
-		if(isset($params['batchId']) && $params['batchId'])
-			$query->andFilterWhere(['batches.batch_id' => $params['batchId']]);
+        if (isset($params['batchId']) && $params['batchId']) {
+            $query->andFilterWhere(['batches.batch_id' => $params['batchId']]);
+        }
 
 		$query->andFilterWhere(['like', 'event.title', $this->eventTitle])
 			->andFilterWhere(['like', 'user.displayname', $this->userDisplayname])

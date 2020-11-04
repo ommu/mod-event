@@ -104,11 +104,13 @@ class EventNotification extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -164,23 +166,24 @@ class EventNotification extends \app\components\ActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	public function beforeValidate() 
+	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-		}
-		return true;
+        if (parent::beforeValidate()) {
+        }
+        return true;
 	}
 
 	/**
 	 * before save attributes
 	 */
-	public function beforeSave($insert) 
+	public function beforeSave($insert)
 	{
-		if(parent::beforeSave($insert)) {
+        if (parent::beforeSave($insert)) {
 			// Create action
-			if($this->isNewRecord) {
-				if($this->notified_id == null)
-					$this->notified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+            if ($this->isNewRecord) {
+                if ($this->notified_id == null) {
+                    $this->notified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
 
 				$notification = EventNotification::find()->where(['batch_id' => $this->batch_id, 'status' => 1])->one();
 				$notification->status = 0;
@@ -188,8 +191,8 @@ class EventNotification extends \app\components\ActiveRecord
 			}
 
 			$this->notified_date = Yii::$app->formatter->asDate($this->notified_date, 'php:Y-m-d');
-		}
-		return true;	
+        }
+        return true;
 	}
 
 	// /**
@@ -206,7 +209,7 @@ class EventNotification extends \app\components\ActiveRecord
 	// /**
 	//  * After save attributes
 	//  */
-	// public function afterSave($insert, $changedAttributes) 
+	// public function afterSave($insert, $changedAttributes)
 	// {
 	// 	parent::afterSave($insert, $changedAttributes);
 	// 	// Create action
@@ -215,9 +218,9 @@ class EventNotification extends \app\components\ActiveRecord
 	// /**
 	//  * Before delete attributes
 	//  */
-	// public function beforeDelete() 
+	// public function beforeDelete()
 	// {
-	// 	if(parent::beforeDelete()) {
+	//     if (parent::beforeDelete()) {
 	// 		// Create action
 	// 	}
 	// 	return true;
@@ -226,7 +229,7 @@ class EventNotification extends \app\components\ActiveRecord
 	// /**
 	//  * After delete attributes
 	//  */
-	// public function afterDelete() 
+	// public function afterDelete()
 	// {
 	// 	parent::afterDelete();
 	// 	// Create action

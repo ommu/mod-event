@@ -35,8 +35,9 @@ $attributes = [
 		'attribute' => 'eventTitle',
 		'value' => function ($model) {
 			$eventTitle = isset($model->event) ? $model->event->title : '-';
-			if($eventTitle != '-')
-				return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            if ($eventTitle != '-') {
+                return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+            }
 			return $eventTitle;
 		},
 		'format' => 'html',
@@ -45,8 +46,9 @@ $attributes = [
 		'attribute' => 'universityName',
 		'value' => function ($model) {
 			$universityName = isset($model->university) ? $model->university->company->company_name : '-';
-			if($universityName != '-')
-				return Html::a($universityName, ['university/view', 'id'=>$model->university_id], ['title'=>$universityName, 'class'=>'modal-btn']);
+            if ($universityName != '-') {
+                return Html::a($universityName, ['university/view', 'id'=>$model->university_id], ['title'=>$universityName, 'class'=>'modal-btn']);
+            }
 			return $universityName;
 		},
 		'format' => 'html',

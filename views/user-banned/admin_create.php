@@ -35,7 +35,7 @@ $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
 	'imageUpload'	  => ['/redactor/upload/image'],
 	'fileUpload'	   => ['/redactor/upload/file'],
-	'plugins'		  => ['clips', 'fontcolor','imagemanager']
+	'plugins'		  => ['clips', 'fontcolor', 'imagemanager']
 ];
 
 $form = ActiveForm::begin([
@@ -55,7 +55,7 @@ $form = ActiveForm::begin([
 <?php 
 // echo $form->field($model, 'event_id')
 // 	->textInput(['maxlength'=>true])
-// 	->label($model->getAttributeLabel('event_id')); 
+// 	->label($model->getAttributeLabel('event_id'));
 ?>
 
 <?php echo $form->field($model, 'user_id')

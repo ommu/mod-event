@@ -44,13 +44,14 @@ class Events extends \yii\base\BaseObject
 	public static function setEventTag($event)
 	{
 		$oldTag = $event->getTags(true, 'title');
-		if($event->tag)
-			$tag = explode(',', $event->tag);
+        if ($event->tag) {
+            $tag = explode(',', $event->tag);
+        }
 
 		// insert difference tag
-		if(is_array($tag)) {
+        if (is_array($tag)) {
 			foreach ($tag as $val) {
-				if(in_array($val, $oldTag)) {
+                if (in_array($val, $oldTag)) {
 					unset($oldTag[array_keys($oldTag, $val)[0]]);
 					continue;
 				}
@@ -61,13 +62,14 @@ class Events extends \yii\base\BaseObject
 					->andWhere(['body' => $tagSlug])
 					->one();
 
-				if($tagFind != null)
-					$tag_id = $tagFind->tag_id;
-				else {
+                if ($tagFind != null) {
+                    $tag_id = $tagFind->tag_id;
+                } else {
 					$model = new CoreTags();
 					$model->body = $tagSlug;
-					if($model->save())
-						$tag_id = $model->tag_id;
+                    if ($model->save()) {
+                        $tag_id = $model->tag_id;
+                    }
 				}
 
 				$model = new EventTag();
@@ -78,7 +80,7 @@ class Events extends \yii\base\BaseObject
 		}
 
 		// drop difference tag
-		if(!empty($oldTag)) {
+        if (!empty($oldTag)) {
 			foreach ($oldTag as $key => $val) {
 				EventTag::find()
 					->select(['id'])
@@ -96,11 +98,12 @@ class Events extends \yii\base\BaseObject
 	{
 		$oldGender = array_flip($event->getGenders(true));
 
-		if((empty($oldGender) && !$event->gender) || in_array($event->gender, $oldGender))
-			return;
+        if ((empty($oldGender) && !$event->gender) || in_array($event->gender, $oldGender)) {
+            return;
+        }
 
-		if($event->gender) {
-			if(empty($oldGender)) {
+        if ($event->gender) {
+            if (empty($oldGender)) {
 				$model = new EventFilterGender();
 				$model->event_id = $event->id;
 				$model->gender = $event->gender;
@@ -129,19 +132,22 @@ class Events extends \yii\base\BaseObject
 		$registered = $event->sender;
 		
 		$oldBatch = array_values(array_flip($registered->event->getBatches('array')));
-		if(!$registered->isNewRecord)
-			$oldBatch = array_flip($registered->getBatches('array'));
+        if (!$registered->isNewRecord) {
+            $oldBatch = array_flip($registered->getBatches('array'));
+        }
 		$batch = $registered->batch;
-		if(!is_array($batch))
-			$batch = explode(',', $batch);
+        if (!is_array($batch)) {
+            $batch = explode(',', $batch);
+        }
 
 		// insert difference batch
 		$price = 0;
 		foreach ($batch as $val) {
-			if($registered->isNewRecord && !in_array($val, $oldBatch))
-				continue;
+            if ($registered->isNewRecord && !in_array($val, $oldBatch)) {
+                continue;
+            }
 
-			if(!$registered->isNewRecord && in_array($val, $oldBatch)) {
+            if (!$registered->isNewRecord && in_array($val, $oldBatch)) {
 				unset($oldBatch[array_keys($oldBatch, $val)[0]]);
 				continue;
 			}
@@ -149,14 +155,15 @@ class Events extends \yii\base\BaseObject
 			$model = new EventRegisteredBatch();
 			$model->registered_id = $registered->id;
 			$model->batch_id = $val;
-			if($model->save()) {
+            if ($model->save()) {
 				$price = $price + $model->batch->batch_price;
-				if($registered->isNewRecord)
-					unset($oldBatch[array_keys($oldBatch, $val)[0]]);
+                if ($registered->isNewRecord) {
+                    unset($oldBatch[array_keys($oldBatch, $val)[0]]);
+                }
 			}
 		}
 
-		if($registered->isNewRecord) {
+        if ($registered->isNewRecord) {
 			$finance = new EventRegisteredFinance();
 			$finance->registered_id = $registered->id;
 			$finance->price = $price;
@@ -170,7 +177,7 @@ class Events extends \yii\base\BaseObject
 		}
 
 		// drop difference batch
-		if(!$registered->isNewRecord && !empty($oldBatch)) {
+        if (!$registered->isNewRecord && !empty($oldBatch)) {
 			foreach ($oldBatch as $key => $val) {
 				EventRegisteredBatch::find()
 					->select(['id'])

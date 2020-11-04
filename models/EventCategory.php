@@ -102,20 +102,22 @@ class EventCategory extends \app\components\ActiveRecord
 	 */
 	public function getEvents($count=false, $publish=1)
 	{
-		if($count == false)
-			return $this->hasMany(Events::className(), ['cat_id' => 'id'])
-			->alias('events')
-			->andOnCondition([sprintf('%s.publish', 'events') => $publish]);
+        if ($count == false) {
+            return $this->hasMany(Events::className(), ['cat_id' => 'id'])
+                ->alias('events')
+                ->andOnCondition([sprintf('%s.publish', 'events') => $publish]);
+        }
 
 		$model = Events::find()
-			->alias('t')
-			->where(['t.cat_id' => $this->id]);
-		if($publish == 0)
-			$model->unpublish();
-		elseif($publish == 1)
-			$model->published();
-		elseif($publish == 2)
-			$model->deleted();
+            ->alias('t')
+            ->where(['t.cat_id' => $this->id]);
+        if ($publish == 0) {
+            $model->unpublish();
+        } else if ($publish == 1) {
+            $model->published();
+        } else if ($publish == 2) {
+            $model->deleted();
+        }
 		$events = $model->count();
 
 		return $events ? $events : 0;
@@ -169,11 +171,13 @@ class EventCategory extends \app\components\ActiveRecord
 	{
 		parent::init();
 
-		if(!(Yii::$app instanceof \app\components\Application))
-			return;
+        if (!(Yii::$app instanceof \app\components\Application)) {
+            return;
+        }
 
-		if(!$this->hasMethod('search'))
-			return;
+        if (!$this->hasMethod('search')) {
+            return;
+        }
 
 		$this->templateColumns['_no'] = [
 			'header' => '#',
@@ -257,36 +261,39 @@ class EventCategory extends \app\components\ActiveRecord
 	 */
 	public static function getInfo($id, $column=null)
 	{
-		if($column != null) {
-			$model = self::find();
-			if(is_array($column))
-				$model->select($column);
-			else
-				$model->select([$column]);
-			$model = $model->where(['id' => $id])->one();
-			return is_array($column) ? $model : $model->$column;
-			
-		} else {
-			$model = self::findOne($id);
-			return $model;
-		}
+        if ($column != null) {
+            $model = self::find();
+            if (is_array($column)) {
+                $model->select($column);
+            } else {
+                $model->select([$column]);
+            }
+            $model = $model->where(['id' => $id])->one();
+            return is_array($column) ? $model : $model->$column;
+
+        } else {
+            $model = self::findOne($id);
+            return $model;
+        }
 	}
 
 	/**
 	 * function getCategory
 	 */
-	public static function getCategory($publish=null, $array=true) 
+	public static function getCategory($publish=null, $array=true)
 	{
 		$model = self::find()->alias('t')
 			->select(['t.id', 't.category_name']);
 		$model->leftJoin(sprintf('%s title', SourceMessage::tableName()), 't.category_name=title.id');
-		if($publish != null)
-			$model->andWhere(['t.publish' => $publish]);
+        if ($publish != null) {
+            $model->andWhere(['t.publish' => $publish]);
+        }
 
 		$model = $model->orderBy('title.message ASC')->all();
 
-		if($array == true)
-			return \yii\helpers\ArrayHelper::map($model, 'id', 'category_name_i');
+        if ($array == true) {
+            return \yii\helpers\ArrayHelper::map($model, 'id', 'category_name_i');
+        }
 
 		return $model;
 	}
@@ -309,16 +316,18 @@ class EventCategory extends \app\components\ActiveRecord
 	 */
 	public function beforeValidate()
 	{
-		if(parent::beforeValidate()) {
-			if($this->isNewRecord) {
-				if($this->creation_id == null)
-					$this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			} else {
-				if($this->modified_id == null)
-					$this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
-			}
-		}
-		return true;
+        if (parent::beforeValidate()) {
+            if ($this->isNewRecord) {
+                if ($this->creation_id == null) {
+                    $this->creation_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            } else {
+                if ($this->modified_id == null) {
+                    $this->modified_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : null;
+                }
+            }
+        }
+        return true;
 	}
 
 	/**
@@ -326,40 +335,41 @@ class EventCategory extends \app\components\ActiveRecord
 	 */
 	public function beforeSave($insert)
 	{
-		$module = strtolower(Yii::$app->controller->module->id);
-		$controller = strtolower(Yii::$app->controller->id);
-		$action = strtolower(Yii::$app->controller->action->id);
+        $module = strtolower(Yii::$app->controller->module->id);
+        $controller = strtolower(Yii::$app->controller->id);
+        $action = strtolower(Yii::$app->controller->action->id);
 
-		$location = Inflector::slug($module.' '.$controller);
+        $location = Inflector::slug($module.' '.$controller);
 
-		if(parent::beforeSave($insert)) {
-			if($insert || (!$insert && !$this->category_name)) {
-				$category_name = new SourceMessage();
-				$category_name->location = $location.'_title';
-				$category_name->message = $this->category_name_i;
-				if($category_name->save())
-					$this->category_name = $category_name->id;
+        if (parent::beforeSave($insert)) {
+            if ($insert || (!$insert && !$this->category_name)) {
+                $category_name = new SourceMessage();
+                $category_name->location = $location.'_title';
+                $category_name->message = $this->category_name_i;
+                if ($category_name->save()) {
+                    $this->category_name = $category_name->id;
+                }
 
-			} else {
-				$category_name = SourceMessage::findOne($this->category_name);
-				$category_name->message = $this->category_name_i;
-				$category_name->save();
-			}
+            } else {
+                $category_name = SourceMessage::findOne($this->category_name);
+                $category_name->message = $this->category_name_i;
+                $category_name->save();
+            }
 
-			if($insert || (!$insert && !$this->category_desc)) {
-				$category_desc = new SourceMessage();
-				$category_desc->location = $location.'_description';
-				$category_desc->message = $this->category_desc_i;
-				if($category_desc->save())
-					$this->category_desc = $category_desc->id;
+            if ($insert || (!$insert && !$this->category_desc)) {
+                $category_desc = new SourceMessage();
+                $category_desc->location = $location.'_description';
+                $category_desc->message = $this->category_desc_i;
+                if ($category_desc->save()) {
+                    $this->category_desc = $category_desc->id;
+                }
 
-			} else {
-				$category_desc = SourceMessage::findOne($this->category_desc);
-				$category_desc->message = $this->category_desc_i;
-				$category_desc->save();
-			}
-
-		}
-		return true;
+            } else {
+                $category_desc = SourceMessage::findOne($this->category_desc);
+                $category_desc->message = $this->category_desc_i;
+                $category_desc->save();
+            }
+        }
+        return true;
 	}
 }
