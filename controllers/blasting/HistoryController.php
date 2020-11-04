@@ -40,17 +40,17 @@ class HistoryController extends Controller
 	 */
 	public function behaviors()
 	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'delete' => ['POST'],
-				],
-			],
-		];
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
 	}
 
 	/**
@@ -58,7 +58,7 @@ class HistoryController extends Controller
 	 */
 	public function actionIndex()
 	{
-		return $this->redirect(['manage']);
+        return $this->redirect(['manage']);
 	}
 
 	/**
@@ -98,14 +98,14 @@ class HistoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model = new EventBlastingHistory();
+        $model = new EventBlastingHistory();
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
+            $model->load(Yii::$app->request->post());
             if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blasting History success created.'));
-				return $this->redirect(['index']);
+                return $this->redirect(['index']);
 			}
 		}
 
@@ -128,22 +128,22 @@ class HistoryController extends Controller
 		$model = $this->findModel($id);
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blasting History success updated.'));
-				return $this->redirect(['index']);
+                return $this->redirect(['index']);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Update Event Blasting History: {id}', ['id' => $model->id]);
 		$this->view->description = '';
@@ -160,7 +160,7 @@ class HistoryController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
 
 		$this->view->title = Yii::t('app', 'View Event Blasting History: {id}', ['id' => $model->id]);
 		$this->view->description = '';

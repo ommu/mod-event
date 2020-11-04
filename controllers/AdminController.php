@@ -46,19 +46,19 @@ class AdminController extends Controller
 	 */
 	public function behaviors()
 	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'delete' => ['POST'],
-					'publish' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'publish' => ['POST'],
 					'registered' => ['POST'],
-				],
-			],
-		];
+                ],
+            ],
+        ];
 	}
 
 	/**
@@ -66,7 +66,7 @@ class AdminController extends Controller
 	 */
 	public function actionIndex()
 	{
-		return $this->redirect(['manage']);
+        return $this->redirect(['manage']);
 	}
 
 	/**
@@ -111,26 +111,26 @@ class AdminController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model = new Events();
+        $model = new Events();
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			$model->cover_filename = UploadedFile::getInstance($model, 'cover_filename');
-			$model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            $model->cover_filename = UploadedFile::getInstance($model, 'cover_filename');
+            $model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success created.'));
-				return $this->redirect(['view', 'id'=>$model->id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event success created.'));
+                return $this->redirect(['view', 'id'=>$model->id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Create Event');
 		$this->view->description = '';
@@ -151,23 +151,23 @@ class AdminController extends Controller
 		$model = $this->findModel($id);
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			$model->cover_filename = UploadedFile::getInstance($model, 'cover_filename');
-			$model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            $model->cover_filename = UploadedFile::getInstance($model, 'cover_filename');
+            $model->banner_filename = UploadedFile::getInstance($model, 'banner_filename');
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event success updated.'));
-				return $this->redirect(['update', 'id' => $model->id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event success updated.'));
+                return $this->redirect(['update', 'id' => $model->id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->subMenu = $this->module->params['event_submenu'];
 		$this->view->title = Yii::t('app', 'Update Event: {title}', ['title' => $model->title]);
@@ -190,21 +190,21 @@ class AdminController extends Controller
 		$model->scenario = Events::SCENARIO_FILTER;
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter success updated.'));
-				return $this->redirect(['filter', 'id' => $model->id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event filter success updated.'));
+                return $this->redirect(['filter', 'id' => $model->id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->subMenu = $this->module->params['event_submenu'];
 		$this->view->title = Yii::t('app', 'Update Filter: {title}', ['title' => $model->title]);
@@ -222,7 +222,7 @@ class AdminController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
 
 		$this->subMenu = $this->module->params['event_submenu'];
 		$this->view->title = Yii::t('app', 'Detail Event: {title}', ['title' => $model->title]);

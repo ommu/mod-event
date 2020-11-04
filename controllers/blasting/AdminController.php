@@ -44,17 +44,17 @@ class AdminController extends Controller
 	 */
 	public function behaviors()
 	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'delete' => ['POST'],
-				],
-			],
-		];
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
 	}
 
 	/**
@@ -62,7 +62,7 @@ class AdminController extends Controller
 	 */
 	public function actionIndex()
 	{
-		return $this->redirect(['manage']);
+        return $this->redirect(['manage']);
 	}
 
 	/**
@@ -75,11 +75,11 @@ class AdminController extends Controller
 		$model = new EventBlastings();
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
+            $model->load(Yii::$app->request->post());
             if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success created.'));
-				return $this->redirect(['index', 'event_id' => $model->event_id, 'filter_id' => $model->filter_id, 'blast_id' => $model->blast_id]);
+                return $this->redirect(['index', 'event_id' => $model->event_id, 'filter_id' => $model->filter_id, 'blast_id' => $model->blast_id]);
 			}
 		}
 		// --------------------------
@@ -117,14 +117,14 @@ class AdminController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model = new EventBlastings();
+        $model = new EventBlastings();
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
+            $model->load(Yii::$app->request->post());
             if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success created.'));
-				return $this->redirect(['index']);
+                return $this->redirect(['index']);
 			}
 		}
 
@@ -266,22 +266,22 @@ class AdminController extends Controller
 		$model = $this->findModel($id);
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
 				//return $this->redirect(['view', 'id' => $model->blast_id]);
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Event Blastings success updated.'));
-				return $this->redirect(['index']);
+                return $this->redirect(['index']);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Update Event Blastings: {blast_id}', ['blast_id' => $model->blast_id]);
 		$this->view->description = '';
@@ -298,7 +298,7 @@ class AdminController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
 
 		$this->view->title = Yii::t('app', 'View Event Blastings: {blast_id}', ['blast_id' => $model->blast_id]);
 		$this->view->description = '';

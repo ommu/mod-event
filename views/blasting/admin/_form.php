@@ -63,7 +63,7 @@ if (($event = Yii::$app->request->get('event')) != null) {
 		<?php 
 		// cek apakah memilih filter yang sudah ada atau membuat baru
         if (($filter_id = Yii::$app->request->get('filter_id')) != null) {
-			$blasting_filter = new BlastingFilter();
+            $blasting_filter = new BlastingFilter();
 			$model->filter_i['gender'] = $blasting_filter->getFilter($filter_id)['gender'];
 		} else {
             if (!$model->getErrors()) {

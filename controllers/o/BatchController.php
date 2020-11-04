@@ -55,18 +55,18 @@ class BatchController extends Controller
 	 */
 	public function behaviors()
 	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'delete' => ['POST'],
-					'publish' => ['POST'],
-				],
-			],
-		];
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'publish' => ['POST'],
+                ],
+            ],
+        ];
 	}
 
 	/**
@@ -74,7 +74,7 @@ class BatchController extends Controller
 	 */
 	public function actionIndex()
 	{
-		return $this->redirect(['manage']);
+        return $this->redirect(['manage']);
 	}
 
 	/**
@@ -130,21 +130,21 @@ class BatchController extends Controller
 		$this->subMenuParam = $model->event_id;
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success created.'));
-				return $this->redirect(['manage', 'id'=>$model->event_id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success created.'));
+                return $this->redirect(['manage', 'id'=>$model->event_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Create Batch');
         if ($id) {
@@ -169,21 +169,21 @@ class BatchController extends Controller
 		$this->subMenuParam = $model->event_id;
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
-				return $this->redirect(['update', 'id'=>$model->id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event batch success updated.'));
+                return $this->redirect(['update', 'id'=>$model->id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Update Batch: {batch-name}', ['batch-name' => $model->batch_name]);
 		$this->view->description = '';
@@ -200,7 +200,7 @@ class BatchController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
 		$this->subMenuParam = $model->event_id;
 
 		$this->view->title = Yii::t('app', 'Detail Batch: {batch-name}', ['batch-name' => $model->batch_name]);

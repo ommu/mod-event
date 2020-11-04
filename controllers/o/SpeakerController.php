@@ -55,18 +55,18 @@ class SpeakerController extends Controller
 	 */
 	public function behaviors()
 	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'delete' => ['POST'],
-					'publish' => ['POST'],
-				],
-			],
-		];
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'publish' => ['POST'],
+                ],
+            ],
+        ];
 	}
 
 	/**
@@ -74,7 +74,7 @@ class SpeakerController extends Controller
 	 */
 	public function actionIndex()
 	{
-		return $this->redirect(['manage']);
+        return $this->redirect(['manage']);
 	}
 
 	/**
@@ -101,7 +101,7 @@ class SpeakerController extends Controller
         $columns = $searchModel->getGridColumn($cols);
 
         if (($batch = Yii::$app->request->get('batch')) != null || ($batch = Yii::$app->request->get('id')) != null) {
-			$batch = \ommu\event\models\EventBatch::findOne($batch);
+            $batch = \ommu\event\models\EventBatch::findOne($batch);
 			$this->subMenuParam = $batch->event_id;
 		}
 
@@ -131,21 +131,21 @@ class SpeakerController extends Controller
 		$this->subMenuParam = $model->batch->event_id;
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success created.'));
-				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success created.'));
+                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Create Speaker');
         if ($id) {
@@ -170,21 +170,21 @@ class SpeakerController extends Controller
 		$this->subMenuParam = $model->batch->event_id;
 
         if (Yii::$app->request->isPost) {
-			$model->load(Yii::$app->request->post());
-			// $postData = Yii::$app->request->post();
-			// $model->load($postData);
-			// $model->order = $postData['order'] ? $postData['order'] : 0;
+            $model->load(Yii::$app->request->post());
+            // $postData = Yii::$app->request->post();
+            // $model->load($postData);
+            // $model->order = $postData['order'] ? $postData['order'] : 0;
 
             if ($model->save()) {
-				Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
-				return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
+                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
                     return \yii\helpers\Json::encode(\app\components\widgets\ActiveForm::validate($model));
                 }
-			}
-		}
+            }
+        }
 
 		$this->view->title = Yii::t('app', 'Update Speaker: {speaker-name}', ['speaker-name' => $model->speaker_name]);
 		$this->view->description = '';
@@ -201,7 +201,7 @@ class SpeakerController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
 		$this->subMenuParam = $model->batch->event_id;
 
 		$this->view->title = Yii::t('app', 'Detail Speaker: {speaker-name}', ['speaker-name' => $model->speaker_name]);

@@ -160,8 +160,8 @@ class Events extends \yii\base\BaseObject
                 if ($registered->isNewRecord) {
                     unset($oldBatch[array_keys($oldBatch, $val)[0]]);
                 }
-			}
-		}
+            }
+        }
 
         if ($registered->isNewRecord) {
 			$finance = new EventRegisteredFinance();
