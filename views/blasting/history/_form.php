@@ -20,7 +20,7 @@ use yii\jui\DatePicker;
 ?>
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -34,15 +34,15 @@ use yii\jui\DatePicker;
 <?php //echo $form->errorSummary($model);?>
 
 <?php echo $form->field($model, 'item_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('item_id')); ?>
 
 <?php echo $form->field($model, 'view_date')
-	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['type'=>'date', 'class' => 'form-control']])
+	->widget(DatePicker::classname(), ['dateFormat' => Yii::$app->formatter->dateFormat, 'options' => ['type' => 'date', 'class' => 'form-control']])
 	->label($model->getAttributeLabel('view_date')); ?>
 
 <?php echo $form->field($model, 'view_ip')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('view_ip')); ?>
 
 <hr/>

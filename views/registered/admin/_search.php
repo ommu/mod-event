@@ -49,7 +49,7 @@ use ommu\event\models\EventRegistered;
 
 		<?php $status = EventRegistered::getStatus();
 			echo $form->field($model, 'status')
-			->dropDownList($status, ['prompt'=>'']);?>
+			->dropDownList($status, ['prompt' => '']);?>
 
 		<div class="form-group">
 			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']); ?>

@@ -85,7 +85,7 @@ class SpeakerController extends Controller
 	{
         $searchModel = new EventSpeakerSearch();
         if (($id = Yii::$app->request->get('id')) != null) {
-            $searchModel = new EventSpeakerSearch(['batch_id'=>$id]);
+            $searchModel = new EventSpeakerSearch(['batch_id' => $id]);
         }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -127,7 +127,7 @@ class SpeakerController extends Controller
             throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
 
-		$model = new EventSpeaker(['batch_id'=>$id]);
+		$model = new EventSpeaker(['batch_id' => $id]);
 		$this->subMenuParam = $model->batch->event_id;
 
         if (Yii::$app->request->isPost) {
@@ -138,7 +138,7 @@ class SpeakerController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success created.'));
-                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id' => $model->batch_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
@@ -177,7 +177,7 @@ class SpeakerController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
-                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+                return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id' => $model->batch_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
@@ -225,7 +225,7 @@ class SpeakerController extends Controller
 
         if ($model->save(false, ['publish', 'modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success deleted.'));
-			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id' => $model->batch_id]);
 		}
 	}
 
@@ -243,7 +243,7 @@ class SpeakerController extends Controller
 
         if ($model->save(false, ['publish', 'modified_id'])) {
 			Yii::$app->session->setFlash('success', Yii::t('app', 'Event speaker success updated.'));
-			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->batch_id]);
+			return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id' => $model->batch_id]);
 		}
 	}
 

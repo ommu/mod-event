@@ -83,7 +83,7 @@ $this->params['menu']['option'] = [
 			$filter_gender = unserialize($filter->filter_value);
 
 			$form2 = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 				'action' => 'blast?blast_id='.$blast_id,
 				'enableClientValidation' => true,
 				'enableAjaxValidation' => false,
@@ -122,7 +122,7 @@ $this->params['menu']['option'] = [
 			<?php echo Html::a(Yii::t('app', 'Blast All'), ['blast-all', 'blast_id' => $blast_id], ['class' => 'btn btn-success']); ?>
 			<?php echo Html::submitButton(Yii::t('app', 'Blast Selected'), ['class' => 'btn btn-success']); ?>
 			<?php ActiveForm::end(); ?>
-			<?php echo Html::a(Yii::t('app', 'Selesai'), ['index'], ['class' =>'btn btn-primary']); ?>
+			<?php echo Html::a(Yii::t('app', 'Selesai'), ['index'], ['class' => 'btn btn-primary']); ?>
 		</div>
 	</div>
 </div>
@@ -141,9 +141,9 @@ $this->params['menu']['option'] = [
 <div class="event-xxx-manage">
 <?php Pjax::begin(); ?>
 
-<?php //echo $this->render('_search', ['model'=>$searchModel]); ?>
+<?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<?php echo $this->render('_option_form', ['model'=>$searchModel, 'gridColumns'=>$searchModel->activeDefaultColumns($columns), 'route'=>$this->context->route]); ?>
+<?php echo $this->render('_option_form', ['model' => $searchModel, 'gridColumns' => $searchModel->activeDefaultColumns($columns), 'route' => $this->context->route]); ?>
 
 <?php
 $columnData = $columns;
@@ -157,14 +157,14 @@ array_push($columnData, [
 				$url = Url::to(['index', 'event_id' => $event_id, 'filter_id' => $model->filter_id]);
 			else
 				$url = Url::to(['index', 'filter_id' => $model->filter_id]);
-			return Html::a('<span class="glyphicon glyphicon-send"></span>', $url, ['title'=>Yii::t('app', 'Use Blasting Filter')]);
+			return Html::a('<span class="glyphicon glyphicon-send"></span>', $url, ['title' => Yii::t('app', 'Use Blasting Filter')]);
 		},
 		'view' => function ($url, $model, $key) {
-			$url = Url::to(['view', 'id'=>$model->primaryKey]);
-			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title'=>Yii::t('app', 'View Event Blastings')]);
+			$url = Url::to(['view', 'id' => $model->primaryKey]);
+			return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, ['title' => Yii::t('app', 'View Event Blastings')]);
 		},
 		'delete' => function ($url, $model, $key) {
-			$url = Url::to(['delete', 'id'=>$model->primaryKey]);
+			$url = Url::to(['delete', 'id' => $model->primaryKey]);
 			return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
 				'title' => Yii::t('app', 'Delete Event Blastings'),
 				'data-confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),

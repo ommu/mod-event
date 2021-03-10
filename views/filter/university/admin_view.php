@@ -36,7 +36,7 @@ $attributes = [
 		'value' => function ($model) {
 			$eventTitle = isset($model->event) ? $model->event->title : '-';
             if ($eventTitle != '-') {
-                return Html::a($eventTitle, ['admin/view', 'id'=>$model->event_id], ['title'=>$eventTitle, 'class'=>'modal-btn']);
+                return Html::a($eventTitle, ['admin/view', 'id' => $model->event_id], ['title' => $eventTitle, 'class' => 'modal-btn']);
             }
 			return $eventTitle;
 		},
@@ -47,7 +47,7 @@ $attributes = [
 		'value' => function ($model) {
 			$universityName = isset($model->university) ? $model->university->company->company_name : '-';
             if ($universityName != '-') {
-                return Html::a($universityName, ['university/view', 'id'=>$model->university_id], ['title'=>$universityName, 'class'=>'modal-btn']);
+                return Html::a($universityName, ['university/view', 'id' => $model->university_id], ['title' => $universityName, 'class' => 'modal-btn']);
             }
 			return $universityName;
 		},
@@ -65,7 +65,7 @@ $attributes = [
 	],
 	[
 		'attribute' => '',
-		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Update'), 'class'=>'btn btn-success btn-sm']),
+		'value' => Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->primaryKey], ['title' => Yii::t('app', 'Update'), 'class' => 'btn btn-primary btn-sm']),
 		'format' => 'html',
 		'visible' => !$small && Yii::$app->request->isAjax ? true : false,
 	],
@@ -74,7 +74,7 @@ $attributes = [
 echo DetailView::widget([
 	'model' => $model,
 	'options' => [
-		'class'=>'table table-striped detail-view',
+		'class' => 'table table-striped detail-view',
 	],
 	'attributes' => $attributes,
 ]); ?>

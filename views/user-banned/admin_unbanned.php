@@ -38,7 +38,7 @@ $redactorOptions = [
 ];
 
 $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -53,7 +53,7 @@ $form = ActiveForm::begin([
 
 <?php 
 echo $form->field($model, 'unbanned_agreement')
-	->textarea(['rows'=>6, 'cols'=>50])
+	->textarea(['rows' => 6, 'cols' => 50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('unbanned_agreement'));
 ?>

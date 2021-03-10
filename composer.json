@@ -30,7 +30,6 @@
 	],
 	"require": {
 		"php": "~7.0",
-		"yiisoft/yii2": "~2.0.13",
 		"ommu/ipedia": "dev-master",
 		"2amigos/yii2-google-places-library": "*"
 	},

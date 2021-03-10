@@ -73,14 +73,15 @@ class EventSpeaker extends EventSpeakerModel
 			'modified modified', 
 			'batch.event event',
 			'batch.event.category.title category',
-		])
-		->groupBy(['id']);
+		]);
 
-		// add conditions that should always apply here
+		$query->groupBy(['id']);
+
+        // add conditions that should always apply here
 		$dataParams = [
 			'query' => $query,
 		];
-		// disable pagination agar data pada api tampil semua
+        // disable pagination agar data pada api tampil semua
         if (isset($params['pagination']) && $params['pagination'] == 0) {
             $dataParams['pagination'] = false;
         }
@@ -122,10 +123,10 @@ class EventSpeaker extends EventSpeakerModel
 		$this->load($params);
 
         if (!$this->validate()) {
-			// uncomment the following line if you do not want to return any records when validation fails
-			// $query->where('0=1');
-			return $dataProvider;
-		}
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
 
 		// grid filtering conditions
 		$query->andFilterWhere([
@@ -148,7 +149,7 @@ class EventSpeaker extends EventSpeakerModel
             } else {
                 $query->andFilterWhere(['t.publish' => $this->publish]);
             }
-		}
+        }
 
         if (isset($params['eventId']) && $params['eventId']) {
             $query->andFilterWhere(['batch.event_id' => $params['eventId']]);

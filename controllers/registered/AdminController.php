@@ -83,7 +83,7 @@ class AdminController extends Controller
 	{
         $searchModel = new EventRegisteredSearch();
         if (($id = Yii::$app->request->get('id')) != null) {
-            $searchModel = new EventRegisteredSearch(['event_id'=>$id]);
+            $searchModel = new EventRegisteredSearch(['event_id' => $id]);
         }
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -124,7 +124,7 @@ class AdminController extends Controller
             throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
 
-		$model = new EventRegistered(['event_id'=>$id]);
+		$model = new EventRegistered(['event_id' => $id]);
 		$this->subMenuParam = $model->event_id;
 
         if (Yii::$app->request->isPost) {
@@ -135,7 +135,7 @@ class AdminController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success created.'));
-                return $this->redirect(['manage', 'id'=>$model->event_id]);
+                return $this->redirect(['manage', 'id' => $model->event_id]);
 
             } else {
                 if (Yii::$app->request->isAjax) {
@@ -166,7 +166,7 @@ class AdminController extends Controller
 		$model = $this->findModel($id);
 		$finance = EventRegisteredFinance::findOne($model->id);
         if ($finance == null) {
-            $finance = new EventRegisteredFinance(['registered_id'=>$model->id]);
+            $finance = new EventRegisteredFinance(['registered_id' => $model->id]);
         }
 		$this->subMenuParam = $model->event_id;
 
@@ -183,7 +183,7 @@ class AdminController extends Controller
             if ($isValid) {
                 if ($model->save() && $finance->save()) {
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success updated.'));
-					return $this->redirect(['manage', 'id'=>$model->event_id]);
+					return $this->redirect(['manage', 'id' => $model->event_id]);
 				}
 
             } else {
@@ -232,7 +232,7 @@ class AdminController extends Controller
 		$model->delete();
 
 		Yii::$app->session->setFlash('success', Yii::t('app', 'Event registered success deleted.'));
-		return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id'=>$model->event_id]);
+		return $this->redirect(Yii::$app->request->referrer ?: ['manage', 'id' => $model->event_id]);
 	}
 
 	/**

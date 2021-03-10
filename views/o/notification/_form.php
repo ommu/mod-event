@@ -21,7 +21,7 @@ use ommu\event\models\EventBatch;
 ?>
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -46,7 +46,7 @@ echo $form->field($model, 'status')
 	->label($model->getAttributeLabel('notified_date')); ?>
 
 <!-- <?php echo $form->field($model, 'notified_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('notified_id')); ?> -->
 
 <!-- <?php echo $form->field($model, 'users')

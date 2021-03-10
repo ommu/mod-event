@@ -33,7 +33,7 @@ use ommu\event\models\EventCategory;
 
 		<?php $category = EventCategory::getCategory();
 		echo $form->field($model, 'cat_id')
-			->dropDownList($category, ['prompt'=>'']);?>
+			->dropDownList($category, ['prompt' => '']);?>
 
 		<?php echo $form->field($model, 'title');?>
 
@@ -51,7 +51,7 @@ use ommu\event\models\EventCategory;
 
 		<?php $registeredType = Events::getRegisteredType();
 			echo $form->field($model, 'registered_type')
-			->dropDownList($registeredType, ['prompt'=>'']);?>
+			->dropDownList($registeredType, ['prompt' => '']);?>
 
 		<?php echo $form->field($model, 'package_reward');?>
 
@@ -73,13 +73,13 @@ use ommu\event\models\EventCategory;
 
 		<?php $registeredEnable = Events::getRegisteredEnable();
 			echo $form->field($model, 'registered_enable')
-			->dropDownList($registeredEnable, ['prompt'=>'']);?>
+			->dropDownList($registeredEnable, ['prompt' => '']);?>
 
 		<?php echo $form->field($model, 'enable_filter')
-			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+			->dropDownList($model->filterYesNo(), ['prompt' => '']);?>
 
 		<?php echo $form->field($model, 'publish')
-			->dropDownList($model->filterYesNo(), ['prompt'=>'']);?>
+			->dropDownList($model->filterYesNo(), ['prompt' => '']);?>
 
 		<div class="form-group">
 			<?php echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']); ?>

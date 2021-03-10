@@ -59,7 +59,7 @@ class AdminController extends Controller
 	{
 		$model = EventSetting::findOne(1);
         if ($model === null) {
-            $model = new EventSetting(['id'=>1]);
+            $model = new EventSetting(['id' => 1]);
         }
 
         if (Yii::$app->request->isPost) {
@@ -115,7 +115,7 @@ class AdminController extends Controller
 	{
 		$model = EventSetting::findOne(1);
         if ($model === null) {
-            $model = new EventSetting(['id'=>1]);
+            $model = new EventSetting(['id' => 1]);
         }
 
         if (Yii::$app->request->isPost) {

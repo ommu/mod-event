@@ -84,7 +84,7 @@ class Events extends \yii\base\BaseObject
 			foreach ($oldTag as $key => $val) {
 				EventTag::find()
 					->select(['id'])
-					->where(['event_id'=>$event->id, 'tag_id'=>$key])
+					->where(['event_id' => $event->id, 'tag_id' => $key])
 					->one()
 					->delete();
 			}
@@ -118,7 +118,7 @@ class Events extends \yii\base\BaseObject
 			// drop filter gender
 			EventFilterGender::find()
 				->select(['id'])
-				->andWhere(['id'=>key($oldGender)])
+				->andWhere(['id' => key($oldGender)])
 				->one()
 				->delete();
 		}

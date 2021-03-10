@@ -29,7 +29,7 @@ $redactorOptions = [
 ?>
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -51,7 +51,7 @@ if (($event = Yii::$app->request->get('event')) != null) {
 } ?>
 
 <?php /* echo $form->field($model, 'filter_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('filter_id')); */?>
 
 <div class="form-group field-eventblastings-filter_i required">
@@ -81,14 +81,14 @@ if (($event = Yii::$app->request->get('event')) != null) {
 				->checkboxList([
 					'male' => 'Male', 
 					'female' => 'Female'
-				], ['class'=>'desc pt-10', 'separator' => '<br />', 'onclick' => "return false;"])
+				], ['class' => 'desc pt-10', 'separator' => '<br />', 'onclick' => "return false;"])
 				->label($model->getAttributeLabel('filter_i'));
 		} else {
 			echo $form->field($model, 'filter_i[gender]', ['template' => '<div class="col-md-4 col-sm-4 col-xs-12 ">{input}{error}</div>', 'options' => ['tag' => null]])
 				->checkboxList([
 					'male' => 'Male', 
 					'female' => 'Female'
-				], ['class'=>'desc pt-10', 'separator' => '<br />'])
+				], ['class' => 'desc pt-10', 'separator' => '<br />'])
 				->label($model->getAttributeLabel('filter_i'));
 		}
 		?>
@@ -100,7 +100,7 @@ if (($event = Yii::$app->request->get('event')) != null) {
 	->label($model->getAttributeLabel('users')); ?>
 
 <?php echo $form->field($model, 'blast_with')
-	->textarea(['rows'=>6, 'cols'=>50])
+	->textarea(['rows' => 6, 'cols' => 50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('blast_with')); */?>
 

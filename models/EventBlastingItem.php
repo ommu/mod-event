@@ -136,7 +136,7 @@ class EventBlastingItem extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['blasting_search'] = [
 			'attribute' => 'blasting_search',
@@ -156,10 +156,10 @@ class EventBlastingItem extends \app\components\ActiveRecord
 		$this->templateColumns['views'] = [
 			'attribute' => 'views',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['blasting-history/index', 'item'=>$model->primaryKey]);
+				$url = Url::to(['blasting-history/index', 'item' => $model->primaryKey]);
 				return Html::a($model->views ? $model->views : 0, $url);
 			},
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['view_date'] = [

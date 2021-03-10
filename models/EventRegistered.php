@@ -194,7 +194,7 @@ class EventRegistered extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['eventCategoryId'] = [
 			'attribute' => 'eventCategoryId',
@@ -225,7 +225,7 @@ class EventRegistered extends \app\components\ActiveRecord
 			'attribute' => 'batch',
 			'value' => function($model, $key, $index, $column) {
 				$batches = $model->getBatches('array', 'title');
-				return Html::ul($batches, ['encode'=>false, 'class'=>'list-boxed']);
+				return Html::ul($batches, ['encode' => false, 'class' => 'list-boxed']);
 			},
 			'filter' => self::getBatchFilter(),
 			'format' => 'html',
@@ -291,7 +291,7 @@ class EventRegistered extends \app\components\ActiveRecord
 				return self::getStatus($model->status);
 			},
 			'filter' => self::getStatus(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 	}
 
@@ -403,11 +403,11 @@ class EventRegistered extends \app\components\ActiveRecord
 					->one();
 
                 if ($registered != null) {
-                    $this->addError('user_id', Yii::t('app', 'User <strong>{displayname}</strong> sudah terdaftar', ['displayname'=>$this->user->displayname]));
+                    $this->addError('user_id', Yii::t('app', 'User <strong>{displayname}</strong> sudah terdaftar', ['displayname' => $this->user->displayname]));
                 }
 			} else {
                 if ($this->status == '') {
-                    $this->addError('status', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('status')]));
+                    $this->addError('status', Yii::t('app', '{attribute} cannot be blank.', ['attribute' => $this->getAttributeLabel('status')]));
                 }
             }
         }

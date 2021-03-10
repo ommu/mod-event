@@ -153,7 +153,7 @@ class EventBlastings extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['eventTitle'] = [
 			'attribute' => 'eventTitle',
@@ -177,10 +177,10 @@ class EventBlastings extends \app\components\ActiveRecord
 		$this->templateColumns['users'] = [
 			'attribute' => 'users',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['blasting-item/index', 'blasting'=>$model->primaryKey]);
+				$url = Url::to(['blasting-item/index', 'blasting' => $model->primaryKey]);
 				return Html::a($model->users ? $model->users : 0, $url);
 			},
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['blast_with'] = 'blast_with';

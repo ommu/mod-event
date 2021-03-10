@@ -232,7 +232,7 @@ class EventBatch extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['eventCategoryId'] = [
 			'attribute' => 'eventCategoryId',
@@ -281,8 +281,8 @@ class EventBatch extends \app\components\ActiveRecord
 			'attribute' => 'speaker',
 			'value' => function($model, $key, $index, $column) {
 				$speakers = $model->getSpeakers('array');
-				$speakers = !$speakers ? '' : Html::ul($speakers, ['encode'=>false, 'class'=>'list-boxed']).'<hr class="mt-3 mb-3"/>';
-				return $speakers.Html::a('<i class="fa fa-plus-square"></i> '.Yii::t('app', 'Add Speaker'), ['o/speaker/create', 'id'=>$model->primaryKey], ['title'=>Yii::t('app', 'Add Speaker'), 'class'=>'btn btn-success btn-xs modal-btn']);
+				$speakers = !$speakers ? '' : Html::ul($speakers, ['encode' => false, 'class' => 'list-boxed']).'<hr class="mt-4 mb-4"/>';
+				return $speakers.Html::a('<i class="fa fa-plus-square"></i> '.Yii::t('app', 'Add Speaker'), ['o/speaker/create', 'id' => $model->primaryKey], ['title' => Yii::t('app', 'Add Speaker'), 'class' => 'btn btn-success btn-xs modal-btn']);
 			},
 			'format' => 'html',
 		];
@@ -316,16 +316,16 @@ class EventBatch extends \app\components\ActiveRecord
 			'value' => function($model, $key, $index, $column) {
 				return $model->registered_limit;
 			},
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['registereds'] = [
 			'attribute' => 'registereds',
 			'value' => function($model, $key, $index, $column) {
 				$registereds = $model->getRegistereds(true);
-				return Html::a($registereds, ['registered/batch/manage', 'batch'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+				return Html::a($registereds, ['registered/batch/manage', 'batch' => $model->primaryKey], ['title' => Yii::t('app', '{count} registereds', ['count' => $registereds])]);
 			},
 			'filter' => false,
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['creation_date'] = [
@@ -368,11 +368,11 @@ class EventBatch extends \app\components\ActiveRecord
 		$this->templateColumns['publish'] = [
 			'attribute' => 'publish',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['publish', 'id'=>$model->primaryKey]);
+				$url = Url::to(['publish', 'id' => $model->primaryKey]);
 				return $this->quickAction($url, $model->publish);
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'raw',
 			'visible' => !Yii::$app->request->get('trash') ? true : false,
 		];
@@ -446,7 +446,7 @@ class EventBatch extends \app\components\ActiveRecord
             }
 
             if ($this->batch_time['start'] == '') {
-                $this->addError('batch_time', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('batch_time')]));
+                $this->addError('batch_time', Yii::t('app', '{attribute} cannot be blank.', ['attribute' => $this->getAttributeLabel('batch_time')]));
             }
         }
         return true;

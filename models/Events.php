@@ -317,7 +317,7 @@ class Events extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['cat_id'] = [
 			'attribute' => 'cat_id',
@@ -352,7 +352,7 @@ class Events extends \app\components\ActiveRecord
 			'attribute' => 'cover_filename',
 			'value' => function($model, $key, $index, $column) {
 				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
-				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt'=>$model->cover_filename]) : '-';
+				return $model->cover_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->cover_filename])), ['alt' => $model->cover_filename]) : '-';
 			},
 			'format' => 'html',
 		];
@@ -360,7 +360,7 @@ class Events extends \app\components\ActiveRecord
 			'attribute' => 'banner_filename',
 			'value' => function($model, $key, $index, $column) {
 				$uploadPath = join('/', [self::getUploadPath(false), $model->id]);
-				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt'=>$model->banner_filename]) : '-';
+				return $model->banner_filename ? Html::img(Url::to(join('/', ['@webpublic', $uploadPath, $model->banner_filename])), ['alt' => $model->banner_filename]) : '-';
 			},
 			'format' => 'html',
 		];
@@ -469,20 +469,20 @@ class Events extends \app\components\ActiveRecord
 			'attribute' => 'batches',
 			'value' => function($model, $key, $index, $column) {
 				$batches = $model->getBatches('count');
-				return Html::a($batches, ['o/batch/manage', 'event'=>$model->primaryKey, 'publish'=>1], ['title'=>Yii::t('app', '{count} batches', ['count'=>$batches])]);
+				return Html::a($batches, ['o/batch/manage', 'event' => $model->primaryKey, 'publish' => 1], ['title' => Yii::t('app', '{count} batches', ['count' => $batches])]);
 			},
 			'filter' => false,
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['registereds'] = [
 			'attribute' => 'registereds',
 			'value' => function($model, $key, $index, $column) {
 				$registereds = $model->getRegistereds(true);
-				return Html::a($registereds, ['registered/admin/manage', 'event'=>$model->primaryKey], ['title'=>Yii::t('app', '{count} registereds', ['count'=>$registereds])]);
+				return Html::a($registereds, ['registered/admin/manage', 'event' => $model->primaryKey], ['title' => Yii::t('app', '{count} registereds', ['count' => $registereds])]);
 			},
 			'filter' => false,
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'html',
 		];
 		$this->templateColumns['enable_filter'] = [
@@ -492,27 +492,27 @@ class Events extends \app\components\ActiveRecord
 				return $this->getRegisteredEnable($model->enable_filter);
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['registered_enable'] = [
 			'attribute' => 'registered_enable',
 			'label' => Yii::t('app', 'Registered'),
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['registered', 'id'=>$model->primaryKey]);
+				$url = Url::to(['registered', 'id' => $model->primaryKey]);
 				return $this->quickAction($url, $model->registered_enable, 'Enable,Disable');
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'raw',
 		];
 		$this->templateColumns['publish'] = [
 			'attribute' => 'publish',
 			'value' => function($model, $key, $index, $column) {
-				$url = Url::to(['publish', 'id'=>$model->primaryKey]);
+				$url = Url::to(['publish', 'id' => $model->primaryKey]);
 				return $this->quickAction($url, $model->publish);
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 			'format' => 'raw',
 			'visible' => !Yii::$app->request->get('trash') ? true : false,
 		];
@@ -641,7 +641,7 @@ class Events extends \app\components\ActiveRecord
         if ($sep == 'li') {
 			return Html::ul($items, ['item' => function($item, $index) {
 				return Html::tag('li', $item);
-			}, 'class'=>'list-boxed']);
+			}, 'class' => 'list-boxed']);
 		}
 
 		return implode($sep, $items);
@@ -691,13 +691,13 @@ class Events extends \app\components\ActiveRecord
 				$coverFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
                 if (!in_array(strtolower($this->cover_filename->getExtension()), $coverFilenameFileType)) {
 					$this->addError('cover_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
-						'name'=>$this->cover_filename->name,
-						'extensions'=>$this->formatFileType($coverFilenameFileType, false),
+						'name' => $this->cover_filename->name,
+						'extensions' => $this->formatFileType($coverFilenameFileType, false),
 					]));
                 }
             } else {
                 if ($this->isNewRecord || (!$this->isNewRecord && $this->old_cover_filename == '')) {
-                    $this->addError('cover_filename', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('cover_filename')]));
+                    $this->addError('cover_filename', Yii::t('app', '{attribute} cannot be blank.', ['attribute' => $this->getAttributeLabel('cover_filename')]));
                 }
 			}
 
@@ -706,8 +706,8 @@ class Events extends \app\components\ActiveRecord
 				$bannerFilenameFileType = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
                 if (!in_array(strtolower($this->banner_filename->getExtension()), $bannerFilenameFileType)) {
 					$this->addError('banner_filename', Yii::t('app', 'The file {name} cannot be uploaded. Only files with these extensions are allowed: {extensions}', [
-						'name'=>$this->banner_filename->name,
-						'extensions'=>$this->formatFileType($bannerFilenameFileType, false),
+						'name' => $this->banner_filename->name,
+						'extensions' => $this->formatFileType($bannerFilenameFileType, false),
 					]));
 				}
 			}
@@ -724,17 +724,17 @@ class Events extends \app\components\ActiveRecord
 
             if ($this->registered_enable) {
                 if ($this->registered_message == '') {
-                    $this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_message')]));
+                    $this->addError('registered_message', Yii::t('app', '{attribute} cannot be blank.', ['attribute' => $this->getAttributeLabel('registered_message')]));
                 }
                 if ($this->registered_type == '') {
-                    $this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute'=>$this->getAttributeLabel('registered_type')]));
+                    $this->addError('registered_type', Yii::t('app', '{attribute} cannot be blank.', ['attribute' => $this->getAttributeLabel('registered_type')]));
                 }
 			}
 
 			// validate and set package reward
             if ($this->scenario != self::SCENARIO_FILTER) {
                 if ($this->package_reward['type'] == 1 && $this->package_reward['reward'] > 100) {
-                    $this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute'=>$this->getAttributeLabel('package_reward')]));
+                    $this->addError('package_reward', Yii::t('app', '{attribute} max 100%.', ['attribute' => $this->getAttributeLabel('package_reward')]));
                 }
 
                 if ($this->package_reward['type'] == '' || $this->package_reward['reward'] == '') {

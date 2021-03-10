@@ -23,7 +23,7 @@ use ommu\selectize\Selectize;
 use yii\helpers\ArrayHelper;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Events'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id'=>$model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Filter');
 ?>
 
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Filter');
 
 <?php $enableFilter = Events::getRegisteredEnable();
 echo $form->field($model, 'enable_filter')
-	->dropDownList($enableFilter, ['prompt'=>''])
+	->dropDownList($enableFilter, ['prompt' => ''])
 	->label($model->getAttributeLabel('enable_filter')); ?>
 
 <?php echo $form->field($model, 'gender')
@@ -57,7 +57,7 @@ echo $form->field($model, 'enable_filter')
 		'options' => [
 			'placeholder' => Yii::t('app', 'Select a gender..'),
 		],
-		'items' => ArrayHelper::merge([''=>Yii::t('app', 'Select a gender..')], EventFilterGender::getGender()),
+		'items' => ArrayHelper::merge(['' => Yii::t('app', 'Select a gender..')], EventFilterGender::getGender()),
 	])
 	->label($model->getAttributeLabel('gender')); ?>
 

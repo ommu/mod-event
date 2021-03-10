@@ -115,7 +115,7 @@ class EventNotification extends \app\components\ActiveRecord
 		$this->templateColumns['_no'] = [
 			'header' => '#',
 			'class' => 'app\components\grid\SerialColumn',
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 		$this->templateColumns['eventTitle'] = [
 			'attribute' => 'eventTitle',
@@ -159,7 +159,7 @@ class EventNotification extends \app\components\ActiveRecord
 				return $model->status ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
 			},
 			'filter' => $this->filterYesNo(),
-			'contentOptions' => ['class'=>'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
 		];
 	}
 

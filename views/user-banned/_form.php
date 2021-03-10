@@ -27,7 +27,7 @@ $redactorOptions = [
 ?>
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -47,28 +47,28 @@ echo $form->field($model, 'status')
 ?>
 
 <?php echo $form->field($model, 'event_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('event_id')); ?>
 
 <?php echo $form->field($model, 'user_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('user_id')); ?>
 
 <?php echo $form->field($model, 'banned_desc')
-	->textarea(['rows'=>6, 'cols'=>50])
+	->textarea(['rows' => 6, 'cols' => 50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('banned_desc')); ?>
 
 <?php 
 echo $form->field($model, 'unbanned_agreement')
-	->textarea(['rows'=>6, 'cols'=>50])
+	->textarea(['rows' => 6, 'cols' => 50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('unbanned_agreement'));
 ?>
 
 <?php 
 echo $form->field($model, 'unbanned_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('unbanned_id'));
 ?>
 

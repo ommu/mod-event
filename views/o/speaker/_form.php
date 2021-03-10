@@ -18,9 +18,9 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\components\widgets\ActiveForm;
+use yii\web\JsExpression;
 use yii\helpers\ArrayHelper;
 use ommu\selectize\Selectize;
-use yii\web\JsExpression;
 
 $js = <<<JS
 	var options = '';
@@ -33,7 +33,7 @@ JS;
 <div class="event-speaker-form">
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -110,10 +110,10 @@ $pluginOptions = [
 if ($model->user_id && isset($model->user)) {
 	$pluginOptions = ArrayHelper::merge($pluginOptions, [
 		'options' => [[
-			'id'=>$model->user->user_id,
-			'email'=>$model->user->email,
-			'name'=>$model->user->displayname,
-			'photo'=>$model->user->photos,
+			'id' => $model->user->user_id,
+			'email' => $model->user->email,
+			'name' => $model->user->displayname,
+			'photo' => $model->user->photos,
 		]]
 	]);
 }
@@ -131,15 +131,15 @@ echo $form->field($model, 'user_id')
 	->label($model->getAttributeLabel('user_id')); ?>
 
 <?php echo $form->field($model, 'speaker_name')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('speaker_name')); ?>
 
 <?php echo $form->field($model, 'speaker_position')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('speaker_position')); ?>
 
 <?php echo $form->field($model, 'session_title')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('session_title')); ?>
 
 <?php 

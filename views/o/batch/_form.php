@@ -19,6 +19,7 @@ use yii\helpers\Html;
 use app\components\widgets\ActiveForm;
 use yii\redactor\widgets\Redactor;
 use ommu\event\models\EventBatch;
+use ommu\flatpickr\Flatpickr;
 
 $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
@@ -31,7 +32,7 @@ $redactorOptions = [
 <div class="event-batch-form">
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => false,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -45,48 +46,48 @@ $redactorOptions = [
 <?php //echo $form->errorSummary($model);?>
 
 <?php echo $form->field($model, 'batch_name')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('batch_name')); ?>
 
 <?php echo $form->field($model, 'batch_desc')
-	->textarea(['rows'=>6, 'cols'=>50])
+	->textarea(['rows' => 6, 'cols' => 50])
 	->widget(Redactor::className(), ['clientOptions' => $redactorOptions])
 	->label($model->getAttributeLabel('batch_desc')); ?>
 
 <hr/>
 
 <?php echo $form->field($model, 'batch_location')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('batch_location')); ?>
 
 <?php echo $form->field($model, 'location_name')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('location_name')); ?>
 
 <?php echo $form->field($model, 'location_address')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('location_address')); ?>
 
 <?php echo $form->field($model, 'batch_date')
-	->textInput(['type'=>'date'])
+    ->widget(Flatpickr::className(), ['model' => $model, 'attribute' => 'batch_date'])
 	->label($model->getAttributeLabel('batch_date')); ?>
 
-<?php $batch_time_start = $form->field($model, 'batch_time[start]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
-	->textInput(['type'=>'time'])
+<?php $batch_time_start = $form->field($model, 'batch_time[start]', ['template' => '{beginWrapper}{input}{endWrapper}', 'horizontalCssClasses' => ['wrapper' => 'col-sm-4 col-xs-6'], 'options' => ['tag' => null]])
+	->textInput(['type' => 'time'])
 	->label($model->getAttributeLabel('batch_time[start]')); ?>
 
-<?php echo $form->field($model, 'batch_time[end]', ['template' => '{label}'.$batch_time_start.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper'=>'col-sm-5 col-xs-6', 'error'=>'col-sm-9 col-xs-12 col-sm-offset-3', 'hint'=>'col-sm-9 col-xs-12 col-sm-offset-3']])
-	->textInput(['type'=>'time'])
+<?php echo $form->field($model, 'batch_time[end]', ['template' => '{label}'.$batch_time_start.'{beginWrapper}{input}{endWrapper}{error}{hint}', 'horizontalCssClasses' => ['wrapper' => 'col-sm-5 col-xs-6', 'error' => 'col-sm-9 col-xs-12 col-sm-offset-3', 'hint' => 'col-sm-9 col-xs-12 col-sm-offset-3']])
+	->textInput(['type' => 'time'])
 	->label($model->getAttributeLabel('batch_time')); ?>
 
 <hr/>
 
 <?php echo $form->field($model, 'batch_price')
-	->textInput(['type'=>'number', 'min'=>'0'])
+	->textInput(['type' => 'number', 'min' => '0'])
 	->label($model->getAttributeLabel('batch_price')); ?>
 
 <?php echo $form->field($model, 'registered_limit')
-	->textInput(['type'=>'number', 'min'=>'0'])
+	->textInput(['type' => 'number', 'min' => '0'])
 	->label($model->getAttributeLabel('registered_limit')); ?>
 
 <?php 

@@ -19,7 +19,7 @@ use app\components\widgets\ActiveForm;
 ?>
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -33,7 +33,7 @@ use app\components\widgets\ActiveForm;
 <?php //echo $form->errorSummary($model);?>
 
 <?php echo $form->field($model, 'blast_id')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('blast_id')); ?>
 
 <?php echo $form->field($model, 'user_id')
@@ -45,7 +45,7 @@ use app\components\widgets\ActiveForm;
 	->label($model->getAttributeLabel('views')); ?>
 
 <?php echo $form->field($model, 'view_ip')
-	->textInput(['maxlength'=>true])
+	->textInput(['maxlength' => true])
 	->label($model->getAttributeLabel('view_ip')); ?>
 
 <hr/>

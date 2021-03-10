@@ -33,7 +33,7 @@ JS;
 <div class="event-registered-form">
 
 <?php $form = ActiveForm::begin([
-	'options' => ['class'=>'form-horizontal form-label-left'],
+	'options' => ['class' => 'form-horizontal form-label-left'],
 	'enableClientValidation' => true,
 	'enableAjaxValidation' => false,
 	//'enableClientScript' => true,
@@ -101,10 +101,10 @@ $pluginOptions = [
 if ($model->user_id && isset($model->user)) {
 	$pluginOptions = ArrayHelper::merge($pluginOptions, [
 		'options' => [[
-			'id'=>$model->user->user_id,
-			'email'=>$model->user->email,
-			'name'=>$model->user->displayname,
-			'photo'=>$model->user->photos,
+			'id' => $model->user->user_id,
+			'email' => $model->user->email,
+			'name' => $model->user->displayname,
+			'photo' => $model->user->photos,
 		]]
 	]);
 }
@@ -127,7 +127,7 @@ if (!$model->event->isPackage) {
         'options' => [
             'placeholder' => Yii::t('app', 'Select a batch...'),
         ],
-        'items' => ArrayHelper::merge([''=>Yii::t('app', 'Select a batch..')], $model->event->getBatches('array', 'title')),
+        'items' => ArrayHelper::merge(['' => Yii::t('app', 'Select a batch..')], $model->event->getBatches('array', 'title')),
     ];
     if ($model->event->registered_type == 'multiple') {
         $batchSelectizeOptions = ArrayHelper::merge($batchSelectizeOptions, [
@@ -163,7 +163,7 @@ echo $form->field($finance, 'price')
 
 <?php $status = EventRegistered::getStatus();
 echo $form->field($model, 'status')
-	->dropDownList($status, ['prompt'=>''])
+	->dropDownList($status, ['prompt' => ''])
 	->label($model->getAttributeLabel('status'));
 } ?>
 
