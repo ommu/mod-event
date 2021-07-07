@@ -226,7 +226,7 @@ class EventUserBanned extends \app\components\ActiveRecord
 		];
 		$this->templateColumns['status'] = [
 			'attribute' => 'status',
-			'filter' => array(1=>'Banned',0=>'Unbanned'),
+			'filter' => array(1 => 'Banned', 0 => 'Unbanned'),
 			'value' => function($model, $key, $index, $column) {
 				$url = Url::to(['unbanned', 'id' => $model->primaryKey]);
 				return $model->status ? Html::a(Yii::t('app', 'Banned'), $url) :  Yii::t('app', 'Unbanned');
