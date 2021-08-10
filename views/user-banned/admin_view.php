@@ -46,11 +46,11 @@ $attributes = [
 	],
 	[
 		'attribute' => 'banned_start',
-		'value' => !in_array($model->banned_start, ['0000-00-00 00:00:00', '1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->banned_start, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->banned_start, 'medium'),
 	],
 	[
 		'attribute' => 'banned_end',
-		'value' => !in_array($model->banned_end, ['0000-00-00 00:00:00', '1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->banned_end, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->banned_end, 'medium'),
 	],
 	[
 		'attribute' => 'banned_desc',
@@ -64,7 +64,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'unbanned_date',
-		'value' => !in_array($model->unbanned_date, ['0000-00-00 00:00:00', '1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->unbanned_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->unbanned_date, 'medium'),
 	],
 	// 'unbanned_id',
 	[

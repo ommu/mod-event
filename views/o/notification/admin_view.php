@@ -50,7 +50,7 @@ $attributes = [
 	],
 	[
 		'attribute' => 'notified_date',
-		'value' => !in_array($model->notified_date, ['0000-00-00 00:00:00', '1970-01-01 00:00:00']) ? Yii::$app->formatter->format($model->notified_date, 'datetime') : '-',
+		'value' => Yii::$app->formatter->asDatetime($model->notified_date, 'medium'),
 	],
 	'notified_id',
 	'users',
