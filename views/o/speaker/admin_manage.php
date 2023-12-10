@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 if (($id = Yii::$app->request->get('id')) != null) {
 	$this->params['menu']['content'] = [
-		['label' => Yii::t('app', 'Add Speaker'), 'url' => Url::to(['create', 'id' => $id]), 'icon' => 'plus-square', 'htmlOptions' => ['class' => 'btn btn-primary modal-btn']],
+		['label' => Yii::t('app', 'Add Speaker'), 'url' => Url::to(['create', 'id' => $id]), 'icon' => 'plus-square', 'htmlOptions' => ['class' => 'btn btn-success modal-btn']],
 	];
 }
 

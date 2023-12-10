@@ -22,6 +22,7 @@ use yii\redactor\widgets\Redactor;
 use ommu\event\models\Events;
 use ommu\event\models\EventCategory;
 use ommu\selectize\Selectize;
+use ommu\flatpickr\Flatpickr;
 
 $redactorOptions = [
 	'imageManagerJson' => ['/redactor/upload/image-json'],
@@ -140,7 +141,7 @@ if ($model->isNewRecord && !$model->getErrors()) {
 	$model->published_date = Yii::$app->formatter->asDate('now', 'php:Y-m-d');
 }
 echo $form->field($model, 'published_date')
-	->textInput(['type'=>'date'])
+    ->widget(Flatpickr::className(), ['model' => $model, 'attribute' => 'published_date'])
 	->label($model->getAttributeLabel('published_date')); ?>
 
 <?php 
