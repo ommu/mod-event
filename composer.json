@@ -30,7 +30,7 @@
 	],
 	"require": {
 		"php": "~7.0",
-		"ommu/ipedia": "dev-master",
+		"ommu/ipedia": "v2.x-dev",
 		"2amigos/yii2-google-places-library": "*"
 	},
 	"autoload": {

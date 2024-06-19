@@ -6,7 +6,7 @@
  * @var $model ommu\event\models\EventNotification
  *
  * @author Putra Sudaryanto <putra@ommu.id>
- * @contact (+62)856-299-4114
+ * @contact (+62)811-2540-432
  * @copyright Copyright (c) 2017 OMMU (www.ommu.id)
  * @created date 29 November 2017, 15:41 WIB
  * @link https://github.com/ommu/mod-event

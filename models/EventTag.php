@@ -3,7 +3,7 @@
  * EventTag
  * 
  * @author Putra Sudaryanto <putra@ommu.id>
- * @contact (+62)856-299-4114
+ * @contact (+62)811-2540-432
  * @copyright Copyright (c) 2017 OMMU (www.ommu.id)
  * @created date 27 November 2017, 09:29 WIB
  * @modified date 23 June 2019, 15:31 WIB
